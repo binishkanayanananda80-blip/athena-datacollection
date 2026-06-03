@@ -85,36 +85,36 @@ export default function AdminLayout({
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Mobile Header (simplified) */}
-        <header className="md:hidden flex items-center justify-between p-4 bg-primary text-primary-foreground">
-          <h2 className="text-lg font-bold">Admin Portal</h2>
-          <div className="flex items-center gap-2">
+        <header className="md:hidden flex items-center justify-between p-4 bg-sidebar text-white shadow-md z-20">
+          <h2 className="text-lg font-bold tracking-tight">Admin Portal</h2>
+          <div className="flex items-center gap-3">
             <a
               href="/"
-              className="flex items-center gap-1 px-2 py-1 rounded-md text-xs font-semibold bg-green-600 text-white hover:bg-green-500 transition-colors"
+              className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-bold bg-primary text-white hover:bg-primary/90 transition-colors shadow-sm"
             >
               Exit
             </a>
             <a
               href="/api/auth/logout"
-              className="flex items-center gap-2 px-2 py-1 rounded-md text-sm text-primary-foreground/80 hover:bg-primary-foreground/10 hover:text-white transition-colors"
+              className="flex items-center gap-2 px-2 py-1.5 rounded-lg text-sm text-white/70 hover:bg-white/10 hover:text-white transition-colors"
             >
-              <LogOut className="w-4 h-4" />
+              <LogOut className="w-5 h-5" />
             </a>
           </div>
         </header>
 
         {/* Mobile Nav Scroll (simplified) */}
-        <div className="md:hidden flex overflow-x-auto bg-white border-b border-border p-2 gap-2 shadow-sm">
+        <div className="md:hidden flex overflow-x-auto bg-[#232c5e] border-b border-white/5 p-3 gap-2 shadow-sm hide-scrollbar">
           {navItems.map((item) => {
             const isActive = pathname === item.href
             return (
               <Link key={item.href} href={item.href} className="flex-shrink-0">
-                <span className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium ${
+                <span className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold transition-colors ${
                   isActive 
-                    ? "bg-primary text-primary-foreground" 
-                    : "bg-muted text-muted-foreground"
+                    ? "bg-primary text-white shadow-sm" 
+                    : "text-white/70 bg-white/5 hover:bg-white/10"
                 }`}>
-                  <item.icon className="w-3 h-3" />
+                  <item.icon className="w-4 h-4" />
                   {item.label}
                 </span>
               </Link>

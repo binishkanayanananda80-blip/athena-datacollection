@@ -176,18 +176,18 @@ export default function PublicForm() {
   }
 
   return (
-    <div className="min-h-screen p-4 py-8 md:py-12">
-      <div className="max-w-3xl mx-auto space-y-6">
-        <div className="text-center space-y-2">
-          <h1 className="text-2xl md:text-3xl font-bold text-primary">Leeds International School</h1>
-          <h2 className="text-lg md:text-xl text-muted-foreground font-medium">Employee Data Collection for Athena School Management System</h2>
-          <p className="text-sm text-muted-foreground mt-4">
+    <div className="min-h-screen bg-background p-4 py-8 md:py-12 flex flex-col items-center justify-center">
+      <div className="w-full max-w-4xl mx-auto space-y-8">
+        <div className="text-center space-y-3">
+          <h1 className="text-3xl md:text-4xl font-bold text-foreground tracking-tight">Leeds International School</h1>
+          <h2 className="text-lg md:text-xl text-primary font-medium">Employee Data Collection for Athena School Management System</h2>
+          <p className="text-sm md:text-base text-muted-foreground mt-4 max-w-2xl mx-auto">
             Please complete this form accurately. The information collected will be used for the Athena School Management System employee data migration.
           </p>
         </div>
 
-        <Card className="shadow-lg border-t-4 border-t-primary">
-          <CardContent className="pt-6">
+        <Card className="border-none shadow-[0_8px_30px_rgb(0,0,0,0.04)] rounded-3xl bg-white overflow-hidden">
+          <CardContent className="p-6 md:p-10">
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                 
@@ -464,8 +464,8 @@ export default function PublicForm() {
                   />
                 </div>
 
-                <div className="pt-6">
-                  <Button type="submit" className="w-full md:w-auto min-w-[200px]" disabled={isSubmitting}>
+                <div className="pt-8 flex justify-end">
+                  <Button type="submit" size="lg" className="w-full md:w-auto min-w-[240px]" disabled={isSubmitting}>
                     {isSubmitting ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />

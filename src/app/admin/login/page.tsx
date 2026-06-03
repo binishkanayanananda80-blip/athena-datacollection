@@ -37,29 +37,29 @@ export default function AdminLogin() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-muted/40">
-      <Card className="w-full max-w-sm">
-        <CardHeader className="text-center">
-          <CardTitle className="text-2xl text-primary">Admin Login</CardTitle>
-          <CardDescription>Leeds International School</CardDescription>
+    <div className="min-h-screen flex items-center justify-center p-4 bg-background">
+      <Card className="w-full max-w-sm border-none shadow-[0_8px_30px_rgb(0,0,0,0.04)] rounded-3xl bg-white overflow-hidden p-2">
+        <CardHeader className="text-center pb-6">
+          <CardTitle className="text-3xl font-bold text-foreground">Admin Login</CardTitle>
+          <CardDescription className="text-muted-foreground mt-2">Leeds International School</CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={onSubmit} className="space-y-4">
+          <form onSubmit={onSubmit} className="space-y-6">
             <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
+              <Label htmlFor="email" className="text-foreground font-semibold">Email</Label>
               <Input id="email" name="email" type="email" placeholder="admin@leeds.lk" required />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
+              <Label htmlFor="password" className="text-foreground font-semibold">Password</Label>
               <Input id="password" name="password" type="password" required />
             </div>
-            <Button type="submit" className="w-full" disabled={isPending}>
+            <Button type="submit" size="lg" className="w-full font-bold" disabled={isPending}>
               {isPending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : "Log in"}
             </Button>
           </form>
         </CardContent>
-        <CardFooter className="flex justify-center border-t border-border pt-4">
-          <Link href="/" className="text-sm text-muted-foreground hover:text-primary transition-colors">
+        <CardFooter className="flex justify-center border-t border-secondary mt-4 pt-6">
+          <Link href="/" className="text-sm font-semibold text-muted-foreground hover:text-primary transition-colors">
             Back to Public Form
           </Link>
         </CardFooter>
