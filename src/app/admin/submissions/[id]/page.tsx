@@ -1,0 +1,505 @@
+"use client"
+
+import { useEffect, useState } from "react"
+import { useParams, useRouter } from "next/navigation"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import * as z from "zod"
+import { toast } from "sonner"
+import { Loader2, ArrowLeft } from "lucide-react"
+
+import {
+  getActiveBranches,
+  getActiveCategories,
+  getDepartmentsByCategory,
+  getDesignationsByDepartment,
+  getActiveContractTypes,
+} from "@/lib/actions"
+import { getSubmissionById, updateSubmission } from "../actions"
+
+import { Button } from "@/components/ui/button"
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form"
+import { Input } from "@/components/ui/input"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+
+const formSchema = z.object({
+  branch_id: z.coerce.number({ required_error: "Please select a branch." }),
+  epf_no: z.string().min(1, "EPF Number is required."),
+  first_name: z.string().min(1, "First Name is required."),
+  middle_name: z.string().optional(),
+  last_name: z.string().min(1, "Last Name is required."),
+  join_date: z.string().min(1, "Date of Joining is required."),
+  category_id: z.coerce.number({ required_error: "Please select a category." }),
+  department_id: z.coerce.number({ required_error: "Please select a department." }),
+  designation_id: z.coerce.number({ required_error: "Please select a designation." }),
+  contract_type_name: z.string({ required_error: "Please select a contract type." }).min(1),
+  nic: z.string().regex(/^(?:\d{9}[vVxX]|\d{12})$/, "Invalid Sri Lankan NIC format."),
+  mobile: z.string().regex(/^(?:\+94|94|0)?7\d{8}$/, "Invalid Sri Lankan mobile number format."),
+  gender: z.enum(["Male", "Female"], { required_error: "Please select a gender." })
+})
+
+export default function EditSubmissionPage() {
+  const { id } = useParams()
+  const router = useRouter()
+  
+  const [isLoading, setIsLoading] = useState(true)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const [branches, setBranches] = useState<any[]>([])
+  const [categories, setCategories] = useState<any[]>([])
+  const [departments, setDepartments] = useState<any[]>([])
+  const [designations, setDesignations] = useState<any[]>([])
+  const [contractTypes, setContractTypes] = useState<any[]>([])
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      epf_no: "",
+      first_name: "",
+      middle_name: "",
+      last_name: "",
+      join_date: "",
+      nic: "",
+      mobile: "",
+      contract_type_name: "",
+      branch_id: "" as any,
+      category_id: "" as any,
+      department_id: "" as any,
+      designation_id: "" as any,
+      gender: "" as any,
+    },
+  })
+
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const [b, c, ct, submissionData] = await Promise.all([
+          getActiveBranches(),
+          getActiveCategories(),
+          getActiveContractTypes(),
+          getSubmissionById(id as string)
+        ])
+        setBranches(b || [])
+        setCategories(c || [])
+        setContractTypes(ct || [])
+
+        if (submissionData) {
+          // Pre-load dependent dropdowns
+          if (submissionData.category_id) {
+            const deps = await getDepartmentsByCategory(submissionData.category_id)
+            setDepartments(deps || [])
+          }
+          if (submissionData.department_id) {
+            const desigs = await getDesignationsByDepartment(submissionData.department_id)
+            setDesignations(desigs || [])
+          }
+
+          // Reset form with submission data
+          form.reset({
+            epf_no: submissionData.epf_no,
+            first_name: submissionData.first_name,
+            middle_name: submissionData.middle_name || "",
+            last_name: submissionData.last_name,
+            join_date: submissionData.join_date,
+            nic: submissionData.nic,
+            mobile: submissionData.mobile,
+            contract_type_name: submissionData.contract_type_name,
+            branch_id: submissionData.branch_id,
+            category_id: submissionData.category_id,
+            department_id: submissionData.department_id,
+            designation_id: submissionData.designation_id,
+            gender: submissionData.gender as any,
+          })
+        }
+      } catch (error) {
+        toast.error("Failed to load submission data.")
+      } finally {
+        setIsLoading(false)
+      }
+    }
+    if (id) loadData()
+  }, [id, form])
+
+  const selectedCategoryId = form.watch("category_id")
+  const selectedDepartmentId = form.watch("department_id")
+
+  // Handle cascading dropdowns when user changes category
+  useEffect(() => {
+    // Only run this if we are not loading (prevents resetting default values during initial load)
+    if (!isLoading && selectedCategoryId) {
+      getDepartmentsByCategory(selectedCategoryId).then(d => {
+        setDepartments(d || [])
+        form.setValue("department_id", "" as any)
+        form.setValue("designation_id", "" as any)
+        setDesignations([])
+      })
+    }
+  }, [selectedCategoryId, form, isLoading])
+
+  // Handle cascading dropdowns when user changes department
+  useEffect(() => {
+    if (!isLoading && selectedDepartmentId) {
+      getDesignationsByDepartment(selectedDepartmentId).then(d => {
+        setDesignations(d || [])
+        form.setValue("designation_id", "" as any)
+      })
+    }
+  }, [selectedDepartmentId, form, isLoading])
+
+  async function onSubmit(values: z.infer<typeof formSchema>) {
+    setIsSubmitting(true)
+    
+    // Map IDs to Names
+    const branch_name = branches.find(b => b.branch_id === values.branch_id)?.branch_name
+    const category_name = categories.find(c => c.category_id === values.category_id)?.category_name
+    const Department = departments.find(d => d.department_id === values.department_id)?.Department
+    const Designation = designations.find(d => d.designation_id === values.designation_id)?.Designation
+
+    const fullData = {
+      ...values,
+      branch_name,
+      category_name,
+      Department,
+      Designation
+    }
+
+    try {
+      const res = await updateSubmission(id as string, fullData)
+      if (res.success) {
+        toast.success("Record updated successfully.")
+        router.push("/admin/submissions")
+      } else {
+        toast.error(res.error || "Failed to update record.")
+      }
+    } catch (error) {
+      toast.error("An unexpected error occurred.")
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-full min-h-[400px]">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    )
+  }
+
+  return (
+    <div className="space-y-6 max-w-4xl mx-auto pb-10">
+      <div className="flex items-center gap-4">
+        <Button variant="outline" size="icon" onClick={() => router.push("/admin/submissions")}>
+          <ArrowLeft className="h-4 w-4" />
+        </Button>
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Edit Submission</h1>
+          <p className="text-muted-foreground">Modify the employee data record.</p>
+        </div>
+      </div>
+
+      <Card className="shadow-sm">
+        <CardContent className="pt-6">
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <FormField
+                  control={form.control}
+                  name="branch_id"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Branch <span className="text-destructive">*</span></FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value ? field.value.toString() : ""}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select Branch">
+                              {field.value ? branches.find(b => b.branch_id.toString() === field.value.toString())?.branch_name : "Select Branch"}
+                            </SelectValue>
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {branches.map(b => (
+                            <SelectItem key={b.branch_id} value={b.branch_id.toString()}>
+                              {b.branch_name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="epf_no"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>EPF Number <span className="text-destructive">*</span></FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter EPF Number" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <FormField
+                  control={form.control}
+                  name="first_name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>First Name <span className="text-destructive">*</span></FormLabel>
+                      <FormControl>
+                        <Input placeholder="First Name" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                
+                <FormField
+                  control={form.control}
+                  name="middle_name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Middle Name</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Middle Name" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="last_name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Last Name <span className="text-destructive">*</span></FormLabel>
+                      <FormControl>
+                        <Input placeholder="Last Name" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <FormField
+                  control={form.control}
+                  name="join_date"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Date of Joining <span className="text-destructive">*</span></FormLabel>
+                      <FormControl>
+                        <Input type="date" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="nic"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>NIC Number <span className="text-destructive">*</span></FormLabel>
+                      <FormControl>
+                        <Input placeholder="123456789V or 200012345678" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <FormField
+                  control={form.control}
+                  name="mobile"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Mobile Number <span className="text-destructive">*</span></FormLabel>
+                      <FormControl>
+                        <Input placeholder="0771234567" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="gender"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Gender <span className="text-destructive">*</span></FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value ? field.value.toString() : ""}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select Gender">
+                              {field.value ? field.value : "Select Gender"}
+                            </SelectValue>
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="Male">Male</SelectItem>
+                          <SelectItem value="Female">Female</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-4 border-t border-border">
+                <FormField
+                  control={form.control}
+                  name="category_id"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Category <span className="text-destructive">*</span></FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value ? field.value.toString() : ""}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select Category">
+                              {field.value ? categories.find(c => c.category_id.toString() === field.value.toString())?.category_name : "Select Category"}
+                            </SelectValue>
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {categories.map(c => (
+                            <SelectItem key={c.category_id} value={c.category_id.toString()}>
+                              {c.category_name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="department_id"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Department <span className="text-destructive">*</span></FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value ? field.value.toString() : ""} disabled={!selectedCategoryId || departments.length === 0}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select Department">
+                              {field.value ? departments.find(d => d.department_id.toString() === field.value.toString())?.Department : "Select Department"}
+                            </SelectValue>
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {departments.map(d => (
+                            <SelectItem key={d.department_id} value={d.department_id.toString()}>
+                              {d.Department}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="designation_id"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Designation <span className="text-destructive">*</span></FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value ? field.value.toString() : ""} disabled={!selectedDepartmentId || designations.length === 0}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select Designation">
+                              {field.value ? designations.find(d => d.designation_id.toString() === field.value.toString())?.Designation : "Select Designation"}
+                            </SelectValue>
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {designations.map(d => (
+                            <SelectItem key={d.designation_id} value={d.designation_id.toString()}>
+                              {d.Designation}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="contract_type_name"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Contract Type <span className="text-destructive">*</span></FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value ? field.value.toString() : ""}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select Contract Type">
+                              {field.value ? field.value : "Select Contract Type"}
+                            </SelectValue>
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {contractTypes.map(c => (
+                            <SelectItem key={c.contract_type_name} value={c.contract_type_name}>
+                              {c.contract_type_name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="pt-6 flex gap-4">
+                <Button type="button" variant="outline" onClick={() => router.push("/admin/submissions")} disabled={isSubmitting}>
+                  Cancel
+                </Button>
+                <Button type="submit" disabled={isSubmitting}>
+                  {isSubmitting ? (
+                    <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Saving...</>
+                  ) : (
+                    "Save Changes"
+                  )}
+                </Button>
+              </div>
+            </form>
+          </Form>
+        </CardContent>
+      </Card>
+    </div>
+  )
+}
