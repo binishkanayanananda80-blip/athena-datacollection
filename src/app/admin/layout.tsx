@@ -1,8 +1,8 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { logout } from "@/app/admin/login/actions"
+import { usePathname, useRouter } from "next/navigation"
+import { createClient } from "@/lib/supabase/client"
 import { Button } from "@/components/ui/button"
 import { 
   LayoutDashboard, 
@@ -23,6 +23,14 @@ export default function AdminLayout({
   children: React.ReactNode
 }) {
   const pathname = usePathname()
+  const router = useRouter()
+
+  async function handleLogout() {
+    const supabase = createClient()
+    await supabase.auth.signOut()
+    router.push("/admin/login")
+    router.refresh()
+  }
 
   // Don't show sidebar on login page
   if (pathname === '/admin/login') {
@@ -67,12 +75,15 @@ export default function AdminLayout({
           })}
         </nav>
         <div className="p-4 border-t border-primary-foreground/10">
-          <form action={logout}>
-            <Button type="submit" variant="ghost" className="w-full justify-start text-primary-foreground/80 hover:bg-primary-foreground/10 hover:text-white">
-              <LogOut className="w-4 h-4 mr-3" />
-              Logout
-            </Button>
-          </form>
+          <Button
+            type="button"
+            onClick={handleLogout}
+            variant="ghost"
+            className="w-full justify-start text-primary-foreground/80 hover:bg-primary-foreground/10 hover:text-white"
+          >
+            <LogOut className="w-4 h-4 mr-3" />
+            Logout
+          </Button>
         </div>
       </aside>
 
@@ -81,11 +92,15 @@ export default function AdminLayout({
         {/* Mobile Header (simplified) */}
         <header className="md:hidden flex items-center justify-between p-4 bg-primary text-primary-foreground">
           <h2 className="text-lg font-bold">Admin Portal</h2>
-          <form action={logout}>
-            <Button type="submit" variant="ghost" size="sm" className="text-primary-foreground/80 hover:bg-primary-foreground/10">
-              <LogOut className="w-4 h-4" />
-            </Button>
-          </form>
+          <Button
+            type="button"
+            onClick={handleLogout}
+            variant="ghost"
+            size="sm"
+            className="text-primary-foreground/80 hover:bg-primary-foreground/10"
+          >
+            <LogOut className="w-4 h-4" />
+          </Button>
         </header>
 
         {/* Mobile Nav Scroll (simplified) */}
