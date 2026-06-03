@@ -37,15 +37,15 @@ import {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 
 const formSchema = z.object({
-  branch_id: z.coerce.number({ required_error: "Please select a branch." }),
+  branch_id: z.coerce.number({ invalid_type_error: "Please select a branch." }),
   epf_no: z.string().min(1, "EPF Number is required."),
   first_name: z.string().min(1, "First Name is required."),
   middle_name: z.string().optional(),
   last_name: z.string().min(1, "Last Name is required."),
   join_date: z.string().min(1, "Date of Joining is required."),
-  category_id: z.coerce.number({ required_error: "Please select a category." }),
-  department_id: z.coerce.number({ required_error: "Please select a department." }),
-  designation_id: z.coerce.number({ required_error: "Please select a designation." }),
+  category_id: z.coerce.number({ invalid_type_error: "Please select a category." }),
+  department_id: z.coerce.number({ invalid_type_error: "Please select a department." }),
+  designation_id: z.coerce.number({ invalid_type_error: "Please select a designation." }),
   contract_type_name: z.string({ required_error: "Please select a contract type." }).min(1),
   nic: z.string().regex(/^(?:\d{9}[vVxX]|\d{12})$/, "Invalid Sri Lankan NIC format."),
   mobile: z.string().regex(/^(?:\+94|94|0)?7\d{8}$/, "Invalid Sri Lankan mobile number format."),
