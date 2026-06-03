@@ -68,7 +68,7 @@ export default function AdminLayout({
         </nav>
         <div className="p-4 border-t border-primary-foreground/10">
           <form action={logout}>
-            <Button variant="ghost" className="w-full justify-start text-primary-foreground/80 hover:bg-primary-foreground/10 hover:text-white">
+            <Button type="submit" variant="ghost" className="w-full justify-start text-primary-foreground/80 hover:bg-primary-foreground/10 hover:text-white">
               <LogOut className="w-4 h-4 mr-3" />
               Logout
             </Button>
@@ -82,7 +82,7 @@ export default function AdminLayout({
         <header className="md:hidden flex items-center justify-between p-4 bg-primary text-primary-foreground">
           <h2 className="text-lg font-bold">Admin Portal</h2>
           <form action={logout}>
-            <Button variant="ghost" size="sm" className="text-primary-foreground/80 hover:bg-primary-foreground/10">
+            <Button type="submit" variant="ghost" size="sm" className="text-primary-foreground/80 hover:bg-primary-foreground/10">
               <LogOut className="w-4 h-4" />
             </Button>
           </form>
