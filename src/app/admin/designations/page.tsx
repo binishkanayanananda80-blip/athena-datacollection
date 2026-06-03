@@ -94,7 +94,7 @@ export default function DesignationsPage() {
               </div>
               <div className="space-y-2">
                 <label className="text-sm font-medium">Department</label>
-                <Select required value={newDepartmentId} onValueChange={setNewDepartmentId}>
+                <Select required value={newDepartmentId} onValueChange={(val) => setNewDepartmentId(val as string)}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select a Department" />
                   </SelectTrigger>

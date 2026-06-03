@@ -94,7 +94,7 @@ export default function DepartmentsPage() {
               </div>
               <div className="space-y-2">
                 <label className="text-sm font-medium">Category</label>
-                <Select required value={newCategoryId} onValueChange={setNewCategoryId}>
+                <Select required value={newCategoryId} onValueChange={(val) => setNewCategoryId(val as string)}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select a Category" />
                   </SelectTrigger>
