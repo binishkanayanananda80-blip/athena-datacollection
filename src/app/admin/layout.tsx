@@ -1,8 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { usePathname, useRouter } from "next/navigation"
-import { createClient } from "@/lib/supabase/client"
+import { usePathname } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { 
   LayoutDashboard, 
@@ -23,11 +22,6 @@ export default function AdminLayout({
   children: React.ReactNode
 }) {
   const pathname = usePathname()
-  const router = useRouter()
-
-  async function handleLogout() {
-    window.location.href = "/api/auth/logout"
-  }
 
   // Don't show sidebar on login page
   if (pathname === '/admin/login') {
@@ -72,14 +66,13 @@ export default function AdminLayout({
           })}
         </nav>
         <div className="p-4 border-t border-primary-foreground/10">
-          <button
-            type="button"
-            onClick={handleLogout}
+          <a
+            href="/api/auth/logout"
             className="w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-primary-foreground/80 hover:bg-primary-foreground/10 hover:text-white transition-colors"
           >
             <LogOut className="w-4 h-4" />
             Logout
-          </button>
+          </a>
         </div>
       </aside>
 
@@ -88,13 +81,12 @@ export default function AdminLayout({
         {/* Mobile Header (simplified) */}
         <header className="md:hidden flex items-center justify-between p-4 bg-primary text-primary-foreground">
           <h2 className="text-lg font-bold">Admin Portal</h2>
-          <button
-            type="button"
-            onClick={handleLogout}
+          <a
+            href="/api/auth/logout"
             className="flex items-center gap-2 px-2 py-1 rounded-md text-sm text-primary-foreground/80 hover:bg-primary-foreground/10 hover:text-white transition-colors"
           >
             <LogOut className="w-4 h-4" />
-          </button>
+          </a>
         </header>
 
         {/* Mobile Nav Scroll (simplified) */}
