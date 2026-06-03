@@ -41,43 +41,42 @@ export default function AdminLayout({
   ]
 
   return (
-    <div className="flex h-screen overflow-hidden bg-muted/40">
+    <div className="flex h-screen overflow-hidden bg-background">
       {/* Sidebar */}
-      <aside className="w-64 bg-primary text-primary-foreground hidden md:flex flex-col">
-        <div className="p-4 border-b border-primary-foreground/10">
-          <h2 className="text-xl font-bold tracking-tight">Admin Portal</h2>
-          <p className="text-xs text-primary-foreground/70 mt-1">Leeds International School</p>
+      <aside className="w-[280px] bg-sidebar text-sidebar-foreground hidden md:flex flex-col shadow-xl z-20">
+        <div className="p-8 border-b border-white/10">
+          <h2 className="text-2xl font-bold tracking-tight text-white">Admin Portal</h2>
+          <p className="text-sm text-white/70 mt-2">Leeds International School</p>
         </div>
-        <nav className="flex-1 overflow-y-auto p-4 space-y-1">
+        <nav className="flex-1 overflow-y-auto pt-4 pb-4 space-y-1">
           {navItems.map((item) => {
             const isActive = pathname === item.href
             return (
               <Link key={item.href} href={item.href}>
-                <span className={`flex items-center gap-3 px-3 py-2 rounded-md transition-colors text-sm font-medium ${
+                <span className={`flex items-center gap-3 px-6 py-3 transition-colors text-sm font-medium ${
                   isActive 
-                    ? "bg-primary-foreground/15 text-white" 
-                    : "text-primary-foreground/80 hover:bg-primary-foreground/10 hover:text-white"
+                    ? "bg-white/10 text-white border-l-4 border-primary" 
+                    : "text-white/70 hover:bg-white/5 hover:text-white border-l-4 border-transparent"
                 }`}>
-                  <item.icon className="w-4 h-4" />
+                  <item.icon className="w-5 h-5" />
                   {item.label}
                 </span>
               </Link>
             )
           })}
         </nav>
-        <div className="p-4 border-t border-primary-foreground/10 space-y-2">
+        <div className="p-8 border-t border-white/10 space-y-3">
           <a
             href="/"
-            className="w-full flex items-center gap-3 px-3 py-2.5 rounded-md text-sm font-semibold bg-green-600 text-white hover:bg-green-500 transition-colors"
+            className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-xl text-sm font-bold bg-primary text-white hover:bg-primary/90 transition-colors shadow-md"
           >
-            <LogOut className="w-4 h-4" />
             Exit to Data Form
           </a>
           <a
             href="/api/auth/logout"
-            className="w-full flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium text-primary-foreground/80 hover:bg-primary-foreground/10 hover:text-white transition-colors"
+            className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-xl text-sm font-bold text-white/70 hover:bg-white/10 hover:text-white transition-colors"
           >
-            <LogOut className="w-4 h-4" />
+            <LogOut className="w-5 h-5" />
             Logout
           </a>
         </div>

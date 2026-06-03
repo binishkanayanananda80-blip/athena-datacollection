@@ -49,38 +49,38 @@
 }
 
 :root {
-  --background: oklch(0.98 0.01 290);
-  --foreground: oklch(0.2 0.05 290);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.2 0.05 290);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.2 0.05 290);
-  --primary: oklch(0.35 0.15 300);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.55 0.05 280);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.95 0.02 280);
-  --muted-foreground: oklch(0.4 0.05 280);
-  --accent: oklch(0.95 0.02 280);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
-  --chart-1: oklch(0.87 0 0);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.205 0 0);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.708 0 0);
+  --background: #F4F7FE;
+  --foreground: #2B3674;
+  --card: #FFFFFF;
+  --card-foreground: #2B3674;
+  --popover: #FFFFFF;
+  --popover-foreground: #2B3674;
+  --primary: #4318FF;
+  --primary-foreground: #FFFFFF;
+  --secondary: #E9EDF7;
+  --secondary-foreground: #2B3674;
+  --muted: #F4F7FE;
+  --muted-foreground: #A3AED0;
+  --accent: #F4F7FE;
+  --accent-foreground: #2B3674;
+  --destructive: #EE5D50;
+  --border: #E9EDF7;
+  --input: #E9EDF7;
+  --ring: #4318FF;
+  --chart-1: #4318FF;
+  --chart-2: #6AD2FF;
+  --chart-3: #E9EDF7;
+  --chart-4: #FFB547;
+  --chart-5: #EE5D50;
+  --radius: 1rem;
+  --sidebar: #2B3674;
+  --sidebar-foreground: #FFFFFF;
+  --sidebar-primary: #4318FF;
+  --sidebar-primary-foreground: #FFFFFF;
+  --sidebar-accent: rgba(255, 255, 255, 0.1);
+  --sidebar-accent-foreground: #FFFFFF;
+  --sidebar-border: rgba(255, 255, 255, 0.1);
+  --sidebar-ring: #4318FF;
 }
 
 .dark {
