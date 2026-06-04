@@ -38,10 +38,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 
 const formSchema = z.object({
   branch_id: z.coerce.number().min(1, "Please select a branch."),
-  epf_no: z.string().min(1, "EPF Number is required."),
-  first_name: z.string().min(1, "First Name is required."),
-  middle_name: z.string().optional(),
-  last_name: z.string().min(1, "Last Name is required."),
+  epf_no: z.string().regex(/^\d+$/, "EPF Number must contain only numbers."),
+  first_name: z.string().regex(/^[A-Z][a-z]+(?: [A-Z][a-z]+)*$/, "First Name must be Title Case (e.g., Nimal). Initials/single letters are not allowed."),
+  middle_name: z.string().optional().refine(val => !val || /^[A-Z][a-z]+(?: [A-Z][a-z]+)*$/.test(val), "Middle Name must be Title Case. Initials/single letters are not allowed."),
+  last_name: z.string().regex(/^[A-Z][a-z]+(?: [A-Z][a-z]+)*$/, "Last Name must be Title Case. Initials/single letters are not allowed."),
   join_date: z.string().min(1, "Date of Joining is required."),
   category_id: z.coerce.number().min(1, "Please select a category."),
   department_id: z.coerce.number().min(1, "Please select a department."),
