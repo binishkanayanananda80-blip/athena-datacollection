@@ -54,8 +54,37 @@ export async function deleteSubmission(id: string) {
 
 export async function updateSubmission(id: string, data: any) {
   const supabase = await createAdminClient()
+
+  // 1. Check globally for NIC
+  const { data: existingNic } = await supabase
+    .from('employee_submissions')
+    .select('id')
+    .ilike('nic', data.nic)
+    .neq('id', id)
+    .limit(1)
+
+  if (existingNic && existingNic.length > 0) {
+    return { success: false, error: "An employee record already exists with this NIC number." }
+  }
+
+  // 2. Check within branch for EPF
+  const { data: existingEpf } = await supabase
+    .from('employee_submissions')
+    .select('id')
+    .eq('branch_id', data.branch_id)
+    .ilike('epf_no', data.epf_no)
+    .neq('id', id)
+    .limit(1)
+
+  if (existingEpf && existingEpf.length > 0) {
+    return { success: false, error: "An employee record already exists with this EPF number in the selected branch." }
+  }
+
   const { error } = await supabase.from('employee_submissions').update(data).eq('id', id)
   if (error) {
+    if (error.code === '23505') {
+       return { success: false, error: "Database error: This EPF number (in this branch) or NIC is already in use." }
+    }
     return { success: false, error: error.message }
   }
   revalidatePath('/admin/submissions')

@@ -67,15 +67,27 @@ export async function getActiveContractTypes() {
 export async function submitEmployeeData(formData: any) {
   const supabase = await createAdminClient()
   
-  // Duplicate check
-  const { data: existing } = await supabase
+  // 1. Check globally for NIC
+  const { data: existingNic } = await supabase
     .from('employee_submissions')
     .select('id')
-    .or(`epf_no.ilike.${formData.epf_no},nic.ilike.${formData.nic}`)
+    .ilike('nic', formData.nic)
     .limit(1)
 
-  if (existing && existing.length > 0) {
-    return { success: false, error: "An employee record already exists for this EPF number or NIC number. Please contact the admin if you need to update your details." }
+  if (existingNic && existingNic.length > 0) {
+    return { success: false, error: "An employee record already exists with this NIC number." }
+  }
+
+  // 2. Check within branch for EPF
+  const { data: existingEpf } = await supabase
+    .from('employee_submissions')
+    .select('id')
+    .eq('branch_id', formData.branch_id)
+    .ilike('epf_no', formData.epf_no)
+    .limit(1)
+
+  if (existingEpf && existingEpf.length > 0) {
+    return { success: false, error: "An employee record already exists with this EPF number in the selected branch." }
   }
 
   const { error } = await supabase
