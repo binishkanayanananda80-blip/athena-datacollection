@@ -64,6 +64,7 @@ export default function PublicForm() {
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema as any),
+    mode: "onChange",
     defaultValues: {
       epf_no: "",
       first_name: "",
