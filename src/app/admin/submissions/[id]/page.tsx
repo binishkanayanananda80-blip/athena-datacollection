@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { useParams, useRouter } from "next/navigation"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
@@ -137,26 +137,34 @@ export default function EditSubmissionPage() {
   const selectedCategoryId = form.watch("category_id")
   const selectedDepartmentId = form.watch("department_id")
 
+  const prevCategoryId = useRef<number | null>(null)
+  const prevDepartmentId = useRef<number | null>(null)
+
   // Handle cascading dropdowns when user changes category
   useEffect(() => {
-    // Only run this if we are not loading (prevents resetting default values during initial load)
     if (!isLoading && selectedCategoryId) {
-      getDepartmentsByCategory(selectedCategoryId).then(d => {
-        setDepartments(d || [])
-        form.setValue("department_id", "" as any)
-        form.setValue("designation_id", "" as any)
-        setDesignations([])
-      })
+      if (prevCategoryId.current !== null && prevCategoryId.current !== selectedCategoryId) {
+        getDepartmentsByCategory(selectedCategoryId).then(d => {
+          setDepartments(d || [])
+          form.setValue("department_id", "" as any)
+          form.setValue("designation_id", "" as any)
+          setDesignations([])
+        })
+      }
+      prevCategoryId.current = selectedCategoryId
     }
   }, [selectedCategoryId, form, isLoading])
 
   // Handle cascading dropdowns when user changes department
   useEffect(() => {
     if (!isLoading && selectedDepartmentId) {
-      getDesignationsByDepartment(selectedDepartmentId).then(d => {
-        setDesignations(d || [])
-        form.setValue("designation_id", "" as any)
-      })
+      if (prevDepartmentId.current !== null && prevDepartmentId.current !== selectedDepartmentId) {
+        getDesignationsByDepartment(selectedDepartmentId).then(d => {
+          setDesignations(d || [])
+          form.setValue("designation_id", "" as any)
+        })
+      }
+      prevDepartmentId.current = selectedDepartmentId
     }
   }, [selectedDepartmentId, form, isLoading])
 
