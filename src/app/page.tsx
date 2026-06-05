@@ -14,7 +14,8 @@ import {
   getDepartmentsByCategory,
   getDesignationsByDepartment,
   getActiveContractTypes,
-  submitEmployeeData
+  submitEmployeeData,
+  checkIsAdmin
 } from "@/lib/actions"
 
 import { Button } from "@/components/ui/button"
@@ -57,12 +58,20 @@ export default function PublicForm() {
   const [isSuccess, setIsSuccess] = useState(false)
   const [showWarning, setShowWarning] = useState(true)
   const [isDeadlinePassed, setIsDeadlinePassed] = useState(false)
+  const [isAdmin, setIsAdmin] = useState(false)
 
   useEffect(() => {
-    const deadline = new Date('2026-06-06T00:00:00+05:30')
-    if (new Date() > deadline) {
-      setIsDeadlinePassed(true)
+    async function init() {
+      const adminStatus = await checkIsAdmin()
+      setIsAdmin(adminStatus)
+      if (!adminStatus) {
+        const deadline = new Date('2026-06-06T00:00:00+05:30')
+        if (new Date() > deadline) {
+          setIsDeadlinePassed(true)
+        }
+      }
     }
+    init()
   }, [])
 
   const [branches, setBranches] = useState<any[]>([])
@@ -204,7 +213,7 @@ export default function PublicForm() {
 
   return (
     <div className="min-h-screen bg-background p-4 py-8 md:py-12 flex flex-col items-center justify-center relative">
-      {showWarning && !isDeadlinePassed && (
+      {showWarning && !isDeadlinePassed && !isAdmin && (
         <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-md bg-destructive text-destructive-foreground p-4 rounded-xl shadow-xl flex items-start justify-between animate-in slide-in-from-top-4">
           <p className="text-sm font-medium mr-4">
             This system will not accept data from midnight today (05 June 2026).

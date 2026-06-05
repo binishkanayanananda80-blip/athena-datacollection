@@ -1,6 +1,12 @@
 "use server"
 
-import { createAdminClient } from "@/lib/supabase/server"
+import { createAdminClient, createClient } from "@/lib/supabase/server"
+
+export async function checkIsAdmin() {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  return !!user
+}
 
 export async function getActiveBranches() {
   const supabase = await createAdminClient()
@@ -65,8 +71,9 @@ export async function getActiveContractTypes() {
 }
 
 export async function submitEmployeeData(formData: any) {
+  const isAdmin = await checkIsAdmin()
   const deadline = new Date('2026-06-06T00:00:00+05:30')
-  if (new Date() > deadline) {
+  if (!isAdmin && new Date() > deadline) {
     return { success: false, error: "This System will no longer accept Data from Employees of Leeds International School, as the given deadline period is Over." }
   }
 
