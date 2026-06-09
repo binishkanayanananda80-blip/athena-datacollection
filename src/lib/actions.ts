@@ -158,9 +158,20 @@ export async function submitBulkStudentData(records: any[]) {
       continue
     }
 
+    // Sanitize record to prevent null constraint violations
+    const sanitizedRecord = {
+      ...record,
+      student_type: record.student_type || 'Local',
+      status: record.status || 'active',
+      is_living: record.is_living || 'yes',
+      gender: record.gender || 'Male',
+      medium: record.medium || 'English',
+      nationality: record.nationality || 'Sri Lankan'
+    }
+
     const { error } = await supabase
       .from('student_submissions')
-      .insert([record])
+      .insert([sanitizedRecord])
 
     if (error) {
       results.failed++
