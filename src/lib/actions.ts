@@ -198,6 +198,9 @@ export async function submitBulkStudentData(records: any[]) {
       nationality: record.nationality || 'Sri Lankan'
     }
 
+    const parentsToInsert = sanitizedRecord.parents;
+    delete sanitizedRecord.parents;
+
     const { error } = await supabase
       .from('student_submissions')
       .insert([sanitizedRecord])
@@ -206,6 +209,16 @@ export async function submitBulkStudentData(records: any[]) {
       results.failed++
       results.errors.push(`Failed for ${record.admission_no}: ${error.message}`)
     } else {
+      // Insert parents if they exist
+      if (parentsToInsert && parentsToInsert.length > 0) {
+        const parentRecords = parentsToInsert.map((p: any) => ({
+          ...p,
+          admission_no: record.admission_no
+        }));
+        
+        await supabase.from('parent_submissions').insert(parentRecords);
+      }
+      
       results.successful++
     }
   }

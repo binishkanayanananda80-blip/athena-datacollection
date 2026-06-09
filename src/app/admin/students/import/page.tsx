@@ -153,7 +153,39 @@ export default function StudentImportPage() {
                 guardian_type: findKey(row, ['guardian type', 'guardian']),
                 marital_status: findKey(row, ['marital status', 'parents marital status']),
                 is_living: findKey(row, ['is living', 'parents living']) || 'yes',
-                status: 'active'
+                status: 'active',
+                parents: [
+                  {
+                    guardian_type: 'father',
+                    nic: findKey(row, ['father nic', 'father id', 'f nic']),
+                    first_name: findKey(row, ['father first name', 'father fname', 'father name', 'father']),
+                    last_name: findKey(row, ['father last name', 'father lname', 'father surname']),
+                    mobile: findKey(row, ['father mobile', 'father phone', 'father contact']),
+                    personal_email: findKey(row, ['father email', 'father personal email']),
+                    work_email: findKey(row, ['father work email']),
+                    home_phone: findKey(row, ['father home phone', 'home phone'])
+                  },
+                  {
+                    guardian_type: 'mother',
+                    nic: findKey(row, ['mother nic', 'mother id', 'm nic']),
+                    first_name: findKey(row, ['mother first name', 'mother fname', 'mother name', 'mother']),
+                    last_name: findKey(row, ['mother last name', 'mother lname', 'mother surname']),
+                    mobile: findKey(row, ['mother mobile', 'mother phone', 'mother contact']),
+                    personal_email: findKey(row, ['mother email', 'mother personal email']),
+                    work_email: findKey(row, ['mother work email']),
+                    home_phone: findKey(row, ['mother home phone'])
+                  },
+                  {
+                    guardian_type: 'other',
+                    nic: findKey(row, ['other nic', 'guardian nic']),
+                    first_name: findKey(row, ['other first name', 'guardian name', 'guardian first name', 'other name']),
+                    last_name: findKey(row, ['other last name', 'guardian last name']),
+                    mobile: findKey(row, ['other mobile', 'guardian mobile', 'guardian contact']),
+                    personal_email: findKey(row, ['other email', 'guardian email']),
+                    work_email: findKey(row, ['other work email']),
+                    home_phone: findKey(row, ['other home phone'])
+                  }
+                ].filter(p => p.first_name || p.mobile || p.nic)
              }
           }).filter(r => r.admission_no || r.first_name)
 

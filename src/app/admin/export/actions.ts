@@ -33,3 +33,19 @@ export async function getStudentExportData() {
 
   return data || []
 }
+
+export async function getParentExportData() {
+  const supabase = await createAdminClient()
+
+  // Fetch all parent submissions
+  const { data, error } = await supabase
+    .from('parent_submissions')
+    .select('*')
+    .order('created_at', { ascending: false })
+
+  if (error) {
+    throw new Error(error.message)
+  }
+
+  return data || []
+}

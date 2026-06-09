@@ -4,7 +4,7 @@ import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Download, Loader2 } from "lucide-react"
-import { getExportData, getStudentExportData } from "./actions"
+import { getExportData, getStudentExportData, getParentExportData } from "./actions"
 import Papa from "papaparse"
 
 import masterMappings from "@/lib/mappings.json"
@@ -12,6 +12,52 @@ import masterMappings from "@/lib/mappings.json"
 export default function ExportPage() {
   const [isExporting, setIsExporting] = useState(false)
   const [isExportingStudents, setIsExportingStudents] = useState(false)
+  const [isExportingParents, setIsExportingParents] = useState(false)
+
+  async function handleParentExport() {
+    setIsExportingParents(true)
+    try {
+      const data = await getParentExportData()
+      
+      const formattedData = data.map((row: any) => ({
+        admission_no: row.admission_no ? `\t${row.admission_no}` : "",
+        guardian_type: row.guardian_type,
+        nic: row.nic ? `\t${row.nic}` : "",
+        initial_name: row.initial_name || "",
+        name_with_initial: row.name_with_initial || "",
+        first_name: row.first_name || "",
+        middle_name: row.middle_name || "",
+        last_name: row.last_name || "",
+        mobile: row.mobile ? `\t${row.mobile}` : "",
+        home_phone: row.home_phone ? `\t${row.home_phone}` : "",
+        personal_email: row.personal_email || "",
+        work_email: row.work_email || "",
+        school_email: row.school_email || "",
+        city: row.city || "",
+        district: row.district || "",
+        grama_niladhari_division: row.grama_niladhari_division || "",
+        permanent_address: row.permanent_address || "",
+      }))
+
+      const csv = Papa.unparse(formattedData)
+      
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' })
+      const link = document.createElement("a")
+      const url = URL.createObjectURL(blob)
+      link.setAttribute("href", url)
+      link.setAttribute("download", "athena_parent_data_export.csv")
+      link.style.visibility = 'hidden'
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
+
+    } catch (error) {
+      console.error("Export failed", error)
+      alert("Failed to export parent data.")
+    } finally {
+      setIsExportingParents(false)
+    }
+  }
 
   async function handleExport() {
     setIsExporting(true)
@@ -174,6 +220,24 @@ export default function ExportPage() {
                 <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Preparing Export...</>
               ) : (
                 <><Download className="mr-2 h-4 w-4" /> Download Student CSV</>
+              )}
+            </Button>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Parent Export</CardTitle>
+            <CardDescription>
+              This will download all extracted parent data for your students.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Button onClick={handleParentExport} disabled={isExportingParents} className="w-full" variant="outline">
+              {isExportingParents ? (
+                <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Preparing Export...</>
+              ) : (
+                <><Download className="mr-2 h-4 w-4" /> Download Parent CSV</>
               )}
             </Button>
           </CardContent>
