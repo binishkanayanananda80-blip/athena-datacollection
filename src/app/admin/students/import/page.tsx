@@ -90,7 +90,16 @@ export default function StudentImportPage() {
               if (match) return row[match]
             }
             for (let p of possibleNames) {
-              const match = keys.find(k => normalizeStr(k).includes(normalizeStr(p)))
+              const match = keys.find(k => {
+                const nk = normalizeStr(k)
+                const np = normalizeStr(p)
+                if (nk.includes(np)) {
+                  // Prevent 'other' from accidentally matching 'mother'
+                  if (np.includes('other') && nk.includes('mother')) return false
+                  return true
+                }
+                return false
+              })
               if (match) return row[match]
             }
             return ""
@@ -137,9 +146,9 @@ export default function StudentImportPage() {
              let lName = studentNameParts.lName;
 
              const fatherNameParts = splitName(
-               findKey(row, ['father name', 'father full name', 'fathers name']),
-               findKey(row, ['father first name', 'father fname']),
-               findKey(row, ['father last name', 'father lname', 'father surname'])
+               findKey(row, ['father name', 'father full name', 'fathers name', 'farther name', 'farthers name', 'farther full name']),
+               findKey(row, ['father first name', 'father fname', 'farther first name', 'farther fname']),
+               findKey(row, ['father last name', 'father lname', 'father surname', 'farther last name', 'farther lname'])
              );
 
              const motherNameParts = splitName(
@@ -186,14 +195,14 @@ export default function StudentImportPage() {
                 parents: [
                   {
                     guardian_type: 'father',
-                    nic: findKey(row, ['father nic', 'father id', 'f nic']),
+                    nic: findKey(row, ['father nic', 'father id', 'f nic', 'farther nic', 'farther id']),
                     first_name: fatherNameParts.fName,
                     middle_name: fatherNameParts.mName,
                     last_name: fatherNameParts.lName,
-                    mobile: findKey(row, ['father mobile', 'father phone', 'father contact']),
-                    personal_email: findKey(row, ['father email', 'father personal email']),
-                    work_email: findKey(row, ['father work email']),
-                    home_phone: findKey(row, ['father home phone', 'home phone']),
+                    mobile: findKey(row, ['father mobile', 'father phone', 'father contact', 'farther mobile', 'farther phone']),
+                    personal_email: findKey(row, ['father email', 'father personal email', 'farther email']),
+                    work_email: findKey(row, ['father work email', 'farther work email']),
+                    home_phone: findKey(row, ['father home phone', 'home phone', 'farther home phone']),
                     permanent_address: permanentAddress
                   },
                   {
