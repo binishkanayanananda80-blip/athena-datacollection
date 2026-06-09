@@ -188,8 +188,8 @@ export async function submitBulkStudentData(records: any[]) {
     // Sanitize record to prevent null constraint violations and format dates
     const sanitizedRecord = {
       ...record,
-      dob: parseDate(record.dob),
-      date_of_admission: parseDate(record.date_of_admission),
+      dob: parseDate(record.dob) || '2000-01-01',
+      date_of_admission: parseDate(record.date_of_admission) || new Date().toISOString().split('T')[0],
       student_type: record.student_type || 'Local',
       status: record.status || 'active',
       is_living: record.is_living || 'yes',
