@@ -96,36 +96,65 @@ export default function StudentImportPage() {
             return ""
           }
 
-          const parsed = rawRows.map(row => {
-             const fullName = findKey(row, ['student name', 'full name', 'name']);
-             let fName = findKey(row, ['first name', 'fname', 'given name']);
-             let mName = findKey(row, ['middle name', 'mname']);
-             let lName = findKey(row, ['last name', 'lname', 'surname']);
+          const splitName = (fullName: string | undefined, defaultFName: string | undefined, defaultLName: string | undefined) => {
+            let fName = defaultFName || "";
+            let mName = "";
+            let lName = defaultLName || "";
+            if (fullName && !fName && !lName) {
+              const parts = fullName.trim().split(/\s+/);
+              if (parts.length === 1) {
+                fName = parts[0];
+              } else {
+                lName = parts.pop() || "";
+                if (parts.length === 0) {
+                  fName = lName;
+                  lName = "";
+                } else {
+                  const isInitial = (token: string) => token.length === 1 || (token.includes('.') && (token.split('.').pop() || "").length <= 1);
+                  let firstParts = [];
+                  for (let i = 0; i < parts.length; i++) {
+                    firstParts.push(parts[i]);
+                    if (!isInitial(parts[i])) {
+                      break;
+                    }
+                  }
+                  fName = firstParts.join(" ");
+                  mName = parts.slice(firstParts.length).join(" ");
+                }
+              }
+            }
+            return { fName, mName, lName };
+          }
 
-             if (fullName && !fName && !lName) {
-               const parts = fullName.trim().split(/\s+/);
-               if (parts.length === 1) {
-                 fName = parts[0];
-               } else {
-                 lName = parts.pop() || "";
-                 if (parts.length === 0) {
-                   fName = lName;
-                   lName = "";
-                 } else {
-                   const isInitial = (token: string) => token.length === 1 || (token.includes('.') && (token.split('.').pop() || "").length <= 1);
-                   
-                   let firstParts = [];
-                   for (let i = 0; i < parts.length; i++) {
-                     firstParts.push(parts[i]);
-                     if (!isInitial(parts[i])) {
-                       break;
-                     }
-                   }
-                   fName = firstParts.join(" ");
-                   mName = parts.slice(firstParts.length).join(" ");
-                 }
-               }
-             }
+          const parsed = rawRows.map(row => {
+             const studentNameParts = splitName(
+               findKey(row, ['student name', 'full name', 'name']),
+               findKey(row, ['first name', 'fname', 'given name']),
+               findKey(row, ['last name', 'lname', 'surname'])
+             );
+             let fName = studentNameParts.fName;
+             let mName = findKey(row, ['middle name', 'mname']) || studentNameParts.mName;
+             let lName = studentNameParts.lName;
+
+             const fatherNameParts = splitName(
+               findKey(row, ['father name', 'father full name', 'fathers name']),
+               findKey(row, ['father first name', 'father fname']),
+               findKey(row, ['father last name', 'father lname', 'father surname'])
+             );
+
+             const motherNameParts = splitName(
+               findKey(row, ['mother name', 'mother full name', 'mothers name']),
+               findKey(row, ['mother first name', 'mother fname']),
+               findKey(row, ['mother last name', 'mother lname', 'mother surname'])
+             );
+
+             const otherNameParts = splitName(
+               findKey(row, ['other name', 'other full name']),
+               findKey(row, ['other first name', 'other fname']),
+               findKey(row, ['other last name', 'other lname', 'other surname'])
+             );
+
+             const permanentAddress = findKey(row, ['permanent address', 'address', 'perm address']);
 
              return {
                 branch_id: parseInt(selectedBranch),
@@ -158,32 +187,38 @@ export default function StudentImportPage() {
                   {
                     guardian_type: 'father',
                     nic: findKey(row, ['father nic', 'father id', 'f nic']),
-                    first_name: findKey(row, ['father first name', 'father fname', 'father name', 'father']),
-                    last_name: findKey(row, ['father last name', 'father lname', 'father surname']),
+                    first_name: fatherNameParts.fName,
+                    middle_name: fatherNameParts.mName,
+                    last_name: fatherNameParts.lName,
                     mobile: findKey(row, ['father mobile', 'father phone', 'father contact']),
                     personal_email: findKey(row, ['father email', 'father personal email']),
                     work_email: findKey(row, ['father work email']),
-                    home_phone: findKey(row, ['father home phone', 'home phone'])
+                    home_phone: findKey(row, ['father home phone', 'home phone']),
+                    permanent_address: permanentAddress
                   },
                   {
                     guardian_type: 'mother',
                     nic: findKey(row, ['mother nic', 'mother id', 'm nic']),
-                    first_name: findKey(row, ['mother first name', 'mother fname', 'mother name', 'mother']),
-                    last_name: findKey(row, ['mother last name', 'mother lname', 'mother surname']),
+                    first_name: motherNameParts.fName,
+                    middle_name: motherNameParts.mName,
+                    last_name: motherNameParts.lName,
                     mobile: findKey(row, ['mother mobile', 'mother phone', 'mother contact']),
                     personal_email: findKey(row, ['mother email', 'mother personal email']),
                     work_email: findKey(row, ['mother work email']),
-                    home_phone: findKey(row, ['mother home phone'])
+                    home_phone: findKey(row, ['mother home phone']),
+                    permanent_address: permanentAddress
                   },
                   {
                     guardian_type: 'other',
-                    nic: findKey(row, ['other nic', 'guardian nic']),
-                    first_name: findKey(row, ['other first name', 'guardian name', 'guardian first name', 'other name']),
-                    last_name: findKey(row, ['other last name', 'guardian last name']),
-                    mobile: findKey(row, ['other mobile', 'guardian mobile', 'guardian contact']),
-                    personal_email: findKey(row, ['other email', 'guardian email']),
+                    nic: findKey(row, ['other nic']),
+                    first_name: otherNameParts.fName,
+                    middle_name: otherNameParts.mName,
+                    last_name: otherNameParts.lName,
+                    mobile: findKey(row, ['other mobile']),
+                    personal_email: findKey(row, ['other email']),
                     work_email: findKey(row, ['other work email']),
-                    home_phone: findKey(row, ['other home phone'])
+                    home_phone: findKey(row, ['other home phone']),
+                    permanent_address: permanentAddress
                   }
                 ].filter(p => p.first_name || p.mobile || p.nic)
              }
