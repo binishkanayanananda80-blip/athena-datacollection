@@ -1,0 +1,295 @@
+{
+  "Branch": [
+    {
+      "branch_id": 1,
+      "branch_name": "Panadura"
+    },
+    {
+      "branch_id": 2,
+      "branch_name": "Galle"
+    }
+  ],
+  "Curriculums": [
+    {
+      "category_master_id": 1,
+      "Curriculum Name": "Edexcel"
+    },
+    {
+      "category_master_id": 2,
+      "Curriculum Name": "Local"
+    }
+  ],
+  "Academic Year": [
+    {
+      "academic_year_id": 1,
+      "branch_id": 1,
+      "category_master_id": 1,
+      "name": "2025/2026"
+    },
+    {
+      "academic_year_id": 2,
+      "branch_id": 2,
+      "category_master_id": 2,
+      "name": "2025/2026"
+    }
+  ],
+  "Medium": [
+    {
+      "medium_id": 1,
+      "medium": "English",
+      "default_medium": 1
+    }
+  ],
+  "Student Types": [],
+  "Student": [
+    {
+      "gender": "Male",
+      "date_of_admission": "from the CSV or excel",
+      "dob": "from the CSV or excel",
+      "age": "must auto calculate",
+      "student_type_id": "Local",
+      "academic_year_id": 1,
+      "academic year": "2024/2025",
+      "enrolled academic year": "from CSV",
+      "grade_id": 1,
+      "grade": "Play Group",
+      "class_id": 1,
+      "class": "Play Group",
+      "medium_id": 1,
+      "medium": "English",
+      "nationality": "Sri Lankan",
+      "religion": "Buddhist",
+      "emergency_contact": "father/mother/other",
+      "student_lives_with": "Farther",
+      "active/inactive": "active"
+    },
+    {
+      "gender": "Female",
+      "academic_year_id": 2,
+      "academic year": "2023/2024",
+      "grade_id": 2,
+      "grade": "Kindergarten 1",
+      "class_id": 2,
+      "class": "1A",
+      "religion": "Cristian",
+      "student_lives_with": "Mother"
+    },
+    {
+      "academic_year_id": 3,
+      "academic year": "2025/2026",
+      "grade_id": 3,
+      "grade": "Kindergarten 2",
+      "class_id": 3,
+      "class": "1B",
+      "religion": "Islam",
+      "student_lives_with": "Other"
+    },
+    {
+      "grade_id": 4,
+      "grade": "Primary 01",
+      "class_id": 4,
+      "class": "1C"
+    },
+    {
+      "grade_id": 5,
+      "grade": "Primary 02",
+      "class_id": 5,
+      "class": "1D"
+    },
+    {
+      "grade_id": 6,
+      "grade": "Primary 03",
+      "class_id": 6,
+      "class": "1E"
+    },
+    {
+      "grade_id": 7,
+      "grade": "Primary 04",
+      "class_id": 7,
+      "class": "2A"
+    },
+    {
+      "grade_id": 8,
+      "grade": "Primary 05",
+      "class_id": 8,
+      "class": "2B"
+    },
+    {
+      "grade_id": 9,
+      "grade": "Form 01",
+      "class_id": 9,
+      "class": "2C"
+    },
+    {
+      "grade_id": 10,
+      "grade": "Form 02",
+      "class_id": 10,
+      "class": "2D"
+    },
+    {
+      "class_id": 11,
+      "class": "2E"
+    },
+    {
+      "class_id": 12,
+      "class": "3A"
+    },
+    {
+      "class_id": 13,
+      "class": "3B"
+    },
+    {
+      "class_id": 14,
+      "class": "3C"
+    },
+    {
+      "class_id": 15,
+      "class": "3D"
+    },
+    {
+      "class_id": 16,
+      "class": "4A"
+    },
+    {
+      "class_id": 17,
+      "class": "4B"
+    },
+    {
+      "class_id": 18,
+      "class": "4C"
+    },
+    {
+      "class_id": 19,
+      "class": "5A"
+    },
+    {
+      "class_id": 20,
+      "class": "5B"
+    },
+    {
+      "class_id": 21,
+      "class": "5C"
+    },
+    {
+      "class_id": 22,
+      "class": "Science A"
+    },
+    {
+      "class_id": 23,
+      "class": "Science B"
+    },
+    {
+      "class_id": 24,
+      "class": "Commerce"
+    },
+    {
+      "class_id": 25,
+      "class": "Science"
+    },
+    {
+      "class_id": 26,
+      "class": "Grade 09"
+    },
+    {
+      "class_id": 27,
+      "class": "Grade 10"
+    },
+    {
+      "class_id": 28,
+      "class": "Grade 12"
+    },
+    {
+      "class_id": 29,
+      "class": "1F"
+    },
+    {
+      "class_id": 30,
+      "class": "1G"
+    },
+    {
+      "class_id": 31,
+      "class": "2F"
+    },
+    {
+      "class_id": 32,
+      "class": "2G"
+    },
+    {
+      "class_id": 33,
+      "class": "3E"
+    },
+    {
+      "class_id": 34,
+      "class": "PG A"
+    },
+    {
+      "class_id": 35,
+      "class": "PG B"
+    },
+    {
+      "class_id": 36,
+      "class": "P1"
+    },
+    {
+      "class_id": 37,
+      "class": "KG 1A"
+    },
+    {
+      "class_id": 38,
+      "class": "KG 1B"
+    },
+    {
+      "class_id": 39,
+      "class": "KG 1C"
+    },
+    {
+      "class_id": 40,
+      "class": "KG 1D"
+    },
+    {
+      "class_id": 41,
+      "class": "KG1E"
+    },
+    {
+      "class_id": 42,
+      "class": "KG 2A"
+    },
+    {
+      "class_id": 43,
+      "class": "KG 2B"
+    },
+    {
+      "class_id": 44,
+      "class": "KG 2C"
+    },
+    {
+      "class_id": 45,
+      "class": "KG 2D"
+    },
+    {
+      "class_id": 46,
+      "class": "KG 2E"
+    },
+    {
+      "class_id": 47,
+      "class": "Grade 11"
+    }
+  ],
+  "Parent": [
+    {
+      "admission_no": 8524,
+      "guardian_type": "father",
+      "marital_status": "MARRIED/UNMARRIED",
+      "is_living": "yes/no"
+    },
+    {
+      "admission_no": 8524,
+      "guardian_type": "mother"
+    },
+    {
+      "admission_no": 8524,
+      "guardian_type": "other"
+    }
+  ],
+  "Sheet1": []
+}

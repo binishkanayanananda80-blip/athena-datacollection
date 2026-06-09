@@ -7,6 +7,8 @@ import { Download, Loader2 } from "lucide-react"
 import { getExportData, getStudentExportData } from "./actions"
 import Papa from "papaparse"
 
+import masterMappings from "@/lib/mappings.json"
+
 export default function ExportPage() {
   const [isExporting, setIsExporting] = useState(false)
   const [isExportingStudents, setIsExportingStudents] = useState(false)
@@ -61,6 +63,24 @@ export default function ExportPage() {
     try {
       const data = await getStudentExportData()
       
+      const gradeToId: Record<string, string | number> = {};
+      const classToId: Record<string, string | number> = {};
+      masterMappings.Student.forEach((s: any) => {
+        if (s.grade && s.grade_id) gradeToId[s.grade] = s.grade_id;
+        if (s.class && s.class_id) classToId[s.class] = s.class_id;
+      });
+      const mediumToId: Record<string, string | number> = {};
+      masterMappings.Medium.forEach((m: any) => {
+        if (m.medium && m.medium_id) mediumToId[m.medium] = m.medium_id;
+      });
+      
+      const getAcademicYearId = (name: string, branch_id: number, category_master_id: number) => {
+        const match = masterMappings["Academic Year"].find((a: any) => 
+          a.name === name && a.branch_id === branch_id && a.category_master_id === category_master_id
+        );
+        return match ? match.academic_year_id : "";
+      }
+      
       const formattedData = data.map((row: any) => ({
         branch_id: row.branch_id || "",
         branch_name: row.branch_name,
@@ -72,18 +92,18 @@ export default function ExportPage() {
         dob: row.dob,
         age: row.age,
         date_of_admission: row.date_of_admission,
-        student_type_id: "", // Blank for manual mapping if needed
+        student_type_id: "Local", // Excel sets local as Local
         student_type: row.student_type,
         category_master_id: row.category_master_id || "",
         curriculum: row.curriculum_name,
-        academic_year_id: "", // Blank for manual mapping if needed
+        academic_year_id: getAcademicYearId(row.academic_year, row.branch_id, row.category_master_id),
         academic_year: row.academic_year,
         enrolled_academic_year: row.enrolled_academic_year,
-        grade_id: "", // Blank for manual mapping if needed
+        grade_id: gradeToId[row.grade] || "",
         grade: row.grade,
-        class_id: "", // Blank for manual mapping if needed
+        class_id: classToId[row.class] || "",
         class: row.class,
-        medium_id: "", // Blank for manual mapping if needed
+        medium_id: mediumToId[row.medium] || "",
         medium: row.medium,
         nationality: row.nationality,
         religion: row.religion,
