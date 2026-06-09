@@ -148,6 +148,26 @@ export default function ExportPage() {
         return match ? match.class_id : "";
       };
       
+      const getAcademicYearId = (name: string) => {
+        if (!name) return "";
+        const match = masterMappings.Student.find((s: any) => 
+          s["academic year"] === name || 
+          s["academic year"]?.trim() === name?.trim() ||
+          s.academic_year === name
+        );
+        return match ? match.academic_year_id : "";
+      }
+
+      const getEnrolledAcademicYearId = (name: string) => {
+        if (!name) return "";
+        const match = masterMappings.Student.find((s: any) => 
+          s["enrolled academic year"] === name || 
+          s["enrolled academic year"]?.trim() === name?.trim() ||
+          s.enrolled_academic_year === name
+        );
+        return match ? match.enrolled_academic_year_id : "";
+      }
+      
       const formattedData = data.map((row: any) => ({
         branch_id: row.branch_id || "",
         branch_name: row.branch_name,
@@ -163,9 +183,9 @@ export default function ExportPage() {
         student_type: row.student_type,
         category_master_id: row.category_master_id || (masterMappings.Curriculums.find((c: any) => c["Curriculum Name"] === row.curriculum_name)?.category_master_id || ""),
         curriculum: row.curriculum_name,
-        academic_year_id: academicYearToId[row.academic_year] || "",
+        academic_year_id: getAcademicYearId(row.academic_year),
         academic_year: row.academic_year,
-        enrolled_academic_year_id: enrolledAcademicYearToId[row.enrolled_academic_year] || "",
+        enrolled_academic_year_id: getEnrolledAcademicYearId(row.enrolled_academic_year),
         enrolled_academic_year: row.enrolled_academic_year,
         grade_id: gradeToId[row.grade] || "",
         grade: row.grade,
