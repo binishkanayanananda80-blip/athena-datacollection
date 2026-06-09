@@ -106,13 +106,24 @@ export default function StudentImportPage() {
                const parts = fullName.trim().split(/\s+/);
                if (parts.length === 1) {
                  fName = parts[0];
-               } else if (parts.length === 2) {
-                 fName = parts[0];
-                 lName = parts[1];
-               } else if (parts.length >= 3) {
-                 fName = parts[0];
-                 lName = parts[parts.length - 1];
-                 mName = parts.slice(1, parts.length - 1).join(" ");
+               } else {
+                 lName = parts.pop() || "";
+                 if (parts.length === 0) {
+                   fName = lName;
+                   lName = "";
+                 } else {
+                   const isInitial = (token: string) => token.length === 1 || (token.includes('.') && (token.split('.').pop() || "").length <= 1);
+                   
+                   let firstParts = [];
+                   for (let i = 0; i < parts.length; i++) {
+                     firstParts.push(parts[i]);
+                     if (!isInitial(parts[i])) {
+                       break;
+                     }
+                   }
+                   fName = firstParts.join(" ");
+                   mName = parts.slice(firstParts.length).join(" ");
+                 }
                }
              }
 
