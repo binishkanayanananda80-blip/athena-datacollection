@@ -71,12 +71,6 @@ export async function getActiveContractTypes() {
 }
 
 export async function submitEmployeeData(formData: any) {
-  const isAdmin = await checkIsAdmin()
-  const deadline = new Date('2026-06-06T00:00:00+05:30')
-  if (!isAdmin && new Date() > deadline) {
-    return { success: false, error: "This System will no longer accept Data from Employees of Leeds International School, as the given deadline period is Over." }
-  }
-
   const supabase = await createAdminClient()
   
   // 1. Check globally for NIC

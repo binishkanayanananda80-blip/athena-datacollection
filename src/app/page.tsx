@@ -14,8 +14,7 @@ import {
   getDepartmentsByCategory,
   getDesignationsByDepartment,
   getActiveContractTypes,
-  submitEmployeeData,
-  checkIsAdmin
+  submitEmployeeData
 } from "@/lib/actions"
 
 import { Button } from "@/components/ui/button"
@@ -56,23 +55,6 @@ const formSchema = z.object({
 export default function PublicForm() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isSuccess, setIsSuccess] = useState(false)
-  const [showWarning, setShowWarning] = useState(true)
-  const [isDeadlinePassed, setIsDeadlinePassed] = useState(false)
-  const [isAdmin, setIsAdmin] = useState(false)
-
-  useEffect(() => {
-    async function init() {
-      const adminStatus = await checkIsAdmin()
-      setIsAdmin(adminStatus)
-      if (!adminStatus) {
-        const deadline = new Date('2026-06-06T00:00:00+05:30')
-        if (new Date() > deadline) {
-          setIsDeadlinePassed(true)
-        }
-      }
-    }
-    init()
-  }, [])
 
   const [branches, setBranches] = useState<any[]>([])
   const [categories, setCategories] = useState<any[]>([])
@@ -194,39 +176,8 @@ export default function PublicForm() {
     )
   }
 
-  if (isDeadlinePassed) {
-    return (
-      <div className="min-h-screen flex items-center justify-center p-4 bg-background">
-        <Card className="w-full max-w-md text-center shadow-lg">
-          <CardHeader>
-            <CardTitle className="text-2xl text-destructive">Deadline Passed</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground text-lg leading-relaxed">
-              This System will no longer accept Data from Employees of Leeds International School, as the given deadline period is Over.
-            </p>
-          </CardContent>
-        </Card>
-      </div>
-    )
-  }
-
   return (
     <div className="min-h-screen bg-background p-4 py-8 md:py-12 flex flex-col items-center justify-center relative">
-      {showWarning && !isDeadlinePassed && !isAdmin && (
-        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[90%] max-w-md bg-destructive text-destructive-foreground p-4 rounded-xl shadow-xl flex items-start justify-between animate-in slide-in-from-top-4">
-          <p className="text-sm font-medium mr-4">
-            This system will not accept data from midnight today (05 June 2026).
-          </p>
-          <button 
-            onClick={() => setShowWarning(false)} 
-            className="text-destructive-foreground/80 hover:text-white mt-0.5 focus:outline-none"
-          >
-            <X className="h-4 w-4" />
-          </button>
-        </div>
-      )}
-
       <div className="w-full max-w-4xl mx-auto space-y-8">
         <div className="text-center space-y-3">
           <h1 className="text-3xl md:text-4xl font-bold text-foreground tracking-tight">Leeds International School</h1>
