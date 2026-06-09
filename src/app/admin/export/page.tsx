@@ -62,6 +62,7 @@ export default function ExportPage() {
       const data = await getStudentExportData()
       
       const formattedData = data.map((row: any) => ({
+        branch_id: row.branch_id || "",
         branch_name: row.branch_name,
         admission_no: row.admission_no ? `\t${row.admission_no}` : "",
         first_name: row.first_name,
@@ -71,12 +72,18 @@ export default function ExportPage() {
         dob: row.dob,
         age: row.age,
         date_of_admission: row.date_of_admission,
+        student_type_id: "", // Blank for manual mapping if needed
         student_type: row.student_type,
-        curriculum_name: row.curriculum_name,
+        category_master_id: row.category_master_id || "",
+        curriculum: row.curriculum_name,
+        academic_year_id: "", // Blank for manual mapping if needed
         academic_year: row.academic_year,
         enrolled_academic_year: row.enrolled_academic_year,
+        grade_id: "", // Blank for manual mapping if needed
         grade: row.grade,
+        class_id: "", // Blank for manual mapping if needed
         class: row.class,
+        medium_id: "", // Blank for manual mapping if needed
         medium: row.medium,
         nationality: row.nationality,
         religion: row.religion,
