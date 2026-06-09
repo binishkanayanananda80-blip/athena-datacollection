@@ -212,3 +212,16 @@ export async function submitBulkStudentData(records: any[]) {
 
   return { success: true, results }
 }
+
+export async function deleteAllStudentData() {
+  const supabase = await createAdminClient()
+  const { error } = await supabase
+    .from('student_submissions')
+    .delete()
+    .neq('id', 0) // delete all
+
+  if (error) {
+    return { success: false, error: error.message }
+  }
+  return { success: true }
+}

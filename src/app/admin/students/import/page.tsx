@@ -6,7 +6,7 @@ import { toast } from "sonner"
 import { useRouter } from "next/navigation"
 import Papa from "papaparse"
 
-import { getActiveBranches, getActiveCategories, submitBulkStudentData } from "@/lib/actions"
+import { getActiveBranches, getActiveCategories, submitBulkStudentData, deleteAllStudentData } from "@/lib/actions"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -25,6 +25,28 @@ export default function StudentImportPage() {
   
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [importResult, setImportResult] = useState<{successful: number, failed: number, errors: string[]} | null>(null)
+  
+  const [isDeletingData, setIsDeletingData] = useState(false)
+
+  const handleDeleteAllData = async () => {
+    if (!confirm("Are you absolutely sure you want to delete ALL student data from the database? This cannot be undone.")) return;
+    
+    setIsDeletingData(true)
+    try {
+      const res = await deleteAllStudentData()
+      if (res.success) {
+        toast.success("Successfully deleted all student records.")
+        setParsedData([])
+        setImportResult(null)
+      } else {
+        toast.error(res.error || "Failed to delete data")
+      }
+    } catch (error) {
+      toast.error("Error deleting data")
+    } finally {
+      setIsDeletingData(false)
+    }
+  }
 
   useEffect(() => {
     async function loadData() {
@@ -387,6 +409,32 @@ export default function StudentImportPage() {
           </CardContent>
         </Card>
       )}
+
+      {/* Danger Zone */}
+      <Card className="border-red-200 mt-8">
+        <CardHeader>
+          <CardTitle className="text-red-600">Danger Zone</CardTitle>
+          <CardDescription>
+            Use this section carefully. These actions cannot be undone.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Button 
+            variant="destructive" 
+            onClick={handleDeleteAllData}
+            disabled={isDeletingData}
+          >
+            {isDeletingData ? (
+              <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Deleting All Data...</>
+            ) : (
+              "Delete All Student Data"
+            )}
+          </Button>
+          <p className="text-sm text-muted-foreground mt-2">
+            This will permanently remove all imported student records from the database. Use this only for resetting testing data.
+          </p>
+        </CardContent>
+      </Card>
     </div>
   )
 }
