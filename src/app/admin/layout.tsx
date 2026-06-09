@@ -13,7 +13,8 @@ import {
   FileText, 
   QrCode, 
   Download, 
-  LogOut 
+  LogOut,
+  Upload
 } from "lucide-react"
 
 export default function AdminLayout({
@@ -37,6 +38,7 @@ export default function AdminLayout({
     { href: "/admin/designations", label: "Designations", icon: Briefcase },
     { href: "/admin/contract-types", label: "Contract Types", icon: FileText },
     { href: "/admin/qr", label: "QR Code", icon: QrCode },
+    { href: "/admin/students/import", label: "Student Import", icon: Upload },
     { href: "/admin/export", label: "CSV Export", icon: Download },
   ]
 
