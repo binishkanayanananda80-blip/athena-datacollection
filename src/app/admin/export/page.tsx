@@ -111,21 +111,42 @@ export default function ExportPage() {
       
       const gradeToId: Record<string, string | number> = {};
       const classToId: Record<string, string | number> = {};
+      const academicYearToId: Record<string, string | number> = {};
+      const enrolledAcademicYearToId: Record<string, string | number> = {};
       masterMappings.Student.forEach((s: any) => {
         if (s.grade && s.grade_id) gradeToId[s.grade] = s.grade_id;
         if (s.class && s.class_id) classToId[s.class] = s.class_id;
+        if (s["academic year"] && s.academic_year_id) academicYearToId[s["academic year"]] = s.academic_year_id;
+        if (s["enrolled academic year"] && s.enrolled_academic_year_id) enrolledAcademicYearToId[s["enrolled academic year"]] = s.enrolled_academic_year_id;
       });
       const mediumToId: Record<string, string | number> = {};
       masterMappings.Medium.forEach((m: any) => {
         if (m.medium && m.medium_id) mediumToId[m.medium] = m.medium_id;
       });
       
-      const getAcademicYearId = (name: string, branch_id: number, category_master_id: number) => {
-        const match = masterMappings["Academic Year"].find((a: any) => 
-          a.name === name && a.branch_id === branch_id && a.category_master_id === category_master_id
-        );
-        return match ? match.academic_year_id : "";
-      }
+      const getClassId = (grade: string, cls: string) => {
+        if (!cls) return "";
+        if (classToId[cls]) return classToId[cls];
+        if (!grade) return "";
+        
+        let prefix = "";
+        if (grade.includes("Kindergarten 1")) prefix = "KG 1";
+        else if (grade.includes("Kindergarten 2")) prefix = "KG 2";
+        else if (grade.includes("Primary 01")) prefix = "1";
+        else if (grade.includes("Primary 02")) prefix = "2";
+        else if (grade.includes("Primary 03")) prefix = "3";
+        else if (grade.includes("Primary 04")) prefix = "4";
+        else if (grade.includes("Primary 05")) prefix = "5";
+        else if (grade.includes("Play Group")) prefix = "PG";
+        
+        if (prefix) {
+          if (classToId[`${prefix} ${cls}`]) return classToId[`${prefix} ${cls}`];
+          if (classToId[`${prefix}${cls}`]) return classToId[`${prefix}${cls}`];
+        }
+        
+        const match = masterMappings.Student.find((s: any) => s.class && s.class.endsWith(cls));
+        return match ? match.class_id : "";
+      };
       
       const formattedData = data.map((row: any) => ({
         branch_id: row.branch_id || "",
@@ -138,17 +159,17 @@ export default function ExportPage() {
         dob: row.dob,
         age: row.age,
         date_of_admission: row.date_of_admission,
-        student_type_id: row.student_type.toLowerCase() === 'local' ? 1 : (row.student_type.toLowerCase() === 'international' ? 2 : ""),
+        student_type_id: row.student_type?.toLowerCase() === 'local' ? 1 : (row.student_type?.toLowerCase() === 'international' ? 2 : ""),
         student_type: row.student_type,
         category_master_id: row.category_master_id || (masterMappings.Curriculums.find((c: any) => c["Curriculum Name"] === row.curriculum_name)?.category_master_id || ""),
         curriculum: row.curriculum_name,
-        academic_year_id: getAcademicYearId(row.academic_year, row.branch_id, row.category_master_id || (masterMappings.Curriculums.find((c: any) => c["Curriculum Name"] === row.curriculum_name)?.category_master_id || 0)),
+        academic_year_id: academicYearToId[row.academic_year] || "",
         academic_year: row.academic_year,
-        enrolled_academic_year_id: getAcademicYearId(row.enrolled_academic_year, row.branch_id, row.category_master_id || (masterMappings.Curriculums.find((c: any) => c["Curriculum Name"] === row.curriculum_name)?.category_master_id || 0)),
+        enrolled_academic_year_id: enrolledAcademicYearToId[row.enrolled_academic_year] || "",
         enrolled_academic_year: row.enrolled_academic_year,
         grade_id: gradeToId[row.grade] || "",
         grade: row.grade,
-        class_id: classToId[row.class] || "",
+        class_id: getClassId(row.grade, row.class),
         class: row.class,
         medium_id: mediumToId[row.medium] || "",
         medium: row.medium,
