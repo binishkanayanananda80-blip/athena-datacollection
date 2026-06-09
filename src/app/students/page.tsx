@@ -10,7 +10,6 @@ import { Loader2 } from "lucide-react"
 
 import {
   getActiveBranches,
-  getActiveCategories,
   submitStudentData
 } from "@/lib/actions"
 
@@ -43,7 +42,7 @@ const formSchema = z.object({
   dob: z.string().min(1, "Date of Birth is required."),
   date_of_admission: z.string().min(1, "Date of Admission is required."),
   student_type: z.string().min(1, "Student Type is required."),
-  category_master_id: z.coerce.number().min(1, "Please select a curriculum (category)."),
+  curriculum_name: z.string().min(1, "Please select a curriculum."),
   academic_year: z.string().min(1, "Academic Year is required."),
   enrolled_academic_year: z.string().min(1, "Enrolled Academic Year is required."),
   grade: z.string().min(1, "Grade is required."),
@@ -63,7 +62,6 @@ export default function StudentForm() {
   const [isSuccess, setIsSuccess] = useState(false)
 
   const [branches, setBranches] = useState<any[]>([])
-  const [categories, setCategories] = useState<any[]>([])
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema as any),
@@ -77,7 +75,7 @@ export default function StudentForm() {
       date_of_admission: "",
       class: "",
       branch_id: "" as any,
-      category_master_id: "" as any,
+      curriculum_name: "",
       gender: "" as any,
       student_type: "Local",
       academic_year: "2024/2025",
@@ -97,12 +95,10 @@ export default function StudentForm() {
   useEffect(() => {
     async function loadInitialData() {
       try {
-        const [b, c] = await Promise.all([
-          getActiveBranches(),
-          getActiveCategories()
+        const [b] = await Promise.all([
+          getActiveBranches()
         ])
         setBranches(b || [])
-        setCategories(c || [])
       } catch (error) {
         toast.error("Failed to load form data. Please refresh.")
       }
@@ -117,15 +113,13 @@ export default function StudentForm() {
     const dobDate = new Date(values.dob)
     const age = new Date().getFullYear() - dobDate.getFullYear()
 
-    // Map IDs to Names
     const branch_name = branches.find(b => b.branch_id === values.branch_id)?.branch_name
-    const curriculum_name = categories.find(c => c.category_id === values.category_master_id)?.category_name
 
     const fullData = {
       ...values,
       age,
       branch_name,
-      curriculum_name
+      category_master_id: null
     }
 
     try {
@@ -391,24 +385,19 @@ export default function StudentForm() {
 
                   <FormField
                     control={form.control}
-                    name="category_master_id"
+                    name="curriculum_name"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Curriculum (Category) <span className="text-destructive">*</span></FormLabel>
+                        <FormLabel>Curriculum <span className="text-destructive">*</span></FormLabel>
                         <Select onValueChange={field.onChange} value={field.value ? field.value.toString() : ""}>
                           <FormControl>
                             <SelectTrigger>
-                              <SelectValue placeholder="Select Curriculum">
-                                {field.value ? categories.find(c => c.category_id.toString() === field.value.toString())?.category_name : "Select Curriculum"}
-                              </SelectValue>
+                              <SelectValue placeholder="Select Curriculum" />
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            {categories.map(c => (
-                              <SelectItem key={c.category_id} value={c.category_id.toString()}>
-                                {c.category_name}
-                              </SelectItem>
-                            ))}
+                            <SelectItem value="Edexcel">Edexcel</SelectItem>
+                            <SelectItem value="Local">Local</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage />

@@ -27,9 +27,9 @@ export default function StudentImportPage() {
 
   useEffect(() => {
     async function loadData() {
-      const [b, c] = await Promise.all([getActiveBranches(), getActiveCategories()])
+      const [b] = await Promise.all([getActiveBranches()])
       setBranches(b || [])
-      setCategories(c || [])
+      setCategories([{ category_id: "Edexcel", category_name: "Edexcel" }, { category_id: "Local", category_name: "Local" }])
     }
     loadData()
   }, [])
@@ -64,7 +64,7 @@ export default function StudentImportPage() {
               csvData: text,
               branch_id: parseInt(selectedBranch),
               branch_name,
-              category_master_id: parseInt(selectedCategory),
+              category_master_id: null,
               curriculum_name
             })
           })
