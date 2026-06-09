@@ -109,3 +109,66 @@ export async function submitEmployeeData(formData: any) {
 
   return { success: true }
 }
+
+export async function submitStudentData(formData: any) {
+  const supabase = await createAdminClient()
+  
+  // 1. Check globally for Admission No within the same branch
+  const { data: existingStudent } = await supabase
+    .from('student_submissions')
+    .select('id')
+    .eq('branch_id', formData.branch_id)
+    .ilike('admission_no', formData.admission_no)
+    .limit(1)
+
+  if (existingStudent && existingStudent.length > 0) {
+    return { success: false, error: "A student record already exists with this Admission Number in the selected branch." }
+  }
+
+  const { error } = await supabase
+    .from('student_submissions')
+    .insert([formData])
+
+  if (error) {
+    if (error.code === '23505') { // unique violation
+      return { success: false, error: "A student record already exists for this Admission Number in this branch." }
+    }
+    return { success: false, error: error.message }
+  }
+
+  return { success: true }
+}
+
+export async function submitBulkStudentData(records: any[]) {
+  const supabase = await createAdminClient()
+  
+  const results = { successful: 0, failed: 0, errors: [] as string[] }
+
+  for (const record of records) {
+    const { data: existing } = await supabase
+      .from('student_submissions')
+      .select('id')
+      .eq('branch_id', record.branch_id)
+      .ilike('admission_no', record.admission_no)
+      .limit(1)
+
+    if (existing && existing.length > 0) {
+      results.failed++
+      results.errors.push(`Admission No ${record.admission_no} already exists in this branch.`)
+      continue
+    }
+
+    const { error } = await supabase
+      .from('student_submissions')
+      .insert([record])
+
+    if (error) {
+      results.failed++
+      results.errors.push(`Failed for ${record.admission_no}: ${error.message}`)
+    } else {
+      results.successful++
+    }
+  }
+
+  return { success: true, results }
+}

@@ -1,0 +1,283 @@
+"use client"
+
+import { useState, useEffect } from "react"
+import { Loader2, Upload, FileText, CheckCircle, AlertTriangle } from "lucide-react"
+import { toast } from "sonner"
+import { useRouter } from "next/navigation"
+
+import { getActiveBranches, getActiveCategories, submitBulkStudentData } from "@/lib/actions"
+import { Button } from "@/components/ui/button"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Label } from "@/components/ui/label"
+
+export default function StudentImportPage() {
+  const router = useRouter()
+  const [branches, setBranches] = useState<any[]>([])
+  const [categories, setCategories] = useState<any[]>([])
+  const [selectedBranch, setSelectedBranch] = useState<string>("")
+  const [selectedCategory, setSelectedCategory] = useState<string>("")
+  
+  const [file, setFile] = useState<File | null>(null)
+  const [isParsing, setIsParsing] = useState(false)
+  const [parsedData, setParsedData] = useState<any[]>([])
+  
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [importResult, setImportResult] = useState<{successful: number, failed: number, errors: string[]} | null>(null)
+
+  useEffect(() => {
+    async function loadData() {
+      const [b, c] = await Promise.all([getActiveBranches(), getActiveCategories()])
+      setBranches(b || [])
+      setCategories(c || [])
+    }
+    loadData()
+  }, [])
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      setFile(e.target.files[0])
+      setParsedData([])
+      setImportResult(null)
+    }
+  }
+
+  const handleParseAI = async () => {
+    if (!file) return toast.error("Please select a file.")
+    if (!selectedBranch) return toast.error("Please select a branch.")
+    if (!selectedCategory) return toast.error("Please select a curriculum.")
+
+    setIsParsing(true)
+    try {
+      const branch_name = branches.find(b => b.branch_id.toString() === selectedBranch)?.branch_name
+      const curriculum_name = categories.find(c => c.category_id.toString() === selectedCategory)?.category_name
+
+      const reader = new FileReader()
+      reader.onload = async (e) => {
+        const text = e.target?.result as string
+        
+        try {
+          const res = await fetch('/api/ai-csv-upload', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              csvData: text,
+              branch_id: parseInt(selectedBranch),
+              branch_name,
+              category_master_id: parseInt(selectedCategory),
+              curriculum_name
+            })
+          })
+
+          const result = await res.json()
+          if (res.ok && result.success) {
+            setParsedData(result.data)
+            toast.success("Successfully parsed CSV data using AI!")
+          } else {
+            toast.error(result.error || "Failed to parse data")
+          }
+        } catch (error: any) {
+          toast.error("Error communicating with AI parser")
+        } finally {
+          setIsParsing(false)
+        }
+      }
+      reader.readAsText(file)
+
+    } catch (error) {
+      toast.error("Error reading file")
+      setIsParsing(false)
+    }
+  }
+
+  const handleSubmitBulk = async () => {
+    if (parsedData.length === 0) return
+
+    setIsSubmitting(true)
+    try {
+      const res = await submitBulkStudentData(parsedData)
+      if (res.success) {
+        setImportResult(res.results)
+        toast.success(`Import completed. ${res.results.successful} succeeded, ${res.results.failed} failed.`)
+      } else {
+        toast.error("Failed to submit data")
+      }
+    } catch (error) {
+      toast.error("An error occurred during submission.")
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+
+  return (
+    <div className="container mx-auto py-8 max-w-5xl">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold tracking-tight">Import Student Data</h1>
+        <p className="text-muted-foreground mt-2">
+          Upload a CSV or Excel file containing student data. Our AI agent will automatically map the columns to the correct format.
+        </p>
+      </div>
+
+      <div className="grid gap-6 md:grid-cols-2 mb-8">
+        <Card>
+          <CardHeader>
+            <CardTitle>1. Select Branch & Curriculum</CardTitle>
+            <CardDescription>All students in the imported file will be assigned to these selections.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label>Branch</Label>
+              <Select value={selectedBranch} onValueChange={setSelectedBranch}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Branch" />
+                </SelectTrigger>
+                <SelectContent>
+                  {branches.map(b => (
+                    <SelectItem key={b.branch_id} value={b.branch_id.toString()}>
+                      {b.branch_name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div className="space-y-2">
+              <Label>Curriculum</Label>
+              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Curriculum" />
+                </SelectTrigger>
+                <SelectContent>
+                  {categories.map(c => (
+                    <SelectItem key={c.category_id} value={c.category_id.toString()}>
+                      {c.category_name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>2. Upload File & Parse</CardTitle>
+            <CardDescription>Upload the CSV file to be processed by the AI.</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label>CSV File</Label>
+              <div className="flex items-center gap-4">
+                <Input type="file" accept=".csv" onChange={handleFileChange} />
+              </div>
+            </div>
+            
+            <Button 
+              className="w-full" 
+              onClick={handleParseAI}
+              disabled={isParsing || !file || !selectedBranch || !selectedCategory}
+            >
+              {isParsing ? (
+                <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Processing AI Mapping...</>
+              ) : (
+                <><Upload className="mr-2 h-4 w-4" /> Parse with AI</>
+              )}
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
+
+      {parsedData.length > 0 && !importResult && (
+        <Card className="mb-8">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle>3. Preview & Import</CardTitle>
+                <CardDescription>Review the AI-mapped data below. Ensure everything looks correct before importing.</CardDescription>
+              </div>
+              <Button onClick={handleSubmitBulk} disabled={isSubmitting}>
+                {isSubmitting ? (
+                  <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Importing...</>
+                ) : (
+                  "Confirm & Import Data"
+                )}
+              </Button>
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="rounded-md border overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b bg-muted/50 text-left">
+                    <th className="p-3 font-medium">Admission No</th>
+                    <th className="p-3 font-medium">First Name</th>
+                    <th className="p-3 font-medium">Last Name</th>
+                    <th className="p-3 font-medium">Gender</th>
+                    <th className="p-3 font-medium">Grade</th>
+                    <th className="p-3 font-medium">Class</th>
+                    <th className="p-3 font-medium">Parent Contact</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {parsedData.map((row, i) => (
+                    <tr key={i} className="border-b">
+                      <td className="p-3">{row.admission_no}</td>
+                      <td className="p-3">{row.first_name}</td>
+                      <td className="p-3">{row.last_name}</td>
+                      <td className="p-3">{row.gender}</td>
+                      <td className="p-3">{row.grade}</td>
+                      <td className="p-3">{row.class}</td>
+                      <td className="p-3">{row.emergency_contact}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <p className="text-sm text-muted-foreground mt-4">Showing {parsedData.length} extracted records.</p>
+          </CardContent>
+        </Card>
+      )}
+
+      {importResult && (
+        <Card className="border-green-200">
+          <CardHeader>
+            <CardTitle className="text-green-700 flex items-center">
+              <CheckCircle className="mr-2 h-5 w-5" /> Import Results
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="bg-green-50 p-4 rounded-lg">
+                <p className="text-sm text-green-600 font-medium">Successfully Imported</p>
+                <p className="text-3xl font-bold text-green-700">{importResult.successful}</p>
+              </div>
+              <div className="bg-red-50 p-4 rounded-lg">
+                <p className="text-sm text-red-600 font-medium">Failed to Import</p>
+                <p className="text-3xl font-bold text-red-700">{importResult.failed}</p>
+              </div>
+            </div>
+
+            {importResult.errors.length > 0 && (
+              <div className="mt-4">
+                <h4 className="font-medium text-red-600 flex items-center mb-2">
+                  <AlertTriangle className="mr-2 h-4 w-4" /> Errors Log
+                </h4>
+                <ul className="text-sm text-red-600 space-y-1 list-disc pl-5 max-h-40 overflow-y-auto">
+                  {importResult.errors.map((err, idx) => (
+                    <li key={idx}>{err}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            <Button className="mt-4" onClick={() => {
+              setParsedData([])
+              setImportResult(null)
+              setFile(null)
+            }}>Import Another File</Button>
+          </CardContent>
+        </Card>
+      )}
+    </div>
+  )
+}

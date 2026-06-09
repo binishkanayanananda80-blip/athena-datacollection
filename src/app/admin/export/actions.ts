@@ -17,3 +17,19 @@ export async function getExportData() {
 
   return data || []
 }
+
+export async function getStudentExportData() {
+  const supabase = await createAdminClient()
+
+  // Fetch all student submissions, ordered by submitted_at
+  const { data, error } = await supabase
+    .from('student_submissions')
+    .select('branch_name, admission_no, first_name, middle_name, last_name, gender, dob, age, date_of_admission, student_type, curriculum_name, academic_year, enrolled_academic_year, grade, class, medium, nationality, religion, emergency_contact, student_lives_with, guardian_type, marital_status, is_living, status')
+    .order('submitted_at', { ascending: false })
+
+  if (error) {
+    throw new Error(error.message)
+  }
+
+  return data || []
+}
