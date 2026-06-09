@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import { Loader2, Upload, FileText, CheckCircle, AlertTriangle } from "lucide-react"
 import { toast } from "sonner"
 import { useRouter } from "next/navigation"
+import Papa from "papaparse"
 
 import { getActiveBranches, getActiveCategories, submitBulkStudentData } from "@/lib/actions"
 import { Button } from "@/components/ui/button"
@@ -42,52 +43,81 @@ export default function StudentImportPage() {
     }
   }
 
-  const handleParseAI = async () => {
+  const handleParseLocal = () => {
     if (!file) return toast.error("Please select a file.")
     if (!selectedBranch) return toast.error("Please select a branch.")
     if (!selectedCategory) return toast.error("Please select a curriculum.")
 
     setIsParsing(true)
-    try {
-      const branch_name = branches.find(b => b.branch_id.toString() === selectedBranch)?.branch_name
-      const curriculum_name = categories.find(c => c.category_id.toString() === selectedCategory)?.category_name
+    const branch_name = branches.find(b => b.branch_id.toString() === selectedBranch)?.branch_name
+    const curriculum_name = categories.find(c => c.category_id.toString() === selectedCategory)?.category_name
 
-      const reader = new FileReader()
-      reader.onload = async (e) => {
-        const text = e.target?.result as string
-        
+    Papa.parse(file, {
+      header: true,
+      skipEmptyLines: true,
+      complete: (results) => {
         try {
-          const res = await fetch('/api/ai-csv-upload', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              csvData: text,
-              branch_id: parseInt(selectedBranch),
-              branch_name,
-              category_master_id: null,
-              curriculum_name
-            })
+          const rawRows = results.data as any[]
+          
+          const normalizeStr = (s: string) => (s || "").toLowerCase().replace(/[^a-z0-9]/g, '')
+
+          const findKey = (row: any, possibleNames: string[]) => {
+            const keys = Object.keys(row)
+            for (let p of possibleNames) {
+              const match = keys.find(k => normalizeStr(k) === normalizeStr(p))
+              if (match) return row[match]
+            }
+            for (let p of possibleNames) {
+              const match = keys.find(k => normalizeStr(k).includes(normalizeStr(p)))
+              if (match) return row[match]
+            }
+            return ""
+          }
+
+          const parsed = rawRows.map(row => {
+             return {
+                branch_id: parseInt(selectedBranch),
+                branch_name,
+                category_master_id: null,
+                curriculum_name,
+                admission_no: findKey(row, ['admission no', 'admission number', 'admissionno']),
+                first_name: findKey(row, ['first name', 'fname', 'given name', 'name']),
+                middle_name: findKey(row, ['middle name', 'mname']),
+                last_name: findKey(row, ['last name', 'lname', 'surname']),
+                gender: findKey(row, ['gender', 'sex']) || 'Male',
+                dob: findKey(row, ['dob', 'date of birth', 'birth date']),
+                age: parseInt(findKey(row, ['age'])) || 0,
+                date_of_admission: findKey(row, ['date of admission', 'admission date', 'doa']),
+                student_type: findKey(row, ['student type', 'type']) || 'Local',
+                academic_year: findKey(row, ['academic year', 'year']) || '2024/2025',
+                enrolled_academic_year: findKey(row, ['enrolled academic year', 'enrolled year']) || '2024/2025',
+                grade: findKey(row, ['grade', 'class level']),
+                class: findKey(row, ['class', 'section']),
+                medium: findKey(row, ['medium', 'language']) || 'English',
+                nationality: findKey(row, ['nationality']) || 'Sri Lankan',
+                religion: findKey(row, ['religion']),
+                emergency_contact: findKey(row, ['emergency contact', 'contact']),
+                student_lives_with: findKey(row, ['student lives with', 'lives with']),
+                guardian_type: findKey(row, ['guardian type', 'guardian']),
+                marital_status: findKey(row, ['marital status', 'parents marital status']),
+                is_living: findKey(row, ['is living', 'parents living']) || 'yes',
+                status: 'active'
+             }
           })
 
-          const result = await res.json()
-          if (res.ok && result.success) {
-            setParsedData(result.data)
-            toast.success("Successfully parsed CSV data using AI!")
-          } else {
-            toast.error(result.error || "Failed to parse data")
-          }
-        } catch (error: any) {
-          toast.error("Error communicating with AI parser")
+          setParsedData(parsed)
+          toast.success("Successfully parsed CSV data locally!")
+        } catch (error) {
+          toast.error("Error mapping CSV data")
         } finally {
           setIsParsing(false)
         }
+      },
+      error: (error) => {
+        toast.error("Error reading file")
+        setIsParsing(false)
       }
-      reader.readAsText(file)
-
-    } catch (error) {
-      toast.error("Error reading file")
-      setIsParsing(false)
-    }
+    })
   }
 
   const handleSubmitBulk = async () => {
@@ -174,13 +204,13 @@ export default function StudentImportPage() {
             
             <Button 
               className="w-full" 
-              onClick={handleParseAI}
+              onClick={handleParseLocal}
               disabled={isParsing || !file || !selectedBranch || !selectedCategory}
             >
               {isParsing ? (
-                <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Processing AI Mapping...</>
+                <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Processing CSV...</>
               ) : (
-                <><Upload className="mr-2 h-4 w-4" /> Parse with AI</>
+                <><Upload className="mr-2 h-4 w-4" /> Parse Locally</>
               )}
             </Button>
           </CardContent>
