@@ -120,6 +120,54 @@ export default function StudentImportPage() {
     })
   }
 
+  const handleParseAI = async () => {
+    if (!file) return toast.error("Please select a file.")
+    if (!selectedBranch) return toast.error("Please select a branch.")
+    if (!selectedCategory) return toast.error("Please select a curriculum.")
+
+    setIsParsing(true)
+    try {
+      const branch_name = branches.find(b => b.branch_id.toString() === selectedBranch)?.branch_name
+      const curriculum_name = categories.find(c => c.category_id.toString() === selectedCategory)?.category_name
+
+      const reader = new FileReader()
+      reader.onload = async (e) => {
+        const text = e.target?.result as string
+        
+        try {
+          const res = await fetch('/api/ai-csv-upload', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              csvData: text,
+              branch_id: parseInt(selectedBranch),
+              branch_name,
+              category_master_id: null,
+              curriculum_name
+            })
+          })
+
+          const result = await res.json()
+          if (res.ok && result.success) {
+            setParsedData(result.data)
+            toast.success("Successfully parsed CSV data using AI!")
+          } else {
+            toast.error(result.error || "Failed to parse data")
+          }
+        } catch (error: any) {
+          toast.error("Error communicating with AI parser")
+        } finally {
+          setIsParsing(false)
+        }
+      }
+      reader.readAsText(file)
+
+    } catch (error) {
+      toast.error("Error reading file")
+      setIsParsing(false)
+    }
+  }
+
   const handleSubmitBulk = async () => {
     if (parsedData.length === 0) return
 
@@ -201,18 +249,30 @@ export default function StudentImportPage() {
                 <Input type="file" accept=".csv" onChange={handleFileChange} />
               </div>
             </div>
-            
-            <Button 
-              className="w-full" 
-              onClick={handleParseLocal}
-              disabled={isParsing || !file || !selectedBranch || !selectedCategory}
-            >
-              {isParsing ? (
-                <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Processing CSV...</>
-              ) : (
-                <><Upload className="mr-2 h-4 w-4" /> Parse Locally</>
-              )}
-            </Button>
+            <div className="flex flex-col sm:flex-row gap-4">
+              <Button 
+                className="w-full bg-blue-600 hover:bg-blue-700" 
+                onClick={handleParseLocal}
+                disabled={isParsing || !file || !selectedBranch || !selectedCategory}
+              >
+                {isParsing ? (
+                  <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Processing...</>
+                ) : (
+                  <><Upload className="mr-2 h-4 w-4" /> Parse Locally (Fast & Free)</>
+                )}
+              </Button>
+              <Button 
+                className="w-full bg-purple-600 hover:bg-purple-700" 
+                onClick={handleParseAI}
+                disabled={isParsing || !file || !selectedBranch || !selectedCategory}
+              >
+                {isParsing ? (
+                  <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Processing...</>
+                ) : (
+                  <><Upload className="mr-2 h-4 w-4" /> Parse with AI (Groq)</>
+                )}
+              </Button>
+            </div>
           </CardContent>
         </Card>
       </div>
