@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
-
+import { Input } from "@/components/ui/input"
 export default function StudentImportPage() {
   const router = useRouter()
   const [branches, setBranches] = useState<any[]>([])
@@ -127,7 +127,7 @@ export default function StudentImportPage() {
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label>Branch</Label>
-              <Select value={selectedBranch} onValueChange={setSelectedBranch}>
+              <Select value={selectedBranch} onValueChange={(val) => setSelectedBranch(val || "")}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select Branch" />
                 </SelectTrigger>
@@ -143,7 +143,7 @@ export default function StudentImportPage() {
             
             <div className="space-y-2">
               <Label>Curriculum</Label>
-              <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+              <Select value={selectedCategory} onValueChange={(val) => setSelectedCategory(val || "")}>
                 <SelectTrigger>
                   <SelectValue placeholder="Select Curriculum" />
                 </SelectTrigger>
