@@ -122,7 +122,7 @@ export default function StudentImportPage() {
                 is_living: findKey(row, ['is living', 'parents living']) || 'yes',
                 status: 'active'
              }
-          })
+          }).filter(r => r.admission_no || r.first_name)
 
           setParsedData(parsed)
           toast.success("Successfully parsed CSV data locally!")
