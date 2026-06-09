@@ -75,15 +75,34 @@ export default function StudentImportPage() {
           }
 
           const parsed = rawRows.map(row => {
+             const fullName = findKey(row, ['student name', 'full name', 'name']);
+             let fName = findKey(row, ['first name', 'fname', 'given name']);
+             let mName = findKey(row, ['middle name', 'mname']);
+             let lName = findKey(row, ['last name', 'lname', 'surname']);
+
+             if (fullName && !fName && !lName) {
+               const parts = fullName.trim().split(/\s+/);
+               if (parts.length === 1) {
+                 fName = parts[0];
+               } else if (parts.length === 2) {
+                 fName = parts[0];
+                 lName = parts[1];
+               } else if (parts.length >= 3) {
+                 fName = parts[0];
+                 lName = parts[parts.length - 1];
+                 mName = parts.slice(1, parts.length - 1).join(" ");
+               }
+             }
+
              return {
                 branch_id: parseInt(selectedBranch),
                 branch_name,
                 category_master_id: null,
                 curriculum_name,
                 admission_no: findKey(row, ['admission no', 'admission number', 'admissionno']),
-                first_name: findKey(row, ['first name', 'fname', 'given name', 'name']),
-                middle_name: findKey(row, ['middle name', 'mname']),
-                last_name: findKey(row, ['last name', 'lname', 'surname']),
+                first_name: fName,
+                middle_name: mName,
+                last_name: lName,
                 gender: findKey(row, ['gender', 'sex']) || 'Male',
                 dob: findKey(row, ['dob', 'date of birth', 'birth date']),
                 age: parseInt(findKey(row, ['age'])) || 0,
