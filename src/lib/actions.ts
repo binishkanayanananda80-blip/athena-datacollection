@@ -218,7 +218,7 @@ export async function deleteAllStudentData() {
   const { error } = await supabase
     .from('student_submissions')
     .delete()
-    .neq('id', 0) // delete all
+    .neq('id', '00000000-0000-0000-0000-000000000000') // delete all using dummy uuid
 
   if (error) {
     return { success: false, error: error.message }
