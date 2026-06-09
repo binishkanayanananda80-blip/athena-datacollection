@@ -139,6 +139,33 @@ export async function submitStudentData(formData: any) {
   return { success: true }
 }
 
+function parseDate(dateStr: string | null | undefined): string | null {
+  if (!dateStr) return null;
+  const trimmed = dateStr.trim();
+  
+  // If already YYYY-MM-DD
+  if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) {
+    return trimmed;
+  }
+  
+  // Try DD/MM/YYYY or DD-MM-YYYY
+  const dmMatch = trimmed.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})$/);
+  if (dmMatch) {
+    const [_, d, m, y] = dmMatch;
+    const paddedM = m.padStart(2, '0');
+    const paddedD = d.padStart(2, '0');
+    return `${y}-${paddedM}-${paddedD}`;
+  }
+  
+  // Fallback to JS Date parsing
+  const dObj = new Date(trimmed);
+  if (!isNaN(dObj.getTime())) {
+    return dObj.toISOString().split('T')[0];
+  }
+  
+  return trimmed;
+}
+
 export async function submitBulkStudentData(records: any[]) {
   const supabase = await createAdminClient()
   
@@ -158,9 +185,11 @@ export async function submitBulkStudentData(records: any[]) {
       continue
     }
 
-    // Sanitize record to prevent null constraint violations
+    // Sanitize record to prevent null constraint violations and format dates
     const sanitizedRecord = {
       ...record,
+      dob: parseDate(record.dob),
+      date_of_admission: parseDate(record.date_of_admission),
       student_type: record.student_type || 'Local',
       status: record.status || 'active',
       is_living: record.is_living || 'yes',
