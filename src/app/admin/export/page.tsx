@@ -189,6 +189,19 @@ export default function ExportPage() {
         );
         return match ? match.enrolled_academic_year_id : "";
       }
+
+      const calculateAge = (dobString: string) => {
+        if (!dobString) return 0;
+        const dob = new Date(dobString);
+        if (isNaN(dob.getTime())) return 0;
+        const today = new Date();
+        let age = today.getFullYear() - dob.getFullYear();
+        const m = today.getMonth() - dob.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < dob.getDate())) {
+          age--;
+        }
+        return age >= 0 ? age : 0;
+      };
       
       const formattedData = data.map((row: any) => ({
         branch_id: row.branch_id || "",
@@ -199,7 +212,7 @@ export default function ExportPage() {
         last_name: row.last_name,
         gender: row.gender,
         dob: row.dob,
-        age: row.age,
+        age: calculateAge(row.dob),
         date_of_admission: row.date_of_admission,
         student_type_id: row.student_type?.toLowerCase() === 'local' ? 1 : (row.student_type?.toLowerCase() === 'international' ? 2 : ""),
         student_type: row.student_type,
