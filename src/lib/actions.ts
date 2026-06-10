@@ -236,5 +236,12 @@ export async function deleteAllStudentData() {
   if (error) {
     return { success: false, error: error.message }
   }
+
+  // Also delete all parent submissions to prevent orphaned data
+  await supabase
+    .from('parent_submissions')
+    .delete()
+    .neq('id', '00000000-0000-0000-0000-000000000000')
+
   return { success: true }
 }

@@ -66,15 +66,17 @@ export async function getParentExportData() {
     }
   })
 
-  // Attach branch info to each parent
-  const enrichedParents = parents.map(p => {
-    const studentInfo = studentMap.get(p.admission_no) || { branch_id: null, branch_name: null }
-    return {
-      branch_id: studentInfo.branch_id,
-      branch_name: studentInfo.branch_name,
-      ...p
-    }
-  })
+  // Attach branch info to each parent and filter out orphans
+  const enrichedParents = parents
+    .filter(p => studentMap.has(p.admission_no))
+    .map(p => {
+      const studentInfo = studentMap.get(p.admission_no);
+      return {
+        branch_id: studentInfo.branch_id,
+        branch_name: studentInfo.branch_name,
+        ...p
+      }
+    })
 
   return enrichedParents
 }
