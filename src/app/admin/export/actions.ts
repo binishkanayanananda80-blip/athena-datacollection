@@ -18,14 +18,20 @@ export async function getExportData() {
   return data || []
 }
 
-export async function getStudentExportData() {
+export async function getStudentExportData(branch_name?: string) {
   const supabase = await createAdminClient()
 
   // Fetch all student submissions, ordered by submitted_at
-  const { data, error } = await supabase
+  let query = supabase
     .from('student_submissions')
     .select('branch_id, branch_name, admission_no, first_name, middle_name, last_name, gender, dob, age, date_of_admission, student_type, category_master_id, curriculum_name, academic_year, enrolled_academic_yr, grade, class, medium, nationality, religion, emergency_contact, student_lives_with, guardian_type, marital_status, is_living, status')
     .order('submitted_at', { ascending: false })
+
+  if (branch_name) {
+    query = query.eq('branch_name', branch_name)
+  }
+
+  const { data, error } = await query
 
   if (error) {
     throw new Error(error.message)
@@ -34,14 +40,16 @@ export async function getStudentExportData() {
   return data || []
 }
 
-export async function getParentExportData() {
+export async function getParentExportData(branch_name?: string) {
   const supabase = await createAdminClient()
 
   // Fetch all parent submissions
-  const { data: parents, error: parentsError } = await supabase
+  let parentQuery = supabase
     .from('parent_submissions')
     .select('*')
     .order('created_at', { ascending: false })
+
+  const { data: parents, error: parentsError } = await parentQuery
 
   if (parentsError) {
     throw new Error(parentsError.message)
@@ -67,7 +75,7 @@ export async function getParentExportData() {
   })
 
   // Attach branch info to each parent and filter out orphans
-  const enrichedParents = parents
+  let enrichedParents = parents
     .filter(p => studentMap.has(p.admission_no))
     .map(p => {
       const studentInfo = studentMap.get(p.admission_no);
@@ -77,6 +85,10 @@ export async function getParentExportData() {
         ...p
       }
     })
+
+  if (branch_name) {
+    enrichedParents = enrichedParents.filter((p: any) => p.branch_name === branch_name)
+  }
 
   return enrichedParents
 }

@@ -1,10 +1,14 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { Download, Loader2 } from "lucide-react"
 import { getExportData, getStudentExportData, getParentExportData } from "./actions"
+import { getBranches } from "../master-data-actions"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Label } from "@/components/ui/label"
 import Papa from "papaparse"
 
 import masterMappings from "@/lib/mappings.json"
@@ -13,11 +17,25 @@ export default function ExportPage() {
   const [isExporting, setIsExporting] = useState(false)
   const [isExportingStudents, setIsExportingStudents] = useState(false)
   const [isExportingParents, setIsExportingParents] = useState(false)
+  const [isBranchExporting, setIsBranchExporting] = useState(false)
+  
+  const [branches, setBranches] = useState<any[]>([])
+  const [selectedBranch, setSelectedBranch] = useState<string>("")
+  const [exportStudents, setExportStudents] = useState(true)
+  const [exportParents, setExportParents] = useState(true)
 
-  async function handleParentExport() {
+  useEffect(() => {
+    async function loadBranches() {
+      const data = await getBranches()
+      setBranches(data)
+    }
+    loadBranches()
+  }, [])
+
+  async function handleParentExport(branchName?: string, customFileName?: string) {
     setIsExportingParents(true)
     try {
-      const data = await getParentExportData()
+      const data = await getParentExportData(branchName)
       
       const formattedData = data.map((row: any) => ({
         branch_id: row.branch_id || "",
@@ -47,7 +65,7 @@ export default function ExportPage() {
       const link = document.createElement("a")
       const url = URL.createObjectURL(blob)
       link.setAttribute("href", url)
-      link.setAttribute("download", "athena_parent_data_export.csv")
+      link.setAttribute("download", customFileName || "athena_parent_data_export.csv")
       link.style.visibility = 'hidden'
       document.body.appendChild(link)
       link.click()
@@ -106,10 +124,10 @@ export default function ExportPage() {
     }
   }
 
-  async function handleStudentExport() {
+  async function handleStudentExport(branchName?: string, customFileName?: string) {
     setIsExportingStudents(true)
     try {
-      const data = await getStudentExportData()
+      const data = await getStudentExportData(branchName)
       
       const gradeToId: Record<string, string | number> = {};
       const classToId: Record<string, string | number> = {};
@@ -246,7 +264,7 @@ export default function ExportPage() {
       const link = document.createElement("a")
       const url = URL.createObjectURL(blob)
       link.setAttribute("href", url)
-      link.setAttribute("download", "athena_student_data_export.csv")
+      link.setAttribute("download", customFileName || "athena_student_data_export.csv")
       link.style.visibility = 'hidden'
       document.body.appendChild(link)
       link.click()
@@ -257,6 +275,34 @@ export default function ExportPage() {
       alert("Failed to export student data.")
     } finally {
       setIsExportingStudents(false)
+    }
+  }
+
+  async function handleBranchExport() {
+    if (!selectedBranch) return;
+    if (!exportStudents && !exportParents) return;
+    
+    setIsBranchExporting(true)
+    try {
+      const formattedBranchName = selectedBranch.replace(/\s+/g, '_')
+      
+      if (exportStudents) {
+        await handleStudentExport(selectedBranch, `${formattedBranchName}_studentdata_athena.csv`)
+      }
+      
+      if (exportStudents && exportParents) {
+        await new Promise(resolve => setTimeout(resolve, 500))
+      }
+      
+      if (exportParents) {
+        await handleParentExport(selectedBranch, `${formattedBranchName}_parentdata_athena.csv`)
+      }
+      
+    } catch (error) {
+      console.error("Branch export failed", error)
+      alert("Failed to export branch data.")
+    } finally {
+      setIsBranchExporting(false)
     }
   }
 
@@ -294,7 +340,7 @@ export default function ExportPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Button onClick={handleStudentExport} disabled={isExportingStudents} className="w-full" variant="secondary">
+            <Button onClick={() => handleStudentExport()} disabled={isExportingStudents} className="w-full" variant="secondary">
               {isExportingStudents ? (
                 <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Preparing Export...</>
               ) : (
@@ -312,7 +358,7 @@ export default function ExportPage() {
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <Button onClick={handleParentExport} disabled={isExportingParents} className="w-full" variant="outline">
+            <Button onClick={() => handleParentExport()} disabled={isExportingParents} className="w-full" variant="outline">
               {isExportingParents ? (
                 <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Preparing Export...</>
               ) : (
@@ -320,6 +366,64 @@ export default function ExportPage() {
               )}
             </Button>
           </CardContent>
+        </Card>
+
+        <Card className="md:col-span-2">
+          <CardHeader>
+            <CardTitle>Branch-Wise Export</CardTitle>
+            <CardDescription>
+              Select a branch and the type of data to download. Files will be named dynamically based on the branch.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <Label>Select Branch</Label>
+              <Select value={selectedBranch} onValueChange={(val) => setSelectedBranch(val || "")}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a branch..." />
+                </SelectTrigger>
+                <SelectContent>
+                  {branches.map((b) => (
+                    <SelectItem key={b.branch_id} value={b.branch_name}>
+                      {b.branch_name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div className="flex gap-6 pt-2">
+              <div className="flex items-center space-x-2">
+                <Checkbox 
+                  id="export-students" 
+                  checked={exportStudents} 
+                  onCheckedChange={(c) => setExportStudents(c === true)} 
+                />
+                <Label htmlFor="export-students" className="cursor-pointer">Student Data</Label>
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox 
+                  id="export-parents" 
+                  checked={exportParents} 
+                  onCheckedChange={(c) => setExportParents(c === true)} 
+                />
+                <Label htmlFor="export-parents" className="cursor-pointer">Parent Data</Label>
+              </div>
+            </div>
+          </CardContent>
+          <CardFooter>
+            <Button 
+              onClick={handleBranchExport} 
+              disabled={isBranchExporting || !selectedBranch || (!exportStudents && !exportParents)} 
+              className="w-full"
+            >
+              {isBranchExporting ? (
+                <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Preparing Export...</>
+              ) : (
+                <><Download className="mr-2 h-4 w-4" /> Download Branch CSV(s)</>
+              )}
+            </Button>
+          </CardFooter>
         </Card>
       </div>
     </div>
