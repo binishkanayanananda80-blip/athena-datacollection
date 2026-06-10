@@ -37,6 +37,11 @@ export default function ExportPage() {
     try {
       const data = await getParentExportData(branchName)
       
+      if (!data || data.length === 0) {
+        alert(`No parent data available${branchName ? ` for ${branchName}` : ''}.`)
+        return false;
+      }
+      
       const formattedData = data.map((row: any) => ({
         branch_id: row.branch_id || "",
         branch_name: row.branch_name || "",
@@ -128,6 +133,11 @@ export default function ExportPage() {
     setIsExportingStudents(true)
     try {
       const data = await getStudentExportData(branchName)
+      
+      if (!data || data.length === 0) {
+        alert(`No student data available${branchName ? ` for ${branchName}` : ''}.`)
+        return false;
+      }
       
       const gradeToId: Record<string, string | number> = {};
       const classToId: Record<string, string | number> = {};
