@@ -44,7 +44,7 @@ const formSchema = z.object({
   student_type: z.string().min(1, "Student Type is required."),
   curriculum_name: z.string().min(1, "Please select a curriculum."),
   academic_year: z.string().min(1, "Academic Year is required."),
-  enrolled_academic_year: z.string().min(1, "Enrolled Academic Year is required."),
+  enrolled_academic_yr: z.string().min(1, "Enrolled Academic Year is required."),
   grade: z.string().min(1, "Grade is required."),
   class: z.string().min(1, "Class is required."),
   medium: z.string().min(1, "Medium is required."),
@@ -79,7 +79,7 @@ export default function StudentForm() {
       gender: "" as any,
       student_type: "Local",
       academic_year: "2024/2025",
-      enrolled_academic_year: "2024/2025",
+      enrolled_academic_yr: "2024/2025",
       grade: "" as any,
       medium: "English",
       nationality: "Sri Lankan",
@@ -432,7 +432,7 @@ export default function StudentForm() {
 
                   <FormField
                     control={form.control}
-                    name="enrolled_academic_year"
+                    name="enrolled_academic_yr"
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Enrolled Academic Year <span className="text-destructive">*</span></FormLabel>

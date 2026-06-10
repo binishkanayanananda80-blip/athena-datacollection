@@ -180,7 +180,7 @@ export default function StudentImportPage() {
                 date_of_admission: findKey(row, ['date of admission', 'admission date', 'doa']),
                 student_type: findKey(row, ['student type', 'type']) || 'Local',
                 academic_year: findKey(row, ['academic year', 'year']) || '2024/2025',
-                enrolled_academic_year: findKey(row, ['enrolled academic year', 'enrolled year']) || '2024/2025',
+                enrolled_academic_yr: findKey(row, ['enrolled academic year', 'enrolled year']) || '2024/2025',
                 grade: findKey(row, ['grade', 'class level']),
                 class: findKey(row, ['class', 'section']),
                 medium: findKey(row, ['medium', 'language']) || 'English',
@@ -445,7 +445,7 @@ export default function StudentImportPage() {
                       <td className="p-3">{row.gender}</td>
                       <td className="p-3">{row.grade}</td>
                       <td className="p-3">{row.class}</td>
-                      <td className="p-3">{row.enrolled_academic_year}</td>
+                      <td className="p-3">{row.enrolled_academic_yr}</td>
                     </tr>
                   ))}
                 </tbody>

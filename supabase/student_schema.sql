@@ -20,7 +20,7 @@ create table student_submissions (
   curriculum_name text not null,
 
   academic_year text not null,
-  enrolled_academic_year text not null,
+  enrolled_academic_yr text not null,
   
   grade text not null,
   class text not null,

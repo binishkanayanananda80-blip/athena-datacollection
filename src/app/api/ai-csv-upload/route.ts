@@ -29,7 +29,7 @@ Here is the context:
 - curriculum_name: "${curriculum_name}"
 
 Return a JSON object with a single key "students" containing an array of objects. Each object MUST have exactly these keys:
-"branch_id", "branch_name", "admission_no", "first_name", "middle_name", "last_name", "gender", "dob", "age", "date_of_admission", "student_type", "category_master_id", "curriculum_name", "academic_year", "enrolled_academic_year", "grade", "class", "medium", "nationality", "religion", "emergency_contact", "student_lives_with", "guardian_type", "marital_status", "is_living", "status".
+"branch_id", "branch_name", "admission_no", "first_name", "middle_name", "last_name", "gender", "dob", "age", "date_of_admission", "student_type", "category_master_id", "curriculum_name", "academic_year", "enrolled_academic_yr", "grade", "class", "medium", "nationality", "religion", "emergency_contact", "student_lives_with", "guardian_type", "marital_status", "is_living", "status".
 
 Rules for mapping:
 1. Infer the "first_name", "last_name", etc. from the CSV columns (they might be named "Student Name", "Name", "FName", etc.). If middle name is missing, leave it empty string "".
