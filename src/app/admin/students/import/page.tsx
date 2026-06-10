@@ -429,12 +429,11 @@ export default function StudentImportPage() {
                   <tr className="border-b bg-muted/50 text-left">
                     <th className="p-3 font-medium">Admission No</th>
                     <th className="p-3 font-medium">First Name</th>
-                    <th className="p-3 font-medium">Middle Name</th>
                     <th className="p-3 font-medium">Last Name</th>
                     <th className="p-3 font-medium">Gender</th>
                     <th className="p-3 font-medium">Grade</th>
                     <th className="p-3 font-medium">Class</th>
-                    <th className="p-3 font-medium">Parent Contact</th>
+                    <th className="p-3 font-medium">Enrolled Academic Yr</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -442,12 +441,11 @@ export default function StudentImportPage() {
                     <tr key={i} className="border-b">
                       <td className="p-3">{row.admission_no}</td>
                       <td className="p-3">{row.first_name}</td>
-                      <td className="p-3">{row.middle_name}</td>
                       <td className="p-3">{row.last_name}</td>
                       <td className="p-3">{row.gender}</td>
                       <td className="p-3">{row.grade}</td>
                       <td className="p-3">{row.class}</td>
-                      <td className="p-3">{row.emergency_contact}</td>
+                      <td className="p-3">{row.enrolled_academic_year}</td>
                     </tr>
                   ))}
                 </tbody>

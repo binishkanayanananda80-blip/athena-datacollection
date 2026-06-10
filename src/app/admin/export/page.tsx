@@ -223,7 +223,7 @@ export default function ExportPage() {
         academic_year_id: getAcademicYearId(row.academic_year),
         academic_year: row.academic_year,
         enrolled_academic_year_id: getEnrolledAcademicYearId(row.enrolled_academic_year),
-        enrolled_academic_year: row.enrolled_academic_year,
+        enrolled_academic_yr: row.enrolled_academic_year,
         grade_id: getGradeId(row.grade) || "",
         grade: row.grade,
         class_id: getClassId(row.grade, row.class),
