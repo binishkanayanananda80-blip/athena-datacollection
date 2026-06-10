@@ -130,14 +130,16 @@ export default function ExportPage() {
         if (!grade) return "";
         
         let prefix = "";
-        if (grade.includes("Kindergarten 1")) prefix = "KG 1";
-        else if (grade.includes("Kindergarten 2")) prefix = "KG 2";
-        else if (grade.includes("Primary 01")) prefix = "1";
-        else if (grade.includes("Primary 02")) prefix = "2";
-        else if (grade.includes("Primary 03")) prefix = "3";
-        else if (grade.includes("Primary 04")) prefix = "4";
-        else if (grade.includes("Primary 05")) prefix = "5";
-        else if (grade.includes("Play Group")) prefix = "PG";
+        const normGrade = grade.toLowerCase();
+        if (normGrade.includes("kindergarten 1")) prefix = "KG 1";
+        else if (normGrade.includes("kindergarten 2")) prefix = "KG 2";
+        else if (normGrade.includes("primary 01") || normGrade.includes("primary 1")) prefix = "1";
+        else if (normGrade.includes("primary 02") || normGrade.includes("primary 2")) prefix = "2";
+        else if (normGrade.includes("primary 03") || normGrade.includes("primary 3")) prefix = "3";
+        else if (normGrade.includes("primary 04") || normGrade.includes("primary 4")) prefix = "4";
+        else if (normGrade.includes("primary 05") || normGrade.includes("primary 5")) prefix = "5";
+        else if (normGrade.includes("play group")) prefix = "PG";
+        else if (normGrade.includes("grade 09") || normGrade.includes("grade 9")) prefix = "9";
         
         if (prefix) {
           if (classToId[`${prefix} ${cls}`]) return classToId[`${prefix} ${cls}`];
@@ -146,6 +148,26 @@ export default function ExportPage() {
         
         const match = masterMappings.Student.find((s: any) => s.class && s.class.endsWith(cls));
         return match ? match.class_id : "";
+      };
+
+      const getGradeId = (name: string) => {
+        if (!name) return "";
+        if (gradeToId[name]) return gradeToId[name];
+        
+        const normalized = name.replace(/ (\d)$/, ' 0$1'); // e.g., "Primary 1" -> "Primary 01"
+        if (gradeToId[normalized]) return gradeToId[normalized];
+        
+        const normalized2 = name.replace(/ 0(\d)$/, ' $1'); // e.g., "Primary 01" -> "Primary 1"
+        if (gradeToId[normalized2]) return gradeToId[normalized2];
+
+        const match = masterMappings.Student.find((s: any) => 
+          s.grade && (
+            s.grade.toLowerCase() === name.toLowerCase() ||
+            s.grade.toLowerCase() === normalized.toLowerCase() ||
+            s.grade.toLowerCase() === normalized2.toLowerCase()
+          )
+        );
+        return match ? match.grade_id : "";
       };
       
       const getAcademicYearId = (name: string) => {
@@ -187,7 +209,7 @@ export default function ExportPage() {
         academic_year: row.academic_year,
         enrolled_academic_year_id: getEnrolledAcademicYearId(row.enrolled_academic_year),
         enrolled_academic_year: row.enrolled_academic_year,
-        grade_id: gradeToId[row.grade] || "",
+        grade_id: getGradeId(row.grade) || "",
         grade: row.grade,
         class_id: getClassId(row.grade, row.class),
         class: row.class,
