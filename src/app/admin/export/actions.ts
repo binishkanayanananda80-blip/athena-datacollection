@@ -38,14 +38,43 @@ export async function getParentExportData() {
   const supabase = await createAdminClient()
 
   // Fetch all parent submissions
-  const { data, error } = await supabase
+  const { data: parents, error: parentsError } = await supabase
     .from('parent_submissions')
     .select('*')
     .order('created_at', { ascending: false })
 
-  if (error) {
-    throw new Error(error.message)
+  if (parentsError) {
+    throw new Error(parentsError.message)
+  }
+  
+  if (!parents || parents.length === 0) return []
+
+  // Fetch all students to get branch info
+  const { data: students, error: studentsError } = await supabase
+    .from('student_submissions')
+    .select('admission_no, branch_id, branch_name')
+  
+  if (studentsError) {
+    throw new Error(studentsError.message)
   }
 
-  return data || []
+  // Create a map for quick lookup
+  const studentMap = new Map()
+  students?.forEach(s => {
+    if (s.admission_no) {
+      studentMap.set(s.admission_no, { branch_id: s.branch_id, branch_name: s.branch_name })
+    }
+  })
+
+  // Attach branch info to each parent
+  const enrichedParents = parents.map(p => {
+    const studentInfo = studentMap.get(p.admission_no) || { branch_id: null, branch_name: null }
+    return {
+      branch_id: studentInfo.branch_id,
+      branch_name: studentInfo.branch_name,
+      ...p
+    }
+  })
+
+  return enrichedParents
 }

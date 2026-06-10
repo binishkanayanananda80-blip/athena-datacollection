@@ -20,6 +20,8 @@ export default function ExportPage() {
       const data = await getParentExportData()
       
       const formattedData = data.map((row: any) => ({
+        branch_id: row.branch_id || "",
+        branch_name: row.branch_name || "",
         admission_no: row.admission_no ? `\t${row.admission_no}` : "",
         guardian_type: row.guardian_type,
         nic: row.nic ? `\t${row.nic}` : "",
