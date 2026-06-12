@@ -170,16 +170,29 @@ export async function submitBulkStudentData(records: any[]) {
   const supabase = await createAdminClient()
   
   const results = { successful: 0, failed: 0, errors: [] as string[] }
+  if (!records || records.length === 0) return { success: true, results }
+
+  const branchId = records[0].branch_id;
+  const admissionNumbers = records.map(r => r.admission_no).filter(Boolean);
+
+  let existingSet = new Set<string>();
+  if (admissionNumbers.length > 0) {
+    // Fetch all existing admission numbers for this branch in one go
+    const { data: existingData } = await supabase
+      .from('student_submissions')
+      .select('admission_no')
+      .eq('branch_id', branchId)
+      .in('admission_no', admissionNumbers);
+      
+    if (existingData) {
+      existingData.forEach(d => existingSet.add(d.admission_no.toLowerCase()));
+    }
+  }
+
+  const validRecordsToProcess = [];
 
   for (const record of records) {
-    const { data: existing } = await supabase
-      .from('student_submissions')
-      .select('id')
-      .eq('branch_id', record.branch_id)
-      .ilike('admission_no', record.admission_no)
-      .limit(1)
-
-    if (existing && existing.length > 0) {
+    if (!record.admission_no || existingSet.has(record.admission_no.toLowerCase())) {
       results.failed++
       results.errors.push(`Admission No ${record.admission_no} already exists in this branch.`)
       continue
@@ -197,30 +210,39 @@ export async function submitBulkStudentData(records: any[]) {
       medium: record.medium || 'English',
       nationality: record.nationality || 'Sri Lankan'
     }
+    validRecordsToProcess.push(sanitizedRecord);
+  }
 
-    const parentsToInsert = sanitizedRecord.parents;
-    delete sanitizedRecord.parents;
+  // Process valid records in parallel batches to prevent timeouts and lag
+  const BATCH_SIZE = 50;
+  for (let i = 0; i < validRecordsToProcess.length; i += BATCH_SIZE) {
+    const batch = validRecordsToProcess.slice(i, i + BATCH_SIZE);
+    
+    await Promise.all(batch.map(async (sanitizedRecord) => {
+      const parentsToInsert = sanitizedRecord.parents;
+      delete sanitizedRecord.parents;
 
-    const { error } = await supabase
-      .from('student_submissions')
-      .insert([sanitizedRecord])
+      const { error } = await supabase
+        .from('student_submissions')
+        .insert([sanitizedRecord])
 
-    if (error) {
-      results.failed++
-      results.errors.push(`Failed for ${record.admission_no}: ${error.message}`)
-    } else {
-      // Insert parents if they exist
-      if (parentsToInsert && parentsToInsert.length > 0) {
-        const parentRecords = parentsToInsert.map((p: any) => ({
-          ...p,
-          admission_no: record.admission_no
-        }));
+      if (error) {
+        results.failed++
+        results.errors.push(`Failed for ${sanitizedRecord.admission_no}: ${error.message}`)
+      } else {
+        // Insert parents if they exist
+        if (parentsToInsert && parentsToInsert.length > 0) {
+          const parentRecords = parentsToInsert.map((p: any) => ({
+            ...p,
+            admission_no: sanitizedRecord.admission_no
+          }));
+          
+          await supabase.from('parent_submissions').insert(parentRecords);
+        }
         
-        await supabase.from('parent_submissions').insert(parentRecords);
+        results.successful++
       }
-      
-      results.successful++
-    }
+    }));
   }
 
   return { success: true, results }
