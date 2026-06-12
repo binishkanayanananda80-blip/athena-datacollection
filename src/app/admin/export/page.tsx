@@ -162,10 +162,15 @@ export default function ExportPage() {
 
         if (!actualClass) return "";
         if (classToId[actualClass]) return classToId[actualClass];
+        
+        // Strip suffixes like -1 from classes
+        const strippedClass = actualClass.replace(/-\d+$/, "").trim();
+        if (classToId[strippedClass]) return classToId[strippedClass];
+
         if (!actualGrade) return "";
         
         let prefix = "";
-        const normGrade = actualGrade.toLowerCase().replace(/kingdergarten/g, "kindergarten");
+        const normGrade = actualGrade.toLowerCase().replace(/kingdergarten/g, "kindergarten").replace(/-\d+$/, "").trim();
         if (normGrade.includes("kindergarten 1")) prefix = "KG 1";
         else if (normGrade.includes("kindergarten 2")) prefix = "KG 2";
         else if (normGrade.includes("primary 01") || normGrade.includes("primary 1")) prefix = "1";
@@ -181,21 +186,37 @@ export default function ExportPage() {
           if (classToId[`${prefix}${actualClass}`]) return classToId[`${prefix}${actualClass}`];
         }
         
-        const match = masterMappings.Student.find((s: any) => s.class && s.class.endsWith(actualClass));
+        const match = masterMappings.Student.find((s: any) => s.class && (s.class.endsWith(actualClass) || s.class.endsWith(strippedClass)));
         return match ? match.class_id : "";
       };
 
       const getGradeId = (name: string, cls: string) => {
         if (!name && cls) name = cls;
         if (!name) return "";
+        
+        // Fix typos and strip suffixes like "-1" or "-2"
         name = name.replace(/kingdergarten/ig, "Kindergarten");
+        name = name.replace(/-\d+$/, "").trim();
+        
+        // Normalize "Form 3" -> "Form 03", "Grade 9" -> "Grade 09", etc.
+        name = name.replace(/(\bForm|\bGrade|\bPrimary)\s+(\d)$/i, '$1 0$2');
+        name = name.replace(/(\bForm|\bGrade|\bPrimary)(\d)$/i, '$1 0$2');
+        
+        // Hardcode missing Form IDs that don't exist in mappings.json
+        const fallbackGradeIds: Record<string, number> = {
+           "form 03": 11,
+           "form 04": 12,
+           "form 05": 13
+        };
+        const normName = name.toLowerCase();
+        if (fallbackGradeIds[normName]) return fallbackGradeIds[normName];
         
         if (gradeToId[name]) return gradeToId[name];
         
-        const normalized = name.replace(/ (\d)$/, ' 0$1'); // e.g., "Primary 1" -> "Primary 01"
+        const normalized = name.replace(/ (\d)$/, ' 0$1'); 
         if (gradeToId[normalized]) return gradeToId[normalized];
         
-        const normalized2 = name.replace(/ 0(\d)$/, ' $1'); // e.g., "Primary 01" -> "Primary 1"
+        const normalized2 = name.replace(/ 0(\d)$/, ' $1'); 
         if (gradeToId[normalized2]) return gradeToId[normalized2];
 
         const match = masterMappings.Student.find((s: any) => 
@@ -208,7 +229,10 @@ export default function ExportPage() {
         if (match && match.grade_id) return match.grade_id;
 
         // Fallback: If it's a Local Syllabus grade (e.g. "Grade 11") that only has a class_id in mappings.json
-        const classMatch = masterMappings.Student.find((s: any) => s.class && s.class.toLowerCase() === name.toLowerCase());
+        const classMatch = masterMappings.Student.find((s: any) => s.class && (
+            s.class.toLowerCase() === name.toLowerCase() || 
+            s.class.toLowerCase() === normalized.toLowerCase()
+        ));
         return classMatch ? (classMatch.grade_id || classMatch.class_id || "") : "";
       };
       
