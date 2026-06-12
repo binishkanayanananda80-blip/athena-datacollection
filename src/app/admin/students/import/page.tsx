@@ -142,7 +142,7 @@ export default function StudentImportPage() {
                findKey(row, ['last name', 'lname', 'surname'])
              );
              let fName = studentNameParts.fName;
-             let mName = findKey(row, ['middle name', 'mname']) || studentNameParts.mName;
+             let mName = findKey(row, ['middle name', 'mname', 'second name', 'sname', 'secondname']) || studentNameParts.mName;
              let lName = studentNameParts.lName;
 
              const fatherNameParts = splitName(
@@ -429,6 +429,7 @@ export default function StudentImportPage() {
                   <tr className="border-b bg-muted/50 text-left">
                     <th className="p-3 font-medium">Admission No</th>
                     <th className="p-3 font-medium">First Name</th>
+                    <th className="p-3 font-medium">Middle Name</th>
                     <th className="p-3 font-medium">Last Name</th>
                     <th className="p-3 font-medium">Gender</th>
                     <th className="p-3 font-medium">Grade</th>
@@ -441,6 +442,7 @@ export default function StudentImportPage() {
                     <tr key={i} className="border-b">
                       <td className="p-3">{row.admission_no}</td>
                       <td className="p-3">{row.first_name}</td>
+                      <td className="p-3">{row.middle_name}</td>
                       <td className="p-3">{row.last_name}</td>
                       <td className="p-3">{row.gender}</td>
                       <td className="p-3">{row.grade}</td>
