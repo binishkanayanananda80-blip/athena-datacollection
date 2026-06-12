@@ -168,7 +168,7 @@ export default function StudentImportPage() {
              return {
                 branch_id: parseInt(selectedBranch),
                 branch_name,
-                category_master_id: parseInt(selectedCategory),
+                category_master_id: null,
                 curriculum_name,
                 admission_no: findKey(row, ['admission no', 'admission number', 'admissionno']),
                 first_name: fName,
@@ -270,7 +270,7 @@ export default function StudentImportPage() {
               csvData: text,
               branch_id: parseInt(selectedBranch),
               branch_name,
-              category_master_id: parseInt(selectedCategory),
+              category_master_id: null,
               curriculum_name
             })
           })
