@@ -160,7 +160,7 @@ export default function ExportPage() {
         if (!grade) return "";
         
         let prefix = "";
-        const normGrade = grade.toLowerCase();
+        const normGrade = grade.toLowerCase().replace(/kingdergarten/g, "kindergarten");
         if (normGrade.includes("kindergarten 1")) prefix = "KG 1";
         else if (normGrade.includes("kindergarten 2")) prefix = "KG 2";
         else if (normGrade.includes("primary 01") || normGrade.includes("primary 1")) prefix = "1";
@@ -182,6 +182,8 @@ export default function ExportPage() {
 
       const getGradeId = (name: string) => {
         if (!name) return "";
+        name = name.replace(/kingdergarten/ig, "Kindergarten");
+        
         if (gradeToId[name]) return gradeToId[name];
         
         const normalized = name.replace(/ (\d)$/, ' 0$1'); // e.g., "Primary 1" -> "Primary 01"
