@@ -264,7 +264,7 @@ export default function ExportPage() {
         academic_year: row.academic_year,
         enrolled_academic_yr: getEnrolledAcademicYearId(row.enrolled_academic_yr),
         enrolled_academic_year: row.enrolled_academic_yr,
-        grade_id: getGradeId(row.grade) || "",
+        grade_id: getGradeId(row.grade, row.class) || "",
         grade: row.grade,
         class_id: getClassId(row.grade, row.class),
         class: row.class,
