@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label"
 import Papa from "papaparse"
 
 import masterMappings from "@/lib/mappings.json"
+import { getMappedIds } from "@/lib/id-mapper"
 
 export default function ExportPage() {
   const [isExporting, setIsExporting] = useState(false)
@@ -269,31 +270,39 @@ export default function ExportPage() {
         return age >= 0 ? age : 0;
       };
       
-      const formattedData = data.map((row: any) => ({
-        branch_id: row.branch_id || "",
-        branch_name: row.branch_name,
-        admission_no: row.admission_no ? `\t${row.admission_no}` : "",
-        first_name: row.first_name,
-        middle_name: row.middle_name || "",
-        last_name: row.last_name,
-        gender: row.gender,
-        dob: row.dob,
-        age: calculateAge(row.dob),
-        date_of_admission: row.date_of_admission,
-        student_type_id: row.student_type?.toLowerCase() === 'local' ? 1 : (row.student_type?.toLowerCase() === 'international' ? 2 : ""),
-        student_type: row.student_type,
-        category_master_id: row.category_master_id || (masterMappings.Curriculums.find((c: any) => c["Curriculum Name"] === row.curriculum_name)?.category_master_id || ""),
-        curriculum: row.curriculum_name,
-        academic_year_id: getAcademicYearId(row.academic_year),
-        academic_year: row.academic_year,
-        enrolled_academic_yr: getEnrolledAcademicYearId(row.enrolled_academic_yr),
-        enrolled_academic_year: row.enrolled_academic_yr,
-        grade_id: getGradeId(row.grade, row.class) || "",
-        grade: row.grade,
-        class_id: getClassId(row.grade, row.class),
-        class: row.class,
-        medium_id: mediumToId[row.medium] || "",
-        medium: row.medium,
+      const formattedData = data.map((row: any) => {
+        // Fallback to our new mapped IDs if the database record doesn't have them yet
+        const mapped = (!row.grade_id || !row.class_id) 
+          ? getMappedIds(row.branch_id, row.grade, row.class)
+          : { section_id: null, section_name: null, grade_id: null, class_id: null };
+
+        return {
+          branch_id: row.branch_id || "",
+          branch_name: row.branch_name,
+          admission_no: row.admission_no ? `\t${row.admission_no}` : "",
+          first_name: row.first_name,
+          middle_name: row.middle_name || "",
+          last_name: row.last_name,
+          gender: row.gender,
+          dob: row.dob,
+          age: calculateAge(row.dob),
+          date_of_admission: row.date_of_admission,
+          student_type_id: row.student_type?.toLowerCase() === 'local' ? 1 : (row.student_type?.toLowerCase() === 'international' ? 2 : ""),
+          student_type: row.student_type,
+          category_master_id: row.category_master_id || (masterMappings.Curriculums.find((c: any) => c["Curriculum Name"] === row.curriculum_name)?.category_master_id || ""),
+          curriculum: row.curriculum_name,
+          academic_year_id: getAcademicYearId(row.academic_year),
+          academic_year: row.academic_year,
+          enrolled_academic_yr: getEnrolledAcademicYearId(row.enrolled_academic_yr),
+          enrolled_academic_year: row.enrolled_academic_yr,
+          section_id: row.section_id || mapped.section_id || "",
+          section_name: row.section_name || mapped.section_name || "",
+          grade_id: row.grade_id || mapped.grade_id || getGradeId(row.grade, row.class) || "",
+          grade: row.grade,
+          class_id: row.class_id || mapped.class_id || getClassId(row.grade, row.class) || "",
+          class: row.class,
+          medium_id: mediumToId[row.medium] || "",
+          medium: row.medium,
         nationality: row.nationality,
         religion: row.religion,
         emergency_contact: row.emergency_contact,

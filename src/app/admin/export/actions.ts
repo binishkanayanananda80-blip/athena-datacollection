@@ -24,7 +24,7 @@ export async function getStudentExportData(branch_name?: string) {
   // Fetch all student submissions, ordered by submitted_at
   let query = supabase
     .from('student_submissions')
-    .select('branch_id, branch_name, admission_no, first_name, middle_name, last_name, gender, dob, age, date_of_admission, student_type, category_master_id, curriculum_name, academic_year, enrolled_academic_yr, grade, class, medium, nationality, religion, emergency_contact, student_lives_with, guardian_type, marital_status, is_living, status')
+    .select('branch_id, branch_name, admission_no, first_name, middle_name, last_name, gender, dob, age, date_of_admission, student_type, category_master_id, curriculum_name, academic_year, enrolled_academic_yr, section_id, section_name, grade_id, grade, class_id, class, medium, nationality, religion, emergency_contact, student_lives_with, guardian_type, marital_status, is_living, status')
     .order('submitted_at', { ascending: false })
 
   if (branch_name) {
