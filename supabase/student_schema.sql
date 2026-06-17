@@ -25,6 +25,10 @@ create table student_submissions (
   grade text not null,
   class text not null,
   
+  section_id integer,
+  grade_id integer,
+  class_id integer,
+  
   medium text not null,
   nationality text not null,
   religion text not null,

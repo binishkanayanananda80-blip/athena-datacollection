@@ -1,6 +1,7 @@
 "use server"
 
 import { createAdminClient, createClient } from "@/lib/supabase/server"
+import { getMappedIds } from "./id-mapper"
 
 export async function checkIsAdmin() {
   const supabase = await createClient()
@@ -125,6 +126,11 @@ export async function submitStudentData(formData: any) {
     return { success: false, error: "A student record already exists with this Admission Number in the selected branch." }
   }
 
+  const { section_id, grade_id, class_id } = getMappedIds(formData.branch_id, formData.grade, formData.class)
+  formData.section_id = section_id
+  formData.grade_id = grade_id
+  formData.class_id = class_id
+
   const { error } = await supabase
     .from('student_submissions')
     .insert([formData])
@@ -199,8 +205,13 @@ export async function submitBulkStudentData(records: any[]) {
     }
 
     // Sanitize record to prevent null constraint violations and format dates
+    const { section_id, grade_id, class_id } = getMappedIds(record.branch_id, record.grade, record.class);
+    
     const sanitizedRecord = {
       ...record,
+      section_id,
+      grade_id,
+      class_id,
       dob: parseDate(record.dob) || '2000-01-01',
       date_of_admission: parseDate(record.date_of_admission) || new Date().toISOString().split('T')[0],
       student_type: record.student_type || 'Local',
