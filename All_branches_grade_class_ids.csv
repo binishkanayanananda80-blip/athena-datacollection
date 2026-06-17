@@ -1,0 +1,432 @@
+﻿branch_id,branch_name,section_id,section_name,grade_id,grade_name,class_id,class_name
+1,Panadura,1,Pre School,1,Play Group,1,Play Group
+1,Panadura,1,Pre School,2,Kindergarten 1,2,1A
+1,Panadura,1,Pre School,2,Kindergarten 1,3,1B
+1,Panadura,1,Pre School,2,Kindergarten 1,4,1C
+1,Panadura,1,Pre School,2,Kindergarten 1,5,1D
+1,Panadura,1,Pre School,2,Kindergarten 1,6,1E
+1,Panadura,1,Pre School,3,Kindergarten 2,7,2A
+1,Panadura,1,Pre School,3,Kindergarten 2,8,2B
+1,Panadura,1,Pre School,3,Kindergarten 2,9,2C
+1,Panadura,1,Pre School,3,Kindergarten 2,10,2D
+1,Panadura,1,Pre School,3,Kindergarten 2,11,2E
+1,Panadura,2,Primary 1-3,4,Primary 01,12,1A
+1,Panadura,2,Primary 1-3,4,Primary 01,13,1B
+1,Panadura,2,Primary 1-3,4,Primary 01,14,1C
+1,Panadura,2,Primary 1-3,4,Primary 01,15,1D
+1,Panadura,2,Primary 1-3,4,Primary 01,16,1E
+1,Panadura,2,Primary 1-3,5,Primary 02,22,2A
+1,Panadura,2,Primary 1-3,5,Primary 02,23,2B
+1,Panadura,2,Primary 1-3,5,Primary 02,24,2C
+1,Panadura,2,Primary 1-3,5,Primary 02,25,2D
+1,Panadura,2,Primary 1-3,5,Primary 02,26,2E
+1,Panadura,2,Primary 1-3,6,Primary 03,27,3A
+1,Panadura,2,Primary 1-3,6,Primary 03,28,3B
+1,Panadura,2,Primary 1-3,6,Primary 03,29,3C
+1,Panadura,2,Primary 1-3,6,Primary 03,30,3D
+1,Panadura,3,Primary 4-5,7,Primary 04,31,4A
+1,Panadura,3,Primary 4-5,7,Primary 04,32,4B
+1,Panadura,3,Primary 4-5,7,Primary 04,33,4C
+1,Panadura,3,Primary 4-5,8,Primary 05,34,5A
+1,Panadura,3,Primary 4-5,8,Primary 05,35,5B
+1,Panadura,3,Primary 4-5,8,Primary 05,36,5C
+1,Panadura,4,Form 1-3,9,Form 01,37,1A
+1,Panadura,4,Form 1-3,9,Form 01,38,1B
+1,Panadura,4,Form 1-3,10,Form 02,39,2A
+1,Panadura,4,Form 1-3,10,Form 02,40,2B
+1,Panadura,4,Form 1-3,11,Form 03,41,3A
+1,Panadura,4,Form 1-3,11,Form 03,42,3B
+1,Panadura,5,Form 4-7,12,Form 04,43,Science A
+1,Panadura,5,Form 4-7,12,Form 04,44,Science B
+1,Panadura,5,Form 4-7,12,Form 04,45,Commerce
+1,Panadura,5,Form 4-7,13,Form 05,46,Science
+1,Panadura,5,Form 4-7,13,Form 05,47,Commerce
+1,Panadura,5,Form 4-7,14,Form 06,48,Science
+1,Panadura,5,Form 4-7,14,Form 06,49,Commerce
+1,Panadura,5,Form 4-7,15,Form 07,50,Science
+1,Panadura,10,Form 4-7,34,Grade 09,99,Grade 09
+1,Panadura,10,Form 4-7,35,Grade 10,100,Grade 10
+1,Panadura,10,Form 4-7,36,Grade 12,101,Grade 12
+2,Galle,11,Pre School,37,Play Group,102,Play Group
+2,Galle,11,Pre School,38,Kindergarten 1,103,1A
+2,Galle,11,Pre School,38,Kindergarten 1,104,1B
+2,Galle,11,Pre School,38,Kindergarten 1,105,1C
+2,Galle,11,Pre School,38,Kindergarten 1,106,1D
+2,Galle,11,Pre School,38,Kindergarten 1,107,1E
+2,Galle,11,Pre School,39,Kindergarten 2,108,2A
+2,Galle,11,Pre School,39,Kindergarten 2,109,2B
+2,Galle,11,Pre School,39,Kindergarten 2,110,2C
+2,Galle,11,Pre School,39,Kindergarten 2,111,2D
+2,Galle,11,Pre School,39,Kindergarten 2,112,2E
+2,Galle,11,Pre School,39,Kindergarten 2,198,2F
+2,Galle,11,Pre School,39,Kindergarten 2,199,2G
+2,Galle,12,Primary 1-3,40,Primary 01,113,1A
+2,Galle,12,Primary 1-3,40,Primary 01,114,1B
+2,Galle,12,Primary 1-3,40,Primary 01,115,1C
+2,Galle,12,Primary 1-3,40,Primary 01,116,1D
+2,Galle,12,Primary 1-3,40,Primary 01,117,1E
+2,Galle,12,Primary 1-3,40,Primary 01,200,1F
+2,Galle,12,Primary 1-3,41,Primary 02,118,2A
+2,Galle,12,Primary 1-3,41,Primary 02,119,2B
+2,Galle,12,Primary 1-3,41,Primary 02,120,2C
+2,Galle,12,Primary 1-3,41,Primary 02,121,2D
+2,Galle,12,Primary 1-3,41,Primary 02,122,2E
+2,Galle,12,Primary 1-3,42,Primary 03,123,3A
+2,Galle,12,Primary 1-3,42,Primary 03,124,3B
+2,Galle,12,Primary 1-3,42,Primary 03,125,3C
+2,Galle,12,Primary 1-3,42,Primary 03,126,3D
+2,Galle,12,Primary 1-3,42,Primary 03,201,3E
+2,Galle,13,Primary 4-5,43,Primary 04,127,4A
+2,Galle,13,Primary 4-5,43,Primary 04,128,4B
+2,Galle,13,Primary 4-5,44,Primary 05,130,5A
+2,Galle,13,Primary 4-5,44,Primary 05,131,5B
+2,Galle,14,Form 1-3,45,Form 01,133,1A
+2,Galle,14,Form 1-3,45,Form 01,134,1B
+2,Galle,14,Form 1-3,45,Form 01,227,1C
+2,Galle,14,Form 1-3,45,Form 01,228,1D
+2,Galle,14,Form 1-3,45,Form 01,229,1E
+2,Galle,14,Form 1-3,45,Form 01,230,1F
+2,Galle,14,Form 1-3,46,Form 02,135,2A
+2,Galle,14,Form 1-3,46,Form 02,136,2B
+2,Galle,14,Form 1-3,46,Form 02,231,2C
+2,Galle,14,Form 1-3,46,Form 02,232,2D
+2,Galle,14,Form 1-3,46,Form 02,233,2E
+2,Galle,14,Form 1-3,47,Form 03,137,3A
+2,Galle,14,Form 1-3,47,Form 03,234,3B
+2,Galle,14,Form 1-3,47,Form 03,236,3C
+2,Galle,14,Form 1-3,47,Form 03,237,3D
+2,Galle,14,Form 1-3,47,Form 03,238,3E
+2,Galle,15,Form 4-7,48,Form 04,139,Science A
+2,Galle,15,Form 4-7,48,Form 04,140,Science B
+2,Galle,15,Form 4-7,49,Form 05,142,Science
+2,Galle,15,Form 4-7,50,Form 06,144,Science
+2,Galle,15,Form 4-7,51,Form 07,146,Science
+3,Homagama,21,Pre School,73,Play Group,202,PG A
+3,Homagama,21,Pre School,73,Play Group,203,PG B
+3,Homagama,21,Pre School,74,Kindergarten 1,204,1A
+3,Homagama,21,Pre School,74,Kindergarten 1,205,1B
+3,Homagama,21,Pre School,74,Kindergarten 1,206,1C
+3,Homagama,21,Pre School,74,Kindergarten 1,207,1D
+3,Homagama,21,Pre School,75,Kindergarten 2,208,2A
+3,Homagama,21,Pre School,75,Kindergarten 2,209,2B
+3,Homagama,21,Pre School,75,Kindergarten 2,210,2C
+3,Homagama,21,Pre School,75,Kindergarten 2,211,2D
+3,Homagama,22,Primary 1-3,76,Primary 01,212,P1
+4,Malabe,24,Pre School,77,Play Group,213,Play Group
+4,Malabe,24,Pre School,78,Kindergarten 1,214,1A
+4,Malabe,24,Pre School,78,Kindergarten 1,215,1B
+4,Malabe,24,Pre School,79,Kindergarten 2,216,2A
+4,Malabe,24,Pre School,79,Kindergarten 2,217,2B
+4,Malabe,81,Primary 1-3,204,Primary 01,444,1A
+5,Maggona,25,Pre School,80,Play Group,218,Play Group
+5,Maggona,25,Pre School,81,Kindergarten 1,219,1A
+5,Maggona,25,Pre School,81,Kindergarten 1,220,1B
+5,Maggona,25,Pre School,81,Kindergarten 1,226,1C
+5,Maggona,25,Pre School,82,Kindergarten 2,221,2A
+5,Maggona,25,Pre School,82,Kindergarten 2,222,2B
+6,Boralesgamuwa,26,Pre School,83,Play Group,223,Play Group
+6,Boralesgamuwa,26,Pre School,84,Kindergarten 1,224,1A
+6,Boralesgamuwa,26,Pre School,85,Kindergarten 2,225,2A
+7,Matara,27,Pre School,86,Play Group,239,Play Group
+7,Matara,27,Pre School,86,Play Group,499,KG 1E
+7,Matara,27,Pre School,86,Play Group,503,KG 1I
+7,Matara,27,Pre School,87,Kindergarten 1,370,KG 1A
+7,Matara,27,Pre School,87,Kindergarten 1,371,KG 1B
+7,Matara,27,Pre School,87,Kindergarten 1,496,KG 1C
+7,Matara,27,Pre School,87,Kindergarten 1,497,KG 1D
+7,Matara,27,Pre School,87,Kindergarten 1,498,KG 1E
+7,Matara,27,Pre School,87,Kindergarten 1,500,KG 1F
+7,Matara,27,Pre School,87,Kindergarten 1,501,KG 1G
+7,Matara,27,Pre School,87,Kindergarten 1,502,KG 1H
+7,Matara,27,Pre School,87,Kindergarten 1,504,KG 1J
+7,Matara,27,Pre School,162,Kindergarten 2,505,KG 2A
+7,Matara,27,Pre School,162,Kindergarten 2,506,KG 2B
+7,Matara,27,Pre School,162,Kindergarten 2,507,KG 2C
+7,Matara,27,Pre School,162,Kindergarten 2,508,KG 2D
+7,Matara,27,Pre School,162,Kindergarten 2,509,KG 2E
+7,Matara,27,Pre School,162,Kindergarten 2,510,KG 2F
+7,Matara,27,Pre School,162,Kindergarten 2,516,KG 2G
+7,Matara,27,Pre School,162,Kindergarten 2,518,KG 2H
+7,Matara,27,Pre School,162,Kindergarten 2,520,KG 2I
+7,Matara,27,Pre School,162,Kindergarten 2,523,KG 2J
+7,Matara,27,Pre School,162,Kindergarten 2,525,KG 2K
+7,Matara,27,Pre School,162,Kindergarten 2,526,KG 2L
+7,Matara,27,Pre School,162,Kindergarten 2,527,KG 2M
+7,Matara,28,Primary 1-3,163,Primary 01,528,1A
+7,Matara,28,Primary 1-3,163,Primary 01,529,1B
+7,Matara,28,Primary 1-3,163,Primary 01,530,1C
+7,Matara,28,Primary 1-3,163,Primary 01,531,1D
+7,Matara,28,Primary 1-3,163,Primary 01,532,2E
+7,Matara,28,Primary 1-3,163,Primary 01,533,1F
+7,Matara,28,Primary 1-3,163,Primary 01,534,1G
+7,Matara,28,Primary 1-3,163,Primary 01,535,1H
+7,Matara,28,Primary 1-3,163,Primary 01,536,1I
+7,Matara,28,Primary 1-3,164,Primary 02,537,2A
+7,Matara,28,Primary 1-3,164,Primary 02,538,2B
+7,Matara,28,Primary 1-3,164,Primary 02,539,2C
+7,Matara,28,Primary 1-3,164,Primary 02,540,2D
+7,Matara,28,Primary 1-3,164,Primary 02,541,2E
+7,Matara,28,Primary 1-3,164,Primary 02,542,2F
+7,Matara,28,Primary 1-3,164,Primary 02,543,2G
+7,Matara,28,Primary 1-3,164,Primary 02,544,2H
+7,Matara,28,Primary 1-3,165,Primary 03,545,3A
+7,Matara,28,Primary 1-3,165,Primary 03,546,3B
+7,Matara,28,Primary 1-3,165,Primary 03,547,3C
+7,Matara,28,Primary 1-3,165,Primary 03,548,3D
+7,Matara,28,Primary 1-3,165,Primary 03,549,3E
+7,Matara,28,Primary 1-3,165,Primary 03,550,3F
+7,Matara,28,Primary 1-3,165,Primary 03,552,3G
+7,Matara,29,Primary 4-5,166,Primary 04,553,4A
+7,Matara,29,Primary 4-5,166,Primary 04,554,4B
+7,Matara,29,Primary 4-5,166,Primary 04,555,3C
+7,Matara,29,Primary 4-5,166,Primary 04,556,3D
+7,Matara,29,Primary 4-5,166,Primary 04,557,4E
+7,Matara,29,Primary 4-5,167,Primary 05,558,5A
+7,Matara,29,Primary 4-5,167,Primary 05,559,5B
+7,Matara,29,Primary 4-5,167,Primary 05,560,5C
+7,Matara,29,Primary 4-5,167,Primary 05,561,5D
+7,Matara,30,Form 1-3,168,Form 01,562,1A
+7,Matara,30,Form 1-3,168,Form 01,565,1B
+7,Matara,30,Form 1-3,168,Form 01,566,2C
+7,Matara,30,Form 1-3,169,Form 02,563,1B
+7,Matara,30,Form 1-3,169,Form 02,567,2A
+7,Matara,30,Form 1-3,169,Form 02,568,2B
+7,Matara,30,Form 1-3,169,Form 02,569,2C
+7,Matara,30,Form 1-3,170,Form 03,564,1C
+7,Matara,30,Form 1-3,170,Form 03,570,3A
+7,Matara,30,Form 1-3,170,Form 03,571,3B
+7,Matara,31,Form 4-7,171,Form 04,572,4A
+7,Matara,31,Form 4-7,171,Form 04,573,4B
+7,Matara,31,Form 4-7,172,Form 05,521,1A
+7,Matara,31,Form 4-7,172,Form 05,522,1B
+7,Matara,31,Form 4-7,172,Form 05,524,1C
+7,Matara,31,Form 4-7,173,Form 06,519,1B
+7,Matara,31,Form 4-7,215,Form 07,515,1A
+7,Matara,32,"Grade 09, Grade 10, Grade 11 & Grade 12",212,Grade 11,511,2A
+7,Matara,32,"Grade 09, Grade 10, Grade 11 & Grade 12",212,Grade 11,512,Grade 11
+7,Matara,32,"Grade 09, Grade 10, Grade 11 & Grade 12",213,Grade 10,513,Grade 10
+7,Matara,32,"Grade 09, Grade 10, Grade 11 & Grade 12",214,Grade 09,514,Grade 09
+8,Ambalangoda,33,Pre School,88,Play Group,335,Play Group
+8,Ambalangoda,33,Pre School,89,Kindergarten 1,336,KG 1A
+8,Ambalangoda,33,Pre School,89,Kindergarten 1,337,KG 1B
+8,Ambalangoda,33,Pre School,89,Kindergarten 1,338,KG 1C
+8,Ambalangoda,33,Pre School,89,Kindergarten 1,339,KG 1D
+8,Ambalangoda,33,Pre School,89,Kindergarten 1,340,KG 1E
+8,Ambalangoda,33,Pre School,89,Kindergarten 1,341,KG 1F
+8,Ambalangoda,33,Pre School,90,Kindergarten 2,342,KG 2A
+8,Ambalangoda,33,Pre School,90,Kindergarten 2,343,KG 2B
+8,Ambalangoda,33,Pre School,90,Kindergarten 2,344,KG 2C
+8,Ambalangoda,33,Pre School,90,Kindergarten 2,345,KG 2D
+8,Ambalangoda,33,Pre School,90,Kindergarten 2,346,KG 2E
+8,Ambalangoda,33,Pre School,90,Kindergarten 2,347,KG 2F
+8,Ambalangoda,34,Primary 1-3,91,Primary 01,348,1A
+8,Ambalangoda,34,Primary 1-3,91,Primary 01,349,1B
+8,Ambalangoda,34,Primary 1-3,91,Primary 01,350,1C
+8,Ambalangoda,34,Primary 1-3,91,Primary 01,351,1D
+8,Ambalangoda,34,Primary 1-3,91,Primary 01,352,1E
+8,Ambalangoda,34,Primary 1-3,91,Primary 01,353,1F
+8,Ambalangoda,34,Primary 1-3,92,Primary 02,354,2A
+8,Ambalangoda,34,Primary 1-3,92,Primary 02,355,2B
+8,Ambalangoda,34,Primary 1-3,92,Primary 02,356,2C
+8,Ambalangoda,34,Primary 1-3,92,Primary 02,357,2D
+8,Ambalangoda,34,Primary 1-3,92,Primary 02,358,2E
+8,Ambalangoda,34,Primary 1-3,93,Primary 03,359,3A
+8,Ambalangoda,34,Primary 1-3,93,Primary 03,360,3B
+8,Ambalangoda,34,Primary 1-3,93,Primary 03,361,3C
+8,Ambalangoda,34,Primary 1-3,93,Primary 03,362,3D
+8,Ambalangoda,35,Primary 4-5,94,Primary 04,363,4A
+8,Ambalangoda,35,Primary 4-5,94,Primary 04,364,4B
+8,Ambalangoda,35,Primary 4-5,94,Primary 04,365,4C
+8,Ambalangoda,35,Primary 4-5,95,Primary 05,366,5A
+8,Ambalangoda,35,Primary 4-5,95,Primary 05,367,5B
+8,Ambalangoda,36,Form 1-3,96,Form 01,368,1A
+8,Ambalangoda,36,Form 1-3,96,Form 01,369,1B
+8,Ambalangoda,36,Form 1-3,97,Form 02,372,2A
+8,Ambalangoda,36,Form 1-3,97,Form 02,373,2B
+8,Ambalangoda,36,Form 1-3,98,Form 03,374,3A
+8,Ambalangoda,37,Form 4-7,99,Form 04,394,4A
+8,Ambalangoda,37,Form 4-7,100,Form 05,396,5A
+8,Ambalangoda,38,"Grade 09, Grade 10, Grade 11 & Grade 12",174,Grade 11,397,Grade 11
+9,Tangalle,39,Pre School,101,Play Group,455,Play Group
+9,Tangalle,39,Pre School,102,Kindergarten 1,456,KG 1A
+9,Tangalle,39,Pre School,102,Kindergarten 1,457,KG 1B
+9,Tangalle,39,Pre School,102,Kindergarten 1,458,KG 1C
+9,Tangalle,39,Pre School,102,Kindergarten 1,459,KG 1D
+9,Tangalle,39,Pre School,103,Kindergarten 2,460,KG 2A
+9,Tangalle,39,Pre School,103,Kindergarten 2,461,KG 2B
+9,Tangalle,39,Pre School,103,Kindergarten 2,462,KG 2C
+9,Tangalle,39,Pre School,103,Kindergarten 2,463,KG 2D
+9,Tangalle,39,Pre School,103,Kindergarten 2,464,KG 2E
+9,Tangalle,39,Pre School,103,Kindergarten 2,465,KG 2F
+9,Tangalle,40,Primary 1-3,104,Primary 01,466,1A
+9,Tangalle,40,Primary 1-3,104,Primary 01,467,1B
+9,Tangalle,40,Primary 1-3,104,Primary 01,468,1C
+9,Tangalle,40,Primary 1-3,104,Primary 01,469,1D
+9,Tangalle,40,Primary 1-3,104,Primary 01,470,1E
+9,Tangalle,40,Primary 1-3,104,Primary 01,471,1F
+9,Tangalle,40,Primary 1-3,105,Primary 02,472,2A
+9,Tangalle,40,Primary 1-3,105,Primary 02,473,2B
+9,Tangalle,40,Primary 1-3,105,Primary 02,474,2C
+9,Tangalle,40,Primary 1-3,105,Primary 02,475,2D
+9,Tangalle,40,Primary 1-3,105,Primary 02,476,2E
+9,Tangalle,40,Primary 1-3,106,Primary 03,477,3A
+9,Tangalle,40,Primary 1-3,106,Primary 03,478,3B
+9,Tangalle,40,Primary 1-3,106,Primary 03,479,3C
+9,Tangalle,40,Primary 1-3,106,Primary 03,480,3D
+9,Tangalle,41,Primary 4-5,107,Primary 04,481,4A
+9,Tangalle,41,Primary 4-5,107,Primary 04,482,4B
+9,Tangalle,41,Primary 4-5,107,Primary 04,483,4C
+9,Tangalle,41,Primary 4-5,107,Primary 04,484,4D
+9,Tangalle,41,Primary 4-5,205,Primary 05,485,5A
+9,Tangalle,41,Primary 4-5,205,Primary 05,486,5B
+9,Tangalle,42,Form 1-3,206,Form 01,487,1A
+9,Tangalle,42,Form 1-3,206,Form 01,488,1B
+9,Tangalle,42,Form 1-3,207,Form 02,489,2A
+9,Tangalle,42,Form 1-3,207,Form 02,490,2B
+9,Tangalle,42,Form 1-3,208,Form 03,491,3A
+9,Tangalle,42,Form 1-3,208,Form 03,492,3B
+9,Tangalle,43,Form 4-7,209,Form 04,493,4A
+9,Tangalle,43,Form 4-7,209,Form 04,494,4B
+9,Tangalle,43,Form 4-7,210,Form 05,495,5A
+10,Tissamaharama,62,Pre School,151,Play Group,380,Play Group
+10,Tissamaharama,62,Pre School,152,Kindergarten 1,377,KG 1A
+10,Tissamaharama,62,Pre School,152,Kindergarten 1,378,KG 1B
+10,Tissamaharama,62,Pre School,152,Kindergarten 1,379,KG 1C
+10,Tissamaharama,62,Pre School,153,Kindergarten 2,306,KG 2A
+10,Tissamaharama,62,Pre School,153,Kindergarten 2,375,KG 2B
+10,Tissamaharama,62,Pre School,153,Kindergarten 2,376,KG 2C
+10,Tissamaharama,63,Primary 1-3,154,Primary 01,381,1A
+10,Tissamaharama,63,Primary 1-3,154,Primary 01,382,1B
+10,Tissamaharama,63,Primary 1-3,154,Primary 01,383,1C
+10,Tissamaharama,63,Primary 1-3,155,Primary 02,384,2A
+10,Tissamaharama,63,Primary 1-3,155,Primary 02,385,2B
+10,Tissamaharama,63,Primary 1-3,155,Primary 02,386,2C
+10,Tissamaharama,63,Primary 1-3,156,Primary 03,387,3A
+10,Tissamaharama,63,Primary 1-3,156,Primary 03,388,3B
+10,Tissamaharama,63,Primary 1-3,156,Primary 03,389,3C
+10,Tissamaharama,64,Primary 4-5,157,Primary 04,390,4A
+10,Tissamaharama,64,Primary 4-5,158,Primary 05,391,5A
+10,Tissamaharama,65,Form 1-3,159,Form 01,392,1A
+10,Tissamaharama,65,Form 1-3,160,Form 02,393,2A
+10,Tissamaharama,65,Form 1-3,161,Form 03,395,3A
+10,Tissamaharama,66,Form 4-7,175,Form 04,398,4A
+10,Tissamaharama,73,"Grade 09, Grade 10, Grade 11 & Grade 12",176,Grade 09,399,Grade 09
+10,Tissamaharama,73,"Grade 09, Grade 10, Grade 11 & Grade 12",177,Grade 10,400,Grade 10
+10,Tissamaharama,73,"Grade 09, Grade 10, Grade 11 & Grade 12",178,Grade 11,401,Grade 11
+11,Embilipitiya,78,Pre School,196,Play Group,440,Play Group
+11,Embilipitiya,78,Pre School,197,Kindergarten 1,441,KG 1B
+11,Embilipitiya,78,Pre School,197,Kindergarten 1,442,KG 1C
+11,Embilipitiya,78,Pre School,197,Kindergarten 1,443,KG 1A
+11,Embilipitiya,78,Pre School,198,Kindergarten 2,445,KG 2A
+11,Embilipitiya,78,Pre School,198,Kindergarten 2,446,KG 2B
+11,Embilipitiya,78,Pre School,198,Kindergarten 2,447,KG 2C
+11,Embilipitiya,78,Pre School,198,Kindergarten 2,448,KG 2D
+11,Embilipitiya,78,Pre School,198,Kindergarten 2,449,KG 2E
+11,Embilipitiya,79,Primary 1-3,199,Primary 01,450,1A
+11,Embilipitiya,79,Primary 1-3,200,Primary 02,451,2A
+11,Embilipitiya,79,Primary 1-3,201,Primary 03,452,3A
+11,Embilipitiya,80,Primary 4-5,202,Primary 04,453,4A
+11,Embilipitiya,80,Primary 4-5,203,Primary 05,454,5A
+12,Matugama,60,Pre School,146,Play Group,293,Play Group
+12,Matugama,60,Pre School,147,Kindergarten 1,294,KG 1A
+12,Matugama,60,Pre School,147,Kindergarten 1,295,KG 1B
+12,Matugama,60,Pre School,147,Kindergarten 1,413,KG 1C
+12,Matugama,60,Pre School,147,Kindergarten 1,414,KG 1D
+12,Matugama,60,Pre School,148,Kindergarten 2,415,KG 2A
+12,Matugama,60,Pre School,148,Kindergarten 2,416,KG 2B
+12,Matugama,60,Pre School,148,Kindergarten 2,417,KG 2C
+12,Matugama,60,Pre School,148,Kindergarten 2,418,KG 2D
+12,Matugama,61,Primary 1-3,149,Primary 01,420,1A
+12,Matugama,61,Primary 1-3,149,Primary 01,421,1B
+12,Matugama,61,Primary 1-3,149,Primary 01,422,1C
+12,Matugama,61,Primary 1-3,150,Primary 02,423,2A
+12,Matugama,61,Primary 1-3,150,Primary 02,424,2B
+12,Matugama,61,Primary 1-3,193,Primary 03,426,3A
+12,Matugama,61,Primary 1-3,193,Primary 03,428,3B
+12,Matugama,77,Primary 4-5,194,Primary 04,430,4A
+12,Matugama,77,Primary 4-5,195,Primary 05,432,5A
+13,Horana,54,Pre School,131,Play Group,265,Play Group
+13,Horana,54,Pre School,132,Kindergarten 1,266,KG 1A
+13,Horana,54,Pre School,132,Kindergarten 1,267,KG 1B
+13,Horana,54,Pre School,132,Kindergarten 1,268,KG 1C
+13,Horana,54,Pre School,132,Kindergarten 1,269,KG 1D
+13,Horana,54,Pre School,133,Kindergarten 2,270,KG 2A
+13,Horana,54,Pre School,133,Kindergarten 2,271,KG 2B
+13,Horana,54,Pre School,133,Kindergarten 2,272,KG 2C
+13,Horana,54,Pre School,133,Kindergarten 2,273,KG 2D
+13,Horana,55,Primary 1-3,134,Primary 01,274,1A
+13,Horana,55,Primary 1-3,134,Primary 01,275,1B
+13,Horana,55,Primary 1-3,135,Primary 02,276,2A
+13,Horana,55,Primary 1-3,135,Primary 02,277,2B
+13,Horana,55,Primary 1-3,135,Primary 02,278,2C
+13,Horana,55,Primary 1-3,136,Primary 03,279,3A
+13,Horana,55,Primary 1-3,136,Primary 03,280,3B
+13,Horana,55,Primary 1-3,136,Primary 03,281,3C
+13,Horana,56,Primary 4-5,137,Primary 04,282,4A
+13,Horana,56,Primary 4-5,137,Primary 04,283,4B
+13,Horana,56,Primary 4-5,138,Primary 05,284,5A
+13,Horana,56,Primary 4-5,138,Primary 05,285,5B
+13,Horana,57,Form 1-3,139,Form 01,286,1A
+13,Horana,57,Form 1-3,139,Form 01,287,1B
+13,Horana,57,Form 1-3,140,Form 02,288,2A
+13,Horana,57,Form 1-3,141,Form 03,289,3A
+13,Horana,58,Form 4-7,142,Form 04,290,4A
+13,Horana,58,Form 4-7,143,Form 05,291,5A
+13,Horana,59,"Grade 09, Grade 10, Grade 11 & Grade 12",145,Grade 11,292,Grade 11
+14,Bandaragama,74,Pre School,185,Play Group,408,Play Group
+14,Bandaragama,74,Pre School,186,Kindergarten 1,410,KG 1A
+14,Bandaragama,74,Pre School,186,Kindergarten 1,411,KG 1B
+14,Bandaragama,74,Pre School,186,Kindergarten 1,412,KG 1C
+14,Bandaragama,74,Pre School,186,Kindergarten 1,419,KG 1D
+14,Bandaragama,74,Pre School,187,Kindergarten 2,425,KG 2A
+14,Bandaragama,74,Pre School,187,Kindergarten 2,427,KG 2B
+14,Bandaragama,74,Pre School,187,Kindergarten 2,429,KG 2C
+14,Bandaragama,75,Primary 1-3,188,Primary 01,431,1A
+14,Bandaragama,75,Primary 1-3,188,Primary 01,434,1B
+14,Bandaragama,75,Primary 1-3,189,Primary 02,433,2B
+14,Bandaragama,75,Primary 1-3,189,Primary 02,435,2A
+14,Bandaragama,75,Primary 1-3,190,Primary 03,436,3A
+14,Bandaragama,75,Primary 1-3,190,Primary 03,439,3B
+14,Bandaragama,76,Primary 4-5,191,Primary 04,437,4A
+14,Bandaragama,76,Primary 4-5,192,Primary 05,438,5A
+15,Piliyandala,45,Pre School,108,Play Group,240,Play Group
+15,Piliyandala,45,Pre School,109,Kindergarten 1,241,KG 1A
+15,Piliyandala,45,Pre School,109,Kindergarten 1,324,KG 1B
+15,Piliyandala,45,Pre School,109,Kindergarten 1,325,KG 1C
+15,Piliyandala,45,Pre School,109,Kindergarten 1,326,KG 1D
+15,Piliyandala,45,Pre School,110,Kindergarten 2,327,KG 2A
+15,Piliyandala,45,Pre School,110,Kindergarten 2,328,KG 2B
+15,Piliyandala,45,Pre School,110,Kindergarten 2,329,KG 2C
+15,Piliyandala,45,Pre School,110,Kindergarten 2,330,KG 2D
+15,Piliyandala,46,Primary 1-3,111,Primary 01,331,1A
+15,Piliyandala,46,Primary 1-3,111,Primary 01,332,1B
+15,Piliyandala,46,Primary 1-3,112,Primary 02,333,2A
+15,Piliyandala,46,Primary 1-3,112,Primary 02,334,2B
+16,Walgama,67,Pre School,179,Play Group,402,Play Group
+16,Walgama,67,Pre School,180,Kindergarten 1,403,KG 1A
+16,Walgama,67,Pre School,180,Kindergarten 1,404,KG 1B
+16,Walgama,67,Pre School,181,Kindergarten 2,405,KG 2A
+16,Walgama,68,Primary 1-3,183,Primary 01,406,1A
+16,Walgama,68,Primary 1-3,184,Primary 02,407,2A
+18,Maharagama,48,Pre School,116,Play Group,242,PG A
+18,Maharagama,48,Pre School,117,Kindergarten 1,243,KG 1A
+18,Maharagama,48,Pre School,117,Kindergarten 1,244,KG 1B
+18,Maharagama,48,Pre School,117,Kindergarten 1,246,KG 2B
+18,Maharagama,48,Pre School,118,Kindergarten 2,245,KG 2A
+18,Maharagama,48,Pre School,118,Kindergarten 2,247,KG 2C
+18,Maharagama,48,Pre School,118,Kindergarten 2,248,KG 2D
+18,Maharagama,49,Primary 1-3,119,Primary 01,249,1A
+18,Maharagama,49,Primary 1-3,119,Primary 01,250,1B
+18,Maharagama,49,Primary 1-3,120,Primary 02,251,2A
+18,Maharagama,49,Primary 1-3,120,Primary 02,252,2B
+18,Maharagama,49,Primary 1-3,121,Primary 03,253,3A
+18,Maharagama,49,Primary 1-3,121,Primary 03,254,3B
+18,Maharagama,49,Primary 1-3,121,Primary 03,255,3C
+18,Maharagama,50,Primary 4-5,122,Primary 04,256,4A
+18,Maharagama,50,Primary 4-5,122,Primary 04,257,4B
+18,Maharagama,50,Primary 4-5,123,Primary 05,258,5A
+18,Maharagama,51,Form 1-3,124,Form 01,259,1A
+18,Maharagama,51,Form 1-3,124,Form 01,260,1B
+18,Maharagama,51,Form 1-3,125,Form 02,261,2A
+18,Maharagama,52,Form 4-7,127,Form 04,262,4A
+18,Maharagama,53,"Grade 09, Grade 10, Grade 11 & Grade 12",128,Grade 09,263,Grade 09

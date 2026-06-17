@@ -126,8 +126,9 @@ export async function submitStudentData(formData: any) {
     return { success: false, error: "A student record already exists with this Admission Number in the selected branch." }
   }
 
-  const { section_id, grade_id, class_id } = getMappedIds(formData.branch_id, formData.grade, formData.class)
+  const { section_id, section_name, grade_id, class_id } = getMappedIds(formData.branch_id, formData.grade, formData.class)
   formData.section_id = section_id
+  formData.section_name = section_name
   formData.grade_id = grade_id
   formData.class_id = class_id
 
@@ -205,11 +206,12 @@ export async function submitBulkStudentData(records: any[]) {
     }
 
     // Sanitize record to prevent null constraint violations and format dates
-    const { section_id, grade_id, class_id } = getMappedIds(record.branch_id, record.grade, record.class);
+    const { section_id, section_name, grade_id, class_id } = getMappedIds(record.branch_id, record.grade, record.class);
     
     const sanitizedRecord = {
       ...record,
       section_id,
+      section_name,
       grade_id,
       class_id,
       dob: parseDate(record.dob) || '2000-01-01',

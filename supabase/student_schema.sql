@@ -26,6 +26,7 @@ create table student_submissions (
   class text not null,
   
   section_id integer,
+  section_name text,
   grade_id integer,
   class_id integer,
   
