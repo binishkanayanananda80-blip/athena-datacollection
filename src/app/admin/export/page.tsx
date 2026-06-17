@@ -311,7 +311,8 @@ export default function ExportPage() {
         marital_status: row.marital_status,
         is_living: row.is_living,
         status: row.status,
-      }))
+        };
+      })
 
       const csv = Papa.unparse(formattedData)
       
