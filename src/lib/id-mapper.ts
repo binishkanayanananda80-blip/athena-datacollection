@@ -101,12 +101,13 @@ export function getMappedIds(branch_id: number | string, grade: string, classNam
     };
   }
 
-  // If no class match was found, return the grade match
+  // If no class match was found, return the grade match.
+  // If this grade only has exactly ONE class available in this branch (like Play Group), safely assume that's the correct class.
   const fallback = gradeMatches[0];
   return { 
     section_id: fallback.section_id, 
     section_name: fallback.section_name, 
     grade_id: fallback.grade_id, 
-    class_id: null 
+    class_id: gradeMatches.length === 1 ? fallback.class_id : null 
   };
 }
