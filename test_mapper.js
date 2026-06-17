@@ -1,35 +1,12 @@
-import branchMappingsData from './branch-mappings.json';
+const fs = require('fs');
+const branchMappingsData = JSON.parse(fs.readFileSync('src/lib/branch-mappings.json', 'utf8'));
 
-export interface IdMappings {
-  section_id: number | null;
-  section_name: string | null;
-  grade_id: number | null;
-  class_id: number | null;
-}
-
-export interface BranchMappingEntry {
-  branch_id: number;
-  branch_name: string;
-  section_id: number;
-  section_name: string;
-  grade_id: number;
-  grade_name: string;
-  class_id: number;
-  class_name: string;
-}
-
-const mappings: BranchMappingEntry[] = branchMappingsData as BranchMappingEntry[];
-
-/**
- * Maps a branch_id, grade, and className to their respective IDs using the pre-compiled JSON mappings.
- */
-export function getMappedIds(branch_id: number | string, grade: string, className: string): IdMappings {
-  const branchIdNum = typeof branch_id === 'string' ? parseInt(branch_id, 10) : branch_id;
-  
+function getMappedIdsTest(branch_id, grade, className) {
+  const branchIdNum = parseInt(branch_id, 10);
   let normalizedGrade = (grade || "").trim();
   let normalizedClass = (className || "").trim();
 
-  // Normalize grade to handle typos and standard formats
+  // Normalize grade
   normalizedGrade = normalizedGrade.replace(/kingdergarten/ig, "Kindergarten");
   normalizedGrade = normalizedGrade.replace(/-\d+$/, "").trim();
   normalizedGrade = normalizedGrade.replace(/(\bForm|\bGrade|\bPrimary)\s+(\d)$/i, '$1 0$2');
@@ -38,7 +15,7 @@ export function getMappedIds(branch_id: number | string, grade: string, classNam
   const strippedClass = normalizedClass.replace(/-\d+$/, "").trim();
   const lowerGrade = normalizedGrade.toLowerCase();
   
-  // Build common class prefixes based on the grade
+  // Try to generate prefixed classes
   let prefix = "";
   if (lowerGrade.includes("kindergarten 1")) prefix = "KG 1";
   else if (lowerGrade.includes("kindergarten 2")) prefix = "KG 2";
@@ -55,7 +32,6 @@ export function getMappedIds(branch_id: number | string, grade: string, classNam
   else if (lowerGrade.includes("form 04") || lowerGrade.includes("form 4")) prefix = "4";
   else if (lowerGrade.includes("form 05") || lowerGrade.includes("form 5")) prefix = "5";
 
-  // List of possible variations of the class name
   const potentialClasses = [
     normalizedClass,
     strippedClass,
@@ -63,28 +39,25 @@ export function getMappedIds(branch_id: number | string, grade: string, classNam
     prefix ? `${prefix}${normalizedClass}` : null,
     prefix ? `${prefix} ${strippedClass}` : null,
     prefix ? `${prefix}${strippedClass}` : null
-  ].filter(Boolean).map(c => c!.toLowerCase());
+  ].filter(Boolean).map(c => c.toLowerCase());
 
-  // Filter mappings to just the requested branch
-  const branchMappings = mappings.filter(entry => entry.branch_id === branchIdNum);
+  const branchMappings = branchMappingsData.filter(entry => entry.branch_id === branchIdNum);
   
-  // Find grade matches using flexible substring matching
+  // Find grade match
   let gradeMatches = branchMappings.filter(entry => 
     entry.grade_name.toLowerCase() === lowerGrade || 
     entry.grade_name.toLowerCase().includes(lowerGrade) ||
     lowerGrade.includes(entry.grade_name.toLowerCase())
   );
 
-  if (gradeMatches.length === 0) {
-    return { section_id: null, section_name: null, grade_id: null, class_id: null };
-  }
+  if (gradeMatches.length === 0) return null;
 
-  // Find exact class match among the grade matches using our generated potential class combinations
+  // Find exact class match among grade matches
   let classMatch = gradeMatches.find(entry => 
     potentialClasses.includes(entry.class_name.toLowerCase())
   );
 
-  // Fallback: If exact prefix combo doesn't match, check if it ends with the class letter
+  // Fallback: ends with
   if (!classMatch) {
     classMatch = gradeMatches.find(entry => 
       entry.class_name.toLowerCase().endsWith(normalizedClass.toLowerCase()) ||
@@ -93,20 +66,12 @@ export function getMappedIds(branch_id: number | string, grade: string, classNam
   }
 
   if (classMatch) {
-    return {
-      section_id: classMatch.section_id,
-      section_name: classMatch.section_name,
-      grade_id: classMatch.grade_id,
-      class_id: classMatch.class_id
-    };
+    return classMatch;
   }
 
-  // If no class match was found, return the grade match
-  const fallback = gradeMatches[0];
-  return { 
-    section_id: fallback.section_id, 
-    section_name: fallback.section_name, 
-    grade_id: fallback.grade_id, 
-    class_id: null 
-  };
+  return gradeMatches[0]; // fallback to grade only
 }
+
+console.log(getMappedIdsTest(10, 'Kindergart', 'A'));
+console.log(getMappedIdsTest(10, 'Kindergarten 1', 'A'));
+console.log(getMappedIdsTest(1, 'Play Group', 'Play Group'));
