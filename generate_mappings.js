@@ -30,7 +30,18 @@ for (let i = 1; i < lines.length; i++) {
   }
   row.push(currentVal.trim());
   
-  if (row.length === 8) {
+  if (row.length >= 12) {
+    mappings.push({
+      branch_id: parseInt(row[0], 10),
+      branch_name: row[1],
+      section_id: parseInt(row[6], 10),
+      section_name: row[7],
+      grade_id: parseInt(row[8], 10),
+      grade_name: row[9],
+      class_id: parseInt(row[10], 10),
+      class_name: row[11],
+    });
+  } else if (row.length === 8) {
     mappings.push({
       branch_id: parseInt(row[0], 10),
       branch_name: row[1],
