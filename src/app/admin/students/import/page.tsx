@@ -96,7 +96,7 @@ export default function StudentImportPage() {
                 if (nk.includes(np)) {
                   // Prevent short abbreviations from falsely matching longer unrelated words
                   // e.g. 'sname' matching 'classname', 'age' matching 'average', etc.
-                  const exactOnly = ['age', 'dob', 'nic', 'sname', 'mname', 'fname', 'lname', 'doa', 'type', 'year', 'class'];
+                  const exactOnly = ['age', 'dob', 'nic', 'sname', 'mname', 'fname', 'lname', 'doa', 'type', 'year'];
                   if (exactOnly.includes(np)) return false;
 
                   // Prevent 'other' from accidentally matching 'mother'
