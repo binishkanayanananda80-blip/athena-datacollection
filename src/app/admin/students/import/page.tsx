@@ -306,15 +306,35 @@ export default function StudentImportPage() {
 
     setIsSubmitting(true)
     try {
-      const res = await submitBulkStudentData(parsedData)
-      if (res.success) {
-        setImportResult(res.results)
-        toast.success(`Import completed. ${res.results.successful} succeeded, ${res.results.failed} failed.`)
-      } else {
-        toast.error("Failed to submit data")
+      const CHUNK_SIZE = 50;
+      let totalResults = { successful: 0, failed: 0, errors: [] as string[] };
+      let allSuccess = true;
+
+      for (let i = 0; i < parsedData.length; i += CHUNK_SIZE) {
+        const chunk = parsedData.slice(i, i + CHUNK_SIZE);
+        const res = await submitBulkStudentData(chunk);
+        if (res.success && res.results) {
+          totalResults.successful += res.results.successful;
+          totalResults.failed += res.results.failed;
+          totalResults.errors.push(...res.results.errors);
+        } else {
+          allSuccess = false;
+        }
       }
-    } catch (error) {
-      toast.error("An error occurred during submission.")
+
+      if (allSuccess) {
+        setImportResult(totalResults)
+        if (totalResults.errors.length > 0) {
+           toast.warning(`Import completed with some errors. ${totalResults.successful} succeeded, ${totalResults.failed} failed.`);
+        } else {
+           toast.success(`Import completed successfully! ${totalResults.successful} students added.`);
+        }
+      } else {
+        toast.error("Failed to submit some chunks of data")
+      }
+    } catch (error: any) {
+      console.error("Submission error:", error);
+      toast.error(`An error occurred during submission: ${error.message || 'Unknown error'}`)
     } finally {
       setIsSubmitting(false)
     }

@@ -252,9 +252,11 @@ export async function submitBulkStudentData(records: any[]) {
             admission_no: sanitizedRecord.admission_no
           }));
           
-          await supabase.from('parent_submissions').insert(parentRecords);
+          const { error: parentError } = await supabase.from('parent_submissions').insert(parentRecords);
+          if (parentError) {
+             results.errors.push(`Failed to insert parents for ${sanitizedRecord.admission_no}: ${parentError.message}`)
+          }
         }
-        
         results.successful++
       }
     }));
