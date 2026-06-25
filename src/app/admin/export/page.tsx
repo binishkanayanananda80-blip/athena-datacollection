@@ -276,6 +276,11 @@ export default function ExportPage() {
         }
         return age >= 0 ? age : 0;
       };
+
+      const branchMap: Record<string, string> = {};
+      branches.forEach(b => {
+        branchMap[b.branch_id.toString()] = b.branch_name;
+      });
       
       const formattedData = data.map((row: any) => {
         const branchName = branchMap[row.branch_id?.toString()] || row.branch_name;
