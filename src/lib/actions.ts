@@ -201,9 +201,11 @@ export async function submitBulkStudentData(records: any[]) {
   for (const record of records) {
     if (!record.admission_no || existingSet.has(record.admission_no.toLowerCase())) {
       results.failed++
-      results.errors.push(`Admission No ${record.admission_no} already exists in this branch.`)
+      results.errors.push(`Admission No ${record.admission_no} already exists in this branch or is duplicated in the file.`)
       continue
     }
+
+    existingSet.add(record.admission_no.toLowerCase());
 
     // Sanitize record to prevent null constraint violations and format dates
     const { section_id, section_name, grade_id, class_id } = getMappedIds(record.branch_id, record.grade, record.class);
