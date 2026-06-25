@@ -10,6 +10,10 @@ export interface IdMappings {
 export interface BranchMappingEntry {
   branch_id: number;
   branch_name: string;
+  category_master_id?: number;
+  category_master_name?: string;
+  academic_year_id?: number;
+  academic_year_name?: string;
   section_id: number;
   section_name: string;
   grade_id: number;
@@ -19,6 +23,23 @@ export interface BranchMappingEntry {
 }
 
 const mappings: BranchMappingEntry[] = branchMappingsData as BranchMappingEntry[];
+
+export function getAcademicYearIdForBranch(branch_id: number | string, yearName: string): number | null {
+  const branchIdNum = typeof branch_id === 'string' ? parseInt(branch_id, 10) : branch_id;
+  const normalizedYear = (yearName || "").trim();
+  if (!normalizedYear) return null;
+  
+  const match = mappings.find(entry => 
+    entry.branch_id === branchIdNum && 
+    entry.academic_year_name === normalizedYear
+  );
+  
+  if (match && match.academic_year_id) return match.academic_year_id;
+  
+  // fallback without branch_id, just in case
+  const fallback = mappings.find(entry => entry.academic_year_name === normalizedYear);
+  return fallback?.academic_year_id || null;
+}
 
 /**
  * Maps a branch_id, grade, and className to their respective IDs using the pre-compiled JSON mappings.

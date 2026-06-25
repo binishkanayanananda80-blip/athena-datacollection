@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label"
 import Papa from "papaparse"
 
 import masterMappings from "@/lib/mappings.json"
-import { getMappedIds } from "@/lib/id-mapper"
+import { getMappedIds, getAcademicYearIdForBranch } from "@/lib/id-mapper"
 
 export default function ExportPage() {
   const [isExporting, setIsExporting] = useState(false)
@@ -237,8 +237,11 @@ export default function ExportPage() {
         return classMatch ? (classMatch.grade_id || classMatch.class_id || "") : "";
       };
       
-      const getAcademicYearId = (name: string) => {
+      const getAcademicYearId = (name: string, branchId: string | number) => {
         if (!name) return "";
+        const branchMatch = getAcademicYearIdForBranch(branchId, name);
+        if (branchMatch) return branchMatch;
+
         const match = masterMappings.Student.find((s: any) => 
           s["academic year"] === name || 
           s["academic year"]?.trim() === name?.trim() ||
@@ -247,8 +250,11 @@ export default function ExportPage() {
         return match ? match.academic_year_id : "";
       }
 
-      const getEnrolledAcademicYearId = (name: string) => {
+      const getEnrolledAcademicYearId = (name: string, branchId: string | number) => {
         if (!name) return "";
+        const branchMatch = getAcademicYearIdForBranch(branchId, name);
+        if (branchMatch) return branchMatch;
+
         const match = masterMappings.Student.find((s: any) => 
           s["enrolled academic year"] === name || 
           s["enrolled academic year"]?.trim() === name?.trim() ||
@@ -256,6 +262,7 @@ export default function ExportPage() {
         );
         return match ? match.enrolled_academic_year_id : "";
       }
+
 
       const calculateAge = (dobString: string) => {
         if (!dobString) return 0;
@@ -291,9 +298,9 @@ export default function ExportPage() {
           student_type: row.student_type,
           category_master_id: row.category_master_id || (masterMappings.Curriculums.find((c: any) => c["Curriculum Name"] === row.curriculum_name)?.category_master_id || ""),
           curriculum: row.curriculum_name,
-          academic_year_id: getAcademicYearId(row.academic_year),
+          academic_year_id: getAcademicYearId(row.academic_year, row.branch_id),
           academic_year: row.academic_year,
-          enrolled_academic_yr: getEnrolledAcademicYearId(row.enrolled_academic_yr),
+          enrolled_academic_yr: getEnrolledAcademicYearId(row.enrolled_academic_yr, row.branch_id),
           enrolled_academic_year: row.enrolled_academic_yr,
           section_id: row.section_id || mapped.section_id || "",
           section_name: row.section_name || mapped.section_name || "",

@@ -34,6 +34,10 @@ for (let i = 1; i < lines.length; i++) {
     mappings.push({
       branch_id: parseInt(row[0], 10),
       branch_name: row[1],
+      category_master_id: parseInt(row[2], 10),
+      category_master_name: row[3],
+      academic_year_id: parseInt(row[4], 10),
+      academic_year_name: row[5],
       section_id: parseInt(row[6], 10),
       section_name: row[7],
       grade_id: parseInt(row[8], 10),
