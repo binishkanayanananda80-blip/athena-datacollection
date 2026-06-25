@@ -24,15 +24,18 @@ export interface BranchMappingEntry {
 
 const mappings: BranchMappingEntry[] = branchMappingsData as BranchMappingEntry[];
 
-export function getAcademicYearIdForBranch(branch_id: number | string, yearName: string): number | null {
+export function getAcademicYearIdForBranch(branch_id: number | string, yearName: string, branchName?: string): number | null {
   const branchIdNum = typeof branch_id === 'string' ? parseInt(branch_id, 10) : branch_id;
   const normalizedYear = (yearName || "").trim();
   if (!normalizedYear) return null;
   
-  const match = mappings.find(entry => 
-    entry.branch_id === branchIdNum && 
-    entry.academic_year_name === normalizedYear
-  );
+  let branchMappings = mappings.filter(entry => entry.branch_id === branchIdNum);
+  if (branchMappings.length === 0 && branchName) {
+    const normalizedBranchName = branchName.trim().toLowerCase();
+    branchMappings = mappings.filter(entry => entry.branch_name.toLowerCase() === normalizedBranchName);
+  }
+
+  const match = branchMappings.find(entry => entry.academic_year_name === normalizedYear);
   
   if (match && match.academic_year_id) return match.academic_year_id;
   
@@ -44,7 +47,7 @@ export function getAcademicYearIdForBranch(branch_id: number | string, yearName:
 /**
  * Maps a branch_id, grade, and className to their respective IDs using the pre-compiled JSON mappings.
  */
-export function getMappedIds(branch_id: number | string, grade: string, className: string): IdMappings {
+export function getMappedIds(branch_id: number | string, grade: string, className: string, branchName?: string): IdMappings {
   const branchIdNum = typeof branch_id === 'string' ? parseInt(branch_id, 10) : branch_id;
   
   let normalizedGrade = (grade || "").trim();
@@ -52,6 +55,7 @@ export function getMappedIds(branch_id: number | string, grade: string, classNam
 
   // Normalize grade to handle typos and standard formats
   normalizedGrade = normalizedGrade.replace(/kingdergarten/ig, "Kindergarten");
+  normalizedGrade = normalizedGrade.replace(/kindergard.*/ig, "Kindergarten");
   normalizedGrade = normalizedGrade.replace(/-\d+$/, "").trim();
   normalizedGrade = normalizedGrade.replace(/(\bForm|\bGrade|\bPrimary)\s+(\d)$/i, '$1 0$2');
   normalizedGrade = normalizedGrade.replace(/(\bForm|\bGrade|\bPrimary)(\d)$/i, '$1 0$2');
@@ -83,18 +87,48 @@ export function getMappedIds(branch_id: number | string, grade: string, classNam
     prefix ? `${prefix} ${normalizedClass}` : null,
     prefix ? `${prefix}${normalizedClass}` : null,
     prefix ? `${prefix} ${strippedClass}` : null,
-    prefix ? `${prefix}${strippedClass}` : null
+    prefix ? `${prefix}${strippedClass}` : null,
+    normalizedClass.replace(/\s+/g, '')
   ].filter(Boolean).map(c => c!.toLowerCase());
 
   // Filter mappings to just the requested branch
-  const branchMappings = mappings.filter(entry => entry.branch_id === branchIdNum);
-  
+  let branchMappings = mappings.filter(entry => entry.branch_id === branchIdNum);
+  if (branchMappings.length === 0 && branchName) {
+    const normalizedBranchName = branchName.trim().toLowerCase();
+    branchMappings = mappings.filter(entry => entry.branch_name.toLowerCase() === normalizedBranchName);
+  }
+
+  const exactClassMatches = branchMappings.filter(entry => 
+    potentialClasses.includes(entry.class_name.toLowerCase()) || 
+    entry.class_name.toLowerCase() === normalizedClass.toLowerCase().replace(/\s+/g, '')
+  );
+
   // Find grade matches using flexible substring matching
   let gradeMatches = branchMappings.filter(entry => 
     entry.grade_name.toLowerCase() === lowerGrade || 
     entry.grade_name.toLowerCase().includes(lowerGrade) ||
     lowerGrade.includes(entry.grade_name.toLowerCase())
   );
+
+  if (exactClassMatches.length === 1) {
+    const match = exactClassMatches[0];
+    return {
+      section_id: match.section_id,
+      section_name: match.section_name,
+      grade_id: match.grade_id,
+      class_id: match.class_id
+    };
+  } else if (exactClassMatches.length > 1) {
+    const classMatchWithinGrade = exactClassMatches.find(c => gradeMatches.some(g => g.grade_id === c.grade_id));
+    if (classMatchWithinGrade) {
+      return {
+        section_id: classMatchWithinGrade.section_id,
+        section_name: classMatchWithinGrade.section_name,
+        grade_id: classMatchWithinGrade.grade_id,
+        class_id: classMatchWithinGrade.class_id
+      };
+    }
+  }
 
   if (gradeMatches.length === 0) {
     return { section_id: null, section_name: null, grade_id: null, class_id: null };

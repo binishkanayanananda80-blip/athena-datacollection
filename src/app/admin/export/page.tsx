@@ -237,9 +237,9 @@ export default function ExportPage() {
         return classMatch ? (classMatch.grade_id || classMatch.class_id || "") : "";
       };
       
-      const getAcademicYearId = (name: string, branchId: string | number) => {
+      const getAcademicYearId = (name: string, branchId: string | number, branchName?: string) => {
         if (!name) return "";
-        const branchMatch = getAcademicYearIdForBranch(branchId, name);
+        const branchMatch = getAcademicYearIdForBranch(branchId, name, branchName);
         if (branchMatch) return branchMatch;
 
         const match = masterMappings.Student.find((s: any) => 
@@ -250,9 +250,9 @@ export default function ExportPage() {
         return match ? match.academic_year_id : "";
       }
 
-      const getEnrolledAcademicYearId = (name: string, branchId: string | number) => {
+      const getEnrolledAcademicYearId = (name: string, branchId: string | number, branchName?: string) => {
         if (!name) return "";
-        const branchMatch = getAcademicYearIdForBranch(branchId, name);
+        const branchMatch = getAcademicYearIdForBranch(branchId, name, branchName);
         if (branchMatch) return branchMatch;
 
         const match = masterMappings.Student.find((s: any) => 
@@ -278,9 +278,11 @@ export default function ExportPage() {
       };
       
       const formattedData = data.map((row: any) => {
+        const branchName = branchMap[row.branch_id?.toString()] || row.branch_name;
+
         // Fallback to our new mapped IDs if the database record doesn't have them yet
         const mapped = (!row.grade_id || !row.class_id) 
-          ? getMappedIds(row.branch_id, row.grade, row.class)
+          ? getMappedIds(row.branch_id, row.grade, row.class, branchName)
           : { section_id: null, section_name: null, grade_id: null, class_id: null };
 
         return {
@@ -298,9 +300,9 @@ export default function ExportPage() {
           student_type: row.student_type,
           category_master_id: row.category_master_id || (masterMappings.Curriculums.find((c: any) => c["Curriculum Name"] === row.curriculum_name)?.category_master_id || ""),
           curriculum: row.curriculum_name,
-          academic_year_id: getAcademicYearId(row.academic_year, row.branch_id),
+          academic_year_id: getAcademicYearId(row.academic_year, row.branch_id, branchName),
           academic_year: row.academic_year,
-          enrolled_academic_yr: getEnrolledAcademicYearId(row.enrolled_academic_yr, row.branch_id),
+          enrolled_academic_yr: getEnrolledAcademicYearId(row.enrolled_academic_yr, row.branch_id, branchName),
           enrolled_academic_year: row.enrolled_academic_yr,
           section_id: row.section_id || mapped.section_id || "",
           section_name: row.section_name || mapped.section_name || "",

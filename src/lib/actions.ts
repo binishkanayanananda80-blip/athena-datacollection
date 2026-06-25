@@ -208,7 +208,7 @@ export async function submitBulkStudentData(records: any[]) {
     existingSet.add(record.admission_no.toLowerCase());
 
     // Sanitize record to prevent null constraint violations and format dates
-    const { section_id, section_name, grade_id, class_id } = getMappedIds(record.branch_id, record.grade, record.class);
+    const { section_id, section_name, grade_id, class_id } = getMappedIds(record.branch_id, record.grade, record.class, record.branch_name);
     
     const sanitizedRecord = {
       ...record,
