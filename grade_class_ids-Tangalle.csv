@@ -1,0 +1,42 @@
+branch_id,branch_name,category_master_id,category_master_name,academic_year_id,academic_year_name,section_id,section_name,grade_id,grade_name,class_id,class_name
+9,Tangalle,1,Edexcel,11,2025/2026,39,Pre School,101,Play Group,455,Play Group
+9,Tangalle,1,Edexcel,11,2025/2026,39,Pre School,102,Kindergarten 1,456,KG 1A
+9,Tangalle,1,Edexcel,11,2025/2026,39,Pre School,102,Kindergarten 1,457,KG 1B
+9,Tangalle,1,Edexcel,11,2025/2026,39,Pre School,102,Kindergarten 1,458,KG 1C
+9,Tangalle,1,Edexcel,11,2025/2026,39,Pre School,102,Kindergarten 1,459,KG 1D
+9,Tangalle,1,Edexcel,11,2025/2026,39,Pre School,103,Kindergarten 2,460,KG 2A
+9,Tangalle,1,Edexcel,11,2025/2026,39,Pre School,103,Kindergarten 2,461,KG 2B
+9,Tangalle,1,Edexcel,11,2025/2026,39,Pre School,103,Kindergarten 2,462,KG 2C
+9,Tangalle,1,Edexcel,11,2025/2026,39,Pre School,103,Kindergarten 2,463,KG 2D
+9,Tangalle,1,Edexcel,11,2025/2026,39,Pre School,103,Kindergarten 2,464,KG 2E
+9,Tangalle,1,Edexcel,11,2025/2026,39,Pre School,103,Kindergarten 2,465,KG 2F
+9,Tangalle,1,Edexcel,11,2025/2026,40,Primary 1-3,104,Primary 01,466,1A
+9,Tangalle,1,Edexcel,11,2025/2026,40,Primary 1-3,104,Primary 01,467,1B
+9,Tangalle,1,Edexcel,11,2025/2026,40,Primary 1-3,104,Primary 01,468,1C
+9,Tangalle,1,Edexcel,11,2025/2026,40,Primary 1-3,104,Primary 01,469,1D
+9,Tangalle,1,Edexcel,11,2025/2026,40,Primary 1-3,104,Primary 01,470,1E
+9,Tangalle,1,Edexcel,11,2025/2026,40,Primary 1-3,104,Primary 01,471,1F
+9,Tangalle,1,Edexcel,11,2025/2026,40,Primary 1-3,105,Primary 02,472,2A
+9,Tangalle,1,Edexcel,11,2025/2026,40,Primary 1-3,105,Primary 02,473,2B
+9,Tangalle,1,Edexcel,11,2025/2026,40,Primary 1-3,105,Primary 02,474,2C
+9,Tangalle,1,Edexcel,11,2025/2026,40,Primary 1-3,105,Primary 02,475,2D
+9,Tangalle,1,Edexcel,11,2025/2026,40,Primary 1-3,105,Primary 02,476,2E
+9,Tangalle,1,Edexcel,11,2025/2026,40,Primary 1-3,106,Primary 03,477,3A
+9,Tangalle,1,Edexcel,11,2025/2026,40,Primary 1-3,106,Primary 03,478,3B
+9,Tangalle,1,Edexcel,11,2025/2026,40,Primary 1-3,106,Primary 03,479,3C
+9,Tangalle,1,Edexcel,11,2025/2026,40,Primary 1-3,106,Primary 03,480,3D
+9,Tangalle,1,Edexcel,11,2025/2026,41,Primary 4-5,107,Primary 04,481,4A
+9,Tangalle,1,Edexcel,11,2025/2026,41,Primary 4-5,107,Primary 04,482,4B
+9,Tangalle,1,Edexcel,11,2025/2026,41,Primary 4-5,107,Primary 04,483,4C
+9,Tangalle,1,Edexcel,11,2025/2026,41,Primary 4-5,107,Primary 04,484,4D
+9,Tangalle,1,Edexcel,11,2025/2026,41,Primary 4-5,205,Primary 05,485,5A
+9,Tangalle,1,Edexcel,11,2025/2026,41,Primary 4-5,205,Primary 05,486,5B
+9,Tangalle,1,Edexcel,11,2025/2026,42,Form 1-3,206,Form 01,487,1A
+9,Tangalle,1,Edexcel,11,2025/2026,42,Form 1-3,206,Form 01,488,1B
+9,Tangalle,1,Edexcel,11,2025/2026,42,Form 1-3,207,Form 02,489,2A
+9,Tangalle,1,Edexcel,11,2025/2026,42,Form 1-3,207,Form 02,490,2B
+9,Tangalle,1,Edexcel,11,2025/2026,42,Form 1-3,208,Form 03,491,3A
+9,Tangalle,1,Edexcel,11,2025/2026,42,Form 1-3,208,Form 03,492,3B
+9,Tangalle,1,Edexcel,11,2025/2026,43,Form 4-7,209,Form 04,493,4A
+9,Tangalle,1,Edexcel,11,2025/2026,43,Form 4-7,209,Form 04,494,4B
+9,Tangalle,1,Edexcel,11,2025/2026,43,Form 4-7,210,Form 05,495,5A
