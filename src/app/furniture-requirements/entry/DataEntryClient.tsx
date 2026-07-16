@@ -177,7 +177,7 @@ export default function DataEntryClient({ branchId, academicYearId, masterData }
           <div className="space-y-4">
             <div className="space-y-1">
               <label className="text-sm font-medium">Section</label>
-              <Select value={selectedSection} onValueChange={(v) => { setSelectedSection(v); setSelectedGrade(""); setSelectedClass(""); }}>
+              <Select value={selectedSection} onValueChange={(v) => { setSelectedSection(v || ""); setSelectedGrade(""); setSelectedClass(""); }}>
                 <SelectTrigger><SelectValue placeholder="Select Section" /></SelectTrigger>
                 <SelectContent>
                   {masterData.sections.map((s: any) => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}
@@ -186,7 +186,7 @@ export default function DataEntryClient({ branchId, academicYearId, masterData }
             </div>
             <div className="space-y-1">
               <label className="text-sm font-medium">Grade</label>
-              <Select value={selectedGrade} onValueChange={(v) => { setSelectedGrade(v); setSelectedClass(""); }} disabled={!selectedSection}>
+              <Select value={selectedGrade} onValueChange={(v) => { setSelectedGrade(v || ""); setSelectedClass(""); }} disabled={!selectedSection}>
                 <SelectTrigger><SelectValue placeholder="Select Grade" /></SelectTrigger>
                 <SelectContent>
                   {grades.map((g: any) => <SelectItem key={g.id} value={g.id}>{g.name}</SelectItem>)}
@@ -195,7 +195,7 @@ export default function DataEntryClient({ branchId, academicYearId, masterData }
             </div>
             <div className="space-y-1">
               <label className="text-sm font-medium">Class</label>
-              <Select value={selectedClass} onValueChange={setSelectedClass} disabled={!selectedGrade}>
+              <Select value={selectedClass} onValueChange={(v) => setSelectedClass(v || "")} disabled={!selectedGrade}>
                 <SelectTrigger><SelectValue placeholder="Select Class" /></SelectTrigger>
                 <SelectContent>
                   {classes.map((c: any) => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
@@ -207,7 +207,7 @@ export default function DataEntryClient({ branchId, academicYearId, masterData }
           <div className="space-y-4">
             <div className="space-y-1">
               <label className="text-sm font-medium">Location</label>
-              <Select value={selectedLocation} onValueChange={setSelectedLocation}>
+              <Select value={selectedLocation} onValueChange={(v) => setSelectedLocation(v || "")}>
                 <SelectTrigger><SelectValue placeholder="Select Location" /></SelectTrigger>
                 <SelectContent>
                   {masterData.locations.map((l: any) => <SelectItem key={l.id} value={l.id}>{l.name}</SelectItem>)}
