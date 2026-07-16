@@ -2,7 +2,6 @@ import { createClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
 import AdminFurnitureActions from "./AdminFurnitureActions";
 
 export default async function AdminFurnitureDashboard() {
@@ -63,11 +62,17 @@ export default async function AdminFurnitureDashboard() {
                       <TableCell>{reg.full_name}</TableCell>
                       <TableCell>{reg.email}</TableCell>
                       <TableCell>
-                        <Badge 
-                          variant={reg.status === 'Active' ? 'default' : reg.status === 'Pending Approval' ? 'secondary' : 'destructive'}
+                        <span 
+                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${
+                            reg.status === 'Active' 
+                              ? 'bg-green-100 text-green-800' 
+                              : reg.status === 'Pending Approval' 
+                                ? 'bg-yellow-100 text-yellow-800' 
+                                : 'bg-red-100 text-red-800'
+                          }`}
                         >
                           {reg.status}
-                        </Badge>
+                        </span>
                       </TableCell>
                       <TableCell>{new Date(reg.created_at).toLocaleDateString()}</TableCell>
                       <TableCell className="text-right">
