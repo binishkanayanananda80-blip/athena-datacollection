@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createClient, createAdminClient } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -22,8 +22,10 @@ export default async function AdminFurnitureDashboard() {
     redirect("/furniture-requirements/dashboard");
   }
 
-  // Fetch pending branch registrations
-  const { data: registrations } = await supabase
+  // Fetch pending branch registrations using admin client because original admins
+  // aren't in furniture_user_roles and will be blocked by RLS
+  const supabaseAdmin = await createAdminClient();
+  const { data: registrations } = await supabaseAdmin
     .from('furniture_branch_registrations')
     .select('*, branches(branch_name)')
     .order('created_at', { ascending: false });
