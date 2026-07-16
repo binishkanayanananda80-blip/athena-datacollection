@@ -44,12 +44,12 @@ export default function DataEntryClient({ branchId, academicYearId, masterData }
   const applicableCategories = activeTab === "academic" 
     ? masterData.categories.filter((cat: any) => 
         masterData.mappings.some((m: any) => 
-          m.furniture_category_id === cat.id && m.context_type === 'academic_class' && m.context_id === selectedGrade
+          m.category_id === cat.id && m.grade_id === selectedGrade
         )
       )
     : masterData.categories.filter((cat: any) => 
         masterData.mappings.some((m: any) => 
-          m.furniture_category_id === cat.id && m.context_type === 'non_academic_location' && m.context_id === selectedLocation
+          m.category_id === cat.id && m.location_id === selectedLocation
         )
       );
 

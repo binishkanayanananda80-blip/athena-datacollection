@@ -102,7 +102,7 @@ export async function registerBranchUser(formData: {
   }
   
   // 5. Add to user roles as 'branch_user'
-  await supabase.from('furniture_user_roles').insert([{
+  const { error: roleError } = await supabase.from('furniture_user_roles').insert([{
     user_id: userId,
     role: 'branch_user'
   }]);
@@ -186,7 +186,6 @@ export async function loginBranchUser(formData: { identifier: string; password: 
       return { success: false, error: 'Invalid login credentials.' };
     }
     
-    if (userReg.status === 'Pending Approval') return { success: false, error: 'Your account is pending administrator approval.' };
     if (userReg.status === 'Rejected') return { success: false, error: 'Your registration was rejected.' };
     if (userReg.status === 'Deactivated') return { success: false, error: 'Your account has been deactivated.' };
     
@@ -201,7 +200,6 @@ export async function loginBranchUser(formData: { identifier: string; password: 
       .single();
       
     if (userReg) {
-      if (userReg.status === 'Pending Approval') return { success: false, error: 'Your account is pending administrator approval.' };
       if (userReg.status === 'Rejected') return { success: false, error: 'Your registration was rejected.' };
       if (userReg.status === 'Deactivated') return { success: false, error: 'Your account has been deactivated.' };
     }
