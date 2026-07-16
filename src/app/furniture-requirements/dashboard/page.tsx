@@ -18,8 +18,13 @@ import {
 export default async function FurnitureDashboard() {
   const { user, status, registration } = await getCurrentFurnitureUser() || {};
   
-  if (!user || !registration) {
+  if (!user) {
     redirect("/furniture-requirements");
+  }
+
+  if (user && !registration) {
+    // If the user has no branch registration, they are an admin.
+    redirect("/admin/furniture");
   }
 
   const supabase = await createClient();

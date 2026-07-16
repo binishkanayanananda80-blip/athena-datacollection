@@ -17,7 +17,7 @@ export default async function AdminFurnitureDashboard() {
     .eq('user_id', user.id)
     .single();
 
-  if (roleData?.role !== 'super_admin') {
+  if (roleData?.role === 'branch_user') {
     // If a branch user accidentally comes here, redirect them to their module
     redirect("/furniture-requirements/dashboard");
   }
