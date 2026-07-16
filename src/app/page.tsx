@@ -185,6 +185,11 @@ export default function PublicForm() {
           <p className="text-sm md:text-base text-muted-foreground mt-4 max-w-2xl mx-auto">
             Please complete this form accurately. The information collected will be used for the Athena School Management System employee data migration.
           </p>
+          <div className="pt-6">
+            <Link href="/furniture-requirements" className="inline-flex items-center justify-center px-6 py-2.5 bg-slate-900 text-white rounded-lg text-sm font-medium hover:bg-slate-800 transition-colors shadow-sm">
+              Furniture Requirements Module 2026/2027 →
+            </Link>
+          </div>
         </div>
 
         <Card className="border-none shadow-[0_8px_30px_rgb(0,0,0,0.04)] rounded-3xl bg-white overflow-hidden">

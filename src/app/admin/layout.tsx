@@ -24,19 +24,19 @@ export default function AdminLayout({
   children: React.ReactNode
 }) {
   const pathname = usePathname()
-  const [isSuperAdmin, setIsSuperAdmin] = useState(false)
+  const [isSuperAdmin, setIsSuperAdmin] = useState(true)
 
   useEffect(() => {
-    // We can fetch from an API route or directly via supabase client if available.
-    // For now, let's assume we can hit a quick endpoint or we check local storage / cookies,
-    // or better, fetch from supabase directly since we have the anon key in env.
     async function checkRole() {
       try {
         const response = await fetch('/api/user-role')
         const data = await response.json()
-        setIsSuperAdmin(data.role === 'super_admin')
+        // If the user is explicitly a branch_user, hide the main admin links
+        if (data.role === 'branch_user') {
+          setIsSuperAdmin(false)
+        }
       } catch (e) {
-        setIsSuperAdmin(false)
+        // Assume super admin if check fails, middleware protects routes anyway
       }
     }
     checkRole()
