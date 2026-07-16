@@ -33,15 +33,10 @@ import { Checkbox } from "@/components/ui/checkbox";
 const registerSchema = z.object({
   branch_id: z.string().min(1, "Please select a branch."),
   full_name: z.string().min(2, "Full Name is required"),
-  username: z.string().min(3, "Username must be at least 3 characters").regex(/^[a-zA-Z0-9._-]+$/, "Only letters, numbers, dots, hyphens and underscores allowed"),
+  username: z.string().min(1, "Username is required"),
   email: z.string().email("Invalid email address"),
   mobile: z.string().optional(),
-  password: z.string()
-    .min(8, "Password must be at least 8 characters")
-    .regex(/[A-Z]/, "Must contain at least one uppercase letter")
-    .regex(/[a-z]/, "Must contain at least one lowercase letter")
-    .regex(/[0-9]/, "Must contain at least one number")
-    .regex(/[^A-Za-z0-9]/, "Must contain at least one special character"),
+  password: z.string().min(1, "Password is required"),
   confirm_password: z.string(),
   agreement: z.boolean().refine(val => val === true, "You must confirm authorization to register.")
 }).refine((data) => data.password === data.confirm_password, {
@@ -96,7 +91,7 @@ export default function FurnitureAuthPage() {
 
         {activeTab === "register" && (
           <div className="text-center text-xs text-slate-500">
-            Only one authorised user can register for each branch. Your registration will be reviewed by the system administrator.
+            Only one authorised user can register for each branch.
           </div>
         )}
       </div>
@@ -158,9 +153,9 @@ function RegistrationForm() {
         <div className="mx-auto w-12 h-12 rounded-full bg-green-100 flex items-center justify-center">
           <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path></svg>
         </div>
-        <h3 className="text-lg font-medium text-slate-900">Registration Submitted</h3>
+        <h3 className="text-lg font-medium text-slate-900">Registration Complete</h3>
         <p className="text-sm text-slate-500">
-          Your registration has been submitted and is awaiting administrator approval. You will be able to log in once approved.
+          Your account has been created successfully. You can now log in using the Login tab.
         </p>
       </div>
     );

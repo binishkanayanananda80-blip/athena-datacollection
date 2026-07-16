@@ -102,7 +102,7 @@ export async function registerBranchUser(formData: {
       username: username,
       email: email,
       mobile: formData.mobile,
-      status: 'Pending Approval'
+      status: 'Active'
     }]);
 
   if (regError) {
@@ -115,6 +115,12 @@ export async function registerBranchUser(formData: {
   await supabase.from('furniture_user_roles').insert([{
     user_id: userId,
     role: 'branch_user'
+  }]);
+
+  // 6. Assign branch to user automatically
+  await supabase.from('furniture_branch_assignments').insert([{
+    user_id: userId,
+    branch_id: formData.branch_id
   }]);
 
   return { success: true };
