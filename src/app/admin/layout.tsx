@@ -3,7 +3,6 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useEffect, useState } from "react"
-import { createClient } from "@/utils/supabase/client" // Assuming there's a client utility, or I will use another way to check
 import { 
   LayoutDashboard, 
   Users, 
