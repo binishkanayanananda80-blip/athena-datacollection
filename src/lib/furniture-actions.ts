@@ -28,7 +28,7 @@ export async function getAvailableBranchesForRegistration() {
   
   return branches.map(b => ({
     ...b,
-    isAvailable: !registeredIds.has(b.branch_id)
+    isAvailable: true
   }));
 }
 
@@ -49,17 +49,7 @@ export async function registerBranchUser(formData: {
   const email = formData.email.toLowerCase();
   const username = formData.username.toLowerCase();
   
-  // Check if branch is already claimed
-  const { data: existingReg } = await supabase
-    .from('furniture_branch_registrations')
-    .select('id')
-    .eq('branch_id', formData.branch_id)
-    .in('status', ['Pending Approval', 'Active'])
-    .limit(1);
-    
-  if (existingReg && existingReg.length > 0) {
-    return { success: false, error: 'This branch has already been registered.' };
-  }
+  // Removed the check to allow multiple users to register for the same branch
 
   // 2. Check username/email uniqueness in registration table
   const { data: existingUser } = await supabase
