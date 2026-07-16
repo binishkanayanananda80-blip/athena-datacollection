@@ -369,3 +369,33 @@ export async function fetchExistingFormData(academicYearId: string, branchId: nu
 
   return { enrolments, requirements };
 }
+
+// --- Master Data Management ---
+
+export async function addFurnitureCategory(name: string) {
+  const supabase = await createAdminClient();
+  const { data, error } = await supabase.from('furniture_categories').insert([{ name, active: true }]).select().single();
+  if (error) return { success: false, error: error.message };
+  return { success: true, data };
+}
+
+export async function addFurnitureGrade(name: string, section_id: string) {
+  const supabase = await createAdminClient();
+  const { data, error } = await supabase.from('furniture_grades').insert([{ name, section_id, active: true }]).select().single();
+  if (error) return { success: false, error: error.message };
+  return { success: true, data };
+}
+
+export async function addFurnitureClass(name: string, grade_id: string) {
+  const supabase = await createAdminClient();
+  const { data, error } = await supabase.from('furniture_classes').insert([{ name, grade_id, active: true }]).select().single();
+  if (error) return { success: false, error: error.message };
+  return { success: true, data };
+}
+
+export async function addFurnitureLocation(name: string) {
+  const supabase = await createAdminClient();
+  const { data, error } = await supabase.from('furniture_locations').insert([{ name, active: true }]).select().single();
+  if (error) return { success: false, error: error.message };
+  return { success: true, data };
+}

@@ -4,6 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import AdminFurnitureActions from "./AdminFurnitureActions";
 
+import FurnitureAdminNav from "@/components/admin/FurnitureAdminNav";
+
 export default async function AdminFurnitureDashboard() {
   const supabase = await createClient();
 
@@ -38,6 +40,8 @@ export default async function AdminFurnitureDashboard() {
           <p className="text-muted-foreground mt-1">Manage branch registrations and data collection settings.</p>
         </div>
       </div>
+
+      <FurnitureAdminNav />
 
       <div className="grid grid-cols-1 gap-6">
         <Card>
