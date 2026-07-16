@@ -32,6 +32,8 @@ export async function middleware(request: NextRequest) {
   } = await supabase.auth.getUser()
 
   const isAdminRoute = request.nextUrl.pathname.startsWith('/admin') && !request.nextUrl.pathname.startsWith('/admin/login')
+  const isFurnitureProtected = request.nextUrl.pathname.startsWith('/furniture-requirements/dashboard') || request.nextUrl.pathname.startsWith('/furniture-requirements/entry')
+  const isFurnitureAuthPage = request.nextUrl.pathname === '/furniture-requirements' || request.nextUrl.pathname === '/furniture-requirements/'
   
   if (isAdminRoute && !user) {
     const url = request.nextUrl.clone()
@@ -39,10 +41,22 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
-  // If user is logged in and trying to access login page, redirect to dashboard
+  if (isFurnitureProtected && !user) {
+    const url = request.nextUrl.clone()
+    url.pathname = '/furniture-requirements'
+    return NextResponse.redirect(url)
+  }
+
+  // If user is logged in and trying to access login pages, redirect to appropriate dashboard
   if (request.nextUrl.pathname.startsWith('/admin/login') && user) {
     const url = request.nextUrl.clone()
     url.pathname = '/admin/dashboard'
+    return NextResponse.redirect(url)
+  }
+
+  if (isFurnitureAuthPage && user) {
+    const url = request.nextUrl.clone()
+    url.pathname = '/furniture-requirements/dashboard'
     return NextResponse.redirect(url)
   }
 

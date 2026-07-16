@@ -2,7 +2,8 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Button } from "@/components/ui/button"
+import { useEffect, useState } from "react"
+import { createClient } from "@/utils/supabase/client" // Assuming there's a client utility, or I will use another way to check
 import { 
   LayoutDashboard, 
   Users, 
@@ -14,7 +15,8 @@ import {
   QrCode, 
   Download, 
   LogOut,
-  Upload
+  Upload,
+  Package
 } from "lucide-react"
 
 export default function AdminLayout({
@@ -23,13 +25,30 @@ export default function AdminLayout({
   children: React.ReactNode
 }) {
   const pathname = usePathname()
+  const [isSuperAdmin, setIsSuperAdmin] = useState(false)
+
+  useEffect(() => {
+    // We can fetch from an API route or directly via supabase client if available.
+    // For now, let's assume we can hit a quick endpoint or we check local storage / cookies,
+    // or better, fetch from supabase directly since we have the anon key in env.
+    async function checkRole() {
+      try {
+        const response = await fetch('/api/user-role')
+        const data = await response.json()
+        setIsSuperAdmin(data.role === 'super_admin')
+      } catch (e) {
+        setIsSuperAdmin(false)
+      }
+    }
+    checkRole()
+  }, [])
 
   // Don't show sidebar on login page
   if (pathname === '/admin/login') {
     return <>{children}</>
   }
 
-  const navItems = [
+  const allNavItems = [
     { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
     { href: "/admin/submissions", label: "Submissions", icon: Users },
     { href: "/admin/branches", label: "Branches", icon: Building },
@@ -41,6 +60,12 @@ export default function AdminLayout({
     { href: "/admin/students/import", label: "Student Import", icon: Upload },
     { href: "/admin/export", label: "CSV Export", icon: Download },
   ]
+  
+  const furnitureNavItems = [
+    { href: "/admin/furniture", label: "Furniture Module", icon: Package },
+  ]
+
+  const navItems = isSuperAdmin ? [...allNavItems, ...furnitureNavItems] : furnitureNavItems;
 
   return (
     <div className="flex h-screen overflow-hidden bg-background">
