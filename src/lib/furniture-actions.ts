@@ -37,7 +37,7 @@ export async function registerBranchUser(formData: {
   full_name: string;
   username: string;
   email: string;
-  mobile: string;
+  mobile?: string;
   password?: string; // We'll handle auth user creation upon approval, or immediately? 
   // Wait, if we create it immediately, they can log in but be blocked by RLS.
   // Actually, creating the auth account in 'registerBranchUser' makes password management easier.
