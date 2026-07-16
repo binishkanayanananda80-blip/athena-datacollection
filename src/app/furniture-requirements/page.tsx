@@ -31,7 +31,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Checkbox } from "@/components/ui/checkbox";
 
 const registerSchema = z.object({
-  branch_id: z.coerce.number().min(1, "Please select a branch."),
+  branch_id: z.string().min(1, "Please select a branch."),
   full_name: z.string().min(2, "Full Name is required"),
   username: z.string().min(3, "Username must be at least 3 characters").regex(/^[a-zA-Z0-9._-]+$/, "Only letters, numbers, dots, hyphens and underscores allowed"),
   email: z.string().email("Invalid email address"),
@@ -112,7 +112,7 @@ function RegistrationForm() {
   const form = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
-      branch_id: 0,
+      branch_id: "",
       full_name: "",
       username: "",
       email: "",
@@ -138,7 +138,8 @@ function RegistrationForm() {
   async function onSubmit(values: z.infer<typeof registerSchema>) {
     setIsSubmitting(true);
     try {
-      const res = await registerBranchUser(values);
+      const payload = { ...values, branch_id: Number(values.branch_id) };
+      const res = await registerBranchUser(payload);
       if (res.success) {
         setIsSuccess(true);
       } else {
