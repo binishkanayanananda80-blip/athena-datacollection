@@ -5,12 +5,12 @@ import DataEntryClient from "./DataEntryClient";
 export default async function FurnitureDataEntryPage() {
   const { user, status, registration } = await getCurrentFurnitureUser() || {};
   
-  if (!user || !registration) {
+  if (!user) {
     redirect("/furniture-requirements");
   }
 
-  if (status !== 'Active') {
-    redirect("/furniture-requirements/dashboard");
+  if (user && !registration) {
+    redirect("/admin/furniture");
   }
 
   const masterData = await getMasterDataForEntry();
