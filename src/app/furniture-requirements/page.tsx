@@ -112,6 +112,7 @@ function RegistrationForm() {
   const form = useForm<z.infer<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
     defaultValues: {
+      branch_id: 0,
       full_name: "",
       username: "",
       email: "",
