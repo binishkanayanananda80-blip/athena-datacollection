@@ -383,7 +383,7 @@ export async function fetchExistingFormData(academicYearId: string, branchId: nu
       .eq('academic_year_id', academicYearId)
       .eq('branch_id', branchId)
       .eq('class_id', classId)
-      .single();
+      .maybeSingle();
     enrolments = enrData;
 
     const { data: reqData } = await supabase
