@@ -1,9 +1,12 @@
-import { createAdminClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/utils/supabase/server";
 import { redirect } from "next/navigation";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import FurnitureAdminNav from "@/components/admin/FurnitureAdminNav";
 import MasterDataModals from "./MasterDataModals";
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export default async function MasterDataDashboard() {
   const supabase = await createAdminClient();

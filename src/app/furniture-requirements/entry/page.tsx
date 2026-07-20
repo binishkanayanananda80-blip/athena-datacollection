@@ -2,6 +2,9 @@ import { getCurrentFurnitureUser, getMasterDataForEntry } from "@/lib/furniture-
 import { redirect } from "next/navigation";
 import DataEntryClient from "./DataEntryClient";
 
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
+
 export default async function FurnitureDataEntryPage() {
   const { user, status, registration } = await getCurrentFurnitureUser() || {};
   
