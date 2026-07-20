@@ -246,7 +246,7 @@ export async function getCurrentFurnitureUser() {
 }
 
 export async function getMasterDataForEntry() {
-  const supabase = await createClient();
+  const supabase = await createAdminClient();
   
   // Need to bypass RLS for master data if branch user RLS is tricky, but we made master data readable to authenticated.
   const [sectionsRes, gradesRes, classesRes, locationsRes, categoriesRes, mappingsRes, yearRes, tabsRes] = await Promise.all([

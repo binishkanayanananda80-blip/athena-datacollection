@@ -218,9 +218,6 @@ export default function DataEntryClient({ branchId, academicYearId, masterData }
 
   return (
     <div className="space-y-4">
-      <div className="bg-red-100 text-red-900 p-2 font-mono text-xs w-full break-all">
-         DEBUG: appCatLen={applicableCategories.length}, reqLen={requirements.length}, tab={tabType}, mapLen={masterData.mappings.length}, actTab={activeTabId}
-      </div>
       <div className="flex flex-col md:flex-row gap-6">
       {/* Navigation / Selection Sidebar */}
       <div className="w-full md:w-64 flex-shrink-0 space-y-6">
