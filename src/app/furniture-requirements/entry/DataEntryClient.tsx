@@ -43,9 +43,16 @@ export default function DataEntryClient({ branchId, academicYearId, masterData }
   // Applicable categories based on context
   const applicableCategories = activeTab === "academic" 
     ? masterData.categories.filter((cat: any) => 
-        masterData.mappings.some((m: any) => 
-          m.category_id === cat.id && m.grade_id === selectedGrade
-        )
+        masterData.mappings.some((m: any) => {
+          if (m.category_id !== cat.id) return false;
+          if (m.location_id) return false; // Ignore location mappings
+          
+          if (m.class_id) return m.class_id === selectedClass;
+          if (m.grade_id) return m.grade_id === selectedGrade;
+          if (m.section_id) return m.section_id === selectedSection;
+          
+          return false; // If none are set but it's an academic mapping, probably shouldn't match. Or if it's a global mapping, return true.
+        })
       )
     : masterData.categories.filter((cat: any) => 
         masterData.mappings.some((m: any) => 
@@ -178,7 +185,11 @@ export default function DataEntryClient({ branchId, academicYearId, masterData }
             <div className="space-y-1">
               <label className="text-sm font-medium">Section</label>
               <Select value={selectedSection} onValueChange={(v) => { setSelectedSection(v || ""); setSelectedGrade(""); setSelectedClass(""); }}>
-                <SelectTrigger><SelectValue placeholder="Select Section" /></SelectTrigger>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Section">
+                    {selectedSection ? masterData.sections.find((s: any) => s.id === selectedSection)?.name : "Select Section"}
+                  </SelectValue>
+                </SelectTrigger>
                 <SelectContent>
                   {masterData.sections.map((s: any) => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}
                 </SelectContent>
@@ -187,7 +198,11 @@ export default function DataEntryClient({ branchId, academicYearId, masterData }
             <div className="space-y-1">
               <label className="text-sm font-medium">Grade</label>
               <Select value={selectedGrade} onValueChange={(v) => { setSelectedGrade(v || ""); setSelectedClass(""); }} disabled={!selectedSection}>
-                <SelectTrigger><SelectValue placeholder="Select Grade" /></SelectTrigger>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Grade">
+                    {selectedGrade ? grades.find((g: any) => g.id === selectedGrade)?.name : "Select Grade"}
+                  </SelectValue>
+                </SelectTrigger>
                 <SelectContent>
                   {grades.map((g: any) => <SelectItem key={g.id} value={g.id}>{g.name}</SelectItem>)}
                 </SelectContent>
@@ -196,7 +211,11 @@ export default function DataEntryClient({ branchId, academicYearId, masterData }
             <div className="space-y-1">
               <label className="text-sm font-medium">Class</label>
               <Select value={selectedClass} onValueChange={(v) => setSelectedClass(v || "")} disabled={!selectedGrade}>
-                <SelectTrigger><SelectValue placeholder="Select Class" /></SelectTrigger>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Class">
+                    {selectedClass ? classes.find((c: any) => c.id === selectedClass)?.name : "Select Class"}
+                  </SelectValue>
+                </SelectTrigger>
                 <SelectContent>
                   {classes.map((c: any) => <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>)}
                 </SelectContent>
@@ -208,7 +227,11 @@ export default function DataEntryClient({ branchId, academicYearId, masterData }
             <div className="space-y-1">
               <label className="text-sm font-medium">Location</label>
               <Select value={selectedLocation} onValueChange={(v) => setSelectedLocation(v || "")}>
-                <SelectTrigger><SelectValue placeholder="Select Location" /></SelectTrigger>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Location">
+                    {selectedLocation ? masterData.locations.find((l: any) => l.id === selectedLocation)?.name : "Select Location"}
+                  </SelectValue>
+                </SelectTrigger>
                 <SelectContent>
                   {masterData.locations.map((l: any) => <SelectItem key={l.id} value={l.id}>{l.name}</SelectItem>)}
                 </SelectContent>
