@@ -18,11 +18,6 @@ export default function PublicForm() {
           </div>
         </div>
 
-        <div className="text-center pt-24">
-          <Link href="/admin/login" className="text-sm text-muted-foreground hover:text-primary transition-colors">
-            Admin Login
-          </Link>
-        </div>
       </div>
     </div>
   )

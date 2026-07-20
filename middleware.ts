@@ -35,10 +35,19 @@ export async function middleware(request: NextRequest) {
   const isFurnitureProtected = request.nextUrl.pathname.startsWith('/furniture-requirements/dashboard') || request.nextUrl.pathname.startsWith('/furniture-requirements/entry')
   const isFurnitureAuthPage = request.nextUrl.pathname === '/furniture-requirements' || request.nextUrl.pathname === '/furniture-requirements/'
   
-  if (isAdminRoute && !user) {
-    const url = request.nextUrl.clone()
-    url.pathname = '/admin/login'
-    return NextResponse.redirect(url)
+  if (isAdminRoute) {
+    if (!user) {
+      const url = request.nextUrl.clone()
+      url.pathname = '/admin/login'
+      return NextResponse.redirect(url)
+    }
+    
+    // Only allow specific admin email
+    if (user.email !== 'binishkanayanananda80@gmail.com') {
+      const url = request.nextUrl.clone()
+      url.pathname = '/furniture-requirements/entry'
+      return NextResponse.redirect(url)
+    }
   }
 
   if (isFurnitureProtected && !user) {
@@ -48,14 +57,24 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
-  // If user is logged in and trying to access login pages, redirect to appropriate dashboard
+  // If user is logged in and trying to access login pages
   if (request.nextUrl.pathname.startsWith('/admin/login') && user) {
+    if (user.email !== 'binishkanayanananda80@gmail.com') {
+      const url = request.nextUrl.clone()
+      url.pathname = '/furniture-requirements/entry'
+      return NextResponse.redirect(url)
+    }
     const url = request.nextUrl.clone()
     url.pathname = '/admin/dashboard'
     return NextResponse.redirect(url)
   }
 
   if (isFurnitureAuthPage && user) {
+    if (user.email === 'binishkanayanananda80@gmail.com') {
+      const url = request.nextUrl.clone()
+      url.pathname = '/admin/dashboard'
+      return NextResponse.redirect(url)
+    }
     const url = request.nextUrl.clone()
     url.pathname = '/furniture-requirements/entry'
     return NextResponse.redirect(url)
