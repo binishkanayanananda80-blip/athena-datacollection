@@ -217,10 +217,11 @@ export default function DataEntryClient({ branchId, academicYearId, masterData }
                       (tabType === "equipment");
 
   return (
-    <div className="flex flex-col md:flex-row gap-6">
-      <div className="bg-red-100 text-red-900 p-2 font-mono text-xs mb-4 col-span-full w-full break-all">
+    <div className="space-y-4">
+      <div className="bg-red-100 text-red-900 p-2 font-mono text-xs w-full break-all">
          DEBUG: appCatLen={applicableCategories.length}, reqLen={requirements.length}, tab={tabType}, mapLen={masterData.mappings.length}, actTab={activeTabId}
       </div>
+      <div className="flex flex-col md:flex-row gap-6">
       {/* Navigation / Selection Sidebar */}
       <div className="w-full md:w-64 flex-shrink-0 space-y-6">
         <div className="flex flex-col gap-2 bg-slate-100 p-2 rounded-lg">
@@ -470,6 +471,7 @@ export default function DataEntryClient({ branchId, academicYearId, masterData }
             <p>Select a {tabType === "academic" ? "Class" : tabType === "location" ? "Location" : "Tab"} from the sidebar to begin data entry.</p>
           </div>
         )}
+      </div>
       </div>
     </div>
   );
