@@ -72,10 +72,15 @@ export default function DataEntryClient({ branchId, academicYearId, masterData }
   } else {
     // Locations
     applicableCategories = masterData.categories.filter((cat: any) => {
-      if (cat.tab_id !== activeTabId || !cat.parent_id) return false;
-      const parentId = cat.parent_id;
-      const mappings = masterData.mappings.filter((m: any) => m.category_id === parentId);
-      if (mappings.length === 0) return true;
+      // For locations, we don't care about tab_id because the original seed data didn't set tab_id for location furniture.
+      // We just check if this category itself, or its parent, has a mapping for the selected location.
+      const mappings = masterData.mappings.filter((m: any) => 
+        m.category_id === cat.id || (cat.parent_id && m.category_id === cat.parent_id)
+      );
+      
+      // If there are no location mappings for this category, it's not applicable here
+      if (mappings.length === 0) return false;
+      
       return mappings.some((m: any) => m.location_id === selectedLocation);
     });
   }
