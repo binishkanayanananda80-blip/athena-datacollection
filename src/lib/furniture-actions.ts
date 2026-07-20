@@ -321,15 +321,46 @@ export async function saveFurnitureDraft(data: any) {
       updated_at: new Date().toISOString()
     }));
 
-    const conflictCols = data.entry_type === 'academic_class' 
-      ? 'academic_year_id, branch_id, class_id, furniture_category_id'
-      : 'academic_year_id, branch_id, location_id, furniture_category_id';
-
-    const { error: reqError } = await supabase
+    // Fetch existing requirements for this class/location to determine what to update vs insert
+    let query = supabase
       .from('furniture_requirements')
-      .upsert(reqsToUpsert, { onConflict: conflictCols });
+      .select('id, furniture_category_id')
+      .eq('academic_year_id', data.academic_year_id)
+      .eq('branch_id', data.branch_id)
+      .eq('entry_type', data.entry_type);
+      
+    if (data.entry_type === 'academic_class') {
+      query = query.eq('class_id', data.class_id);
+    } else {
+      query = query.eq('location_id', data.location_id);
+    }
 
-    if (reqError) return { success: false, error: reqError.message };
+    const { data: existingReqs, error: fetchError } = await query;
+    if (fetchError) return { success: false, error: fetchError.message };
+
+    const existingMap = new Map((existingReqs || []).map(r => [r.furniture_category_id, r.id]));
+
+    const toInsert = [];
+    const toUpdate = [];
+
+    for (const req of reqsToUpsert) {
+      const existingId = existingMap.get(req.furniture_category_id);
+      if (existingId) {
+        toUpdate.push({ ...req, id: existingId });
+      } else {
+        toInsert.push(req);
+      }
+    }
+
+    if (toInsert.length > 0) {
+      const { error: insertError } = await supabase.from('furniture_requirements').insert(toInsert);
+      if (insertError) return { success: false, error: insertError.message };
+    }
+
+    if (toUpdate.length > 0) {
+      const { error: updateError } = await supabase.from('furniture_requirements').upsert(toUpdate);
+      if (updateError) return { success: false, error: updateError.message };
+    }
   }
 
   return { success: true, savedAt: new Date().toISOString() };
