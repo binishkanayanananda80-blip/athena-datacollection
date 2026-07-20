@@ -15,5 +15,8 @@ export async function GET() {
     .eq('user_id', user.id)
     .single();
 
-  return NextResponse.json({ role: roleData?.role || null });
+  return NextResponse.json({ 
+    role: roleData?.role || null,
+    module: user.user_metadata?.module || null 
+  });
 }

@@ -31,8 +31,8 @@ export default function SidebarLayout({
       try {
         const response = await fetch('/api/user-role')
         const data = await response.json()
-        // If the user is explicitly a branch_user, hide the main admin links
-        if (data.role === 'branch_user') {
+        // If the user is explicitly a branch_user or has the furniture module in metadata, hide the main admin links
+        if (data.role === 'branch_user' || data.module === 'furniture') {
           setIsSuperAdmin(false)
         }
       } catch (e) {
