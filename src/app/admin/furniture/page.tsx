@@ -19,9 +19,9 @@ export default async function AdminFurnitureDashboard() {
     .eq('user_id', user.id)
     .single();
 
-  if (roleData?.role === 'branch_user') {
+  if (roleData?.role === 'branch_user' || user.user_metadata?.module === 'furniture') {
     // If a branch user accidentally comes here, redirect them to their module
-    redirect("/furniture-requirements/dashboard");
+    redirect("/furniture-requirements/entry");
   }
 
   // Fetch pending branch registrations using admin client because original admins

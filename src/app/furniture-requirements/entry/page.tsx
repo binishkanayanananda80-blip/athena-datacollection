@@ -11,6 +11,16 @@ export default async function FurnitureDataEntryPage() {
   }
 
   if (user && !registration) {
+    if (user.user_metadata?.module === 'furniture') {
+      return (
+        <div className="max-w-4xl mx-auto px-4 py-12 text-center text-red-500">
+           <h2 className="text-2xl font-bold mb-4">Account Error</h2>
+           <p>Your branch user account exists, but your registration profile was deleted or not found.</p>
+           <p className="mt-2">This usually happens if the database was reset after you registered.</p>
+           <p className="mt-2 text-slate-700">Please register a new account with a different email/username.</p>
+        </div>
+      );
+    }
     console.log("Entry page: user exists but no registration! Redirecting to /admin/furniture")
     redirect("/admin/furniture");
   }
