@@ -42,18 +42,24 @@ export default function DataEntryClient({ branchId, academicYearId, masterData }
   
   // Applicable categories based on context
   const applicableCategories = activeTab === "academic" 
-    ? masterData.categories.filter((cat: any) => 
-        masterData.mappings.some((m: any) => {
-          if (m.category_id !== cat.id) return false;
-          if (m.location_id) return false; // Ignore location mappings
-          
+    ? masterData.categories.filter((cat: any) => {
+        // If this category is mapped to ANY location, it's a location-only category
+        const isLocationCat = masterData.mappings.some((m: any) => m.category_id === cat.id && m.location_id !== null);
+        if (isLocationCat) return false;
+
+        const academicMappings = masterData.mappings.filter((m: any) => m.category_id === cat.id && m.location_id === null);
+        
+        // If there are NO academic mappings for this category at all, show it globally for all academic classes
+        if (academicMappings.length === 0) return true;
+
+        // Otherwise, enforce strict hierarchical mapping check
+        return academicMappings.some((m: any) => {
           if (m.class_id) return m.class_id === selectedClass;
           if (m.grade_id) return m.grade_id === selectedGrade;
           if (m.section_id) return m.section_id === selectedSection;
-          
-          return false; // If none are set but it's an academic mapping, probably shouldn't match. Or if it's a global mapping, return true.
-        })
-      )
+          return false;
+        });
+      })
     : masterData.categories.filter((cat: any) => 
         masterData.mappings.some((m: any) => 
           m.category_id === cat.id && m.location_id === selectedLocation
