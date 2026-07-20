@@ -42,6 +42,7 @@ export async function middleware(request: NextRequest) {
   }
 
   if (isFurnitureProtected && !user) {
+    console.log("Middleware blocking furniture protected route! !user is true. Path:", request.nextUrl.pathname)
     const url = request.nextUrl.clone()
     url.pathname = '/furniture-requirements'
     return NextResponse.redirect(url)
@@ -56,7 +57,7 @@ export async function middleware(request: NextRequest) {
 
   if (isFurnitureAuthPage && user) {
     const url = request.nextUrl.clone()
-    url.pathname = '/furniture-requirements/dashboard'
+    url.pathname = '/furniture-requirements/entry'
     return NextResponse.redirect(url)
   }
 

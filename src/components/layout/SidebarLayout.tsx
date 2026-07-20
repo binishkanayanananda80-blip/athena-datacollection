@@ -75,7 +75,7 @@ export default function SidebarLayout({
       {/* Sidebar */}
       <aside className="w-[280px] bg-sidebar text-sidebar-foreground hidden md:flex flex-col shadow-xl z-20">
         <div className="p-8 border-b border-white/10">
-          <h2 className="text-2xl font-bold tracking-tight text-white">Admin Portal</h2>
+          <h2 className="text-2xl font-bold tracking-tight text-white">{isSuperAdmin ? "Admin Portal" : "Branch Portal"}</h2>
           <p className="text-sm text-white/70 mt-2">Leeds International School</p>
         </div>
         <nav className="flex-1 overflow-y-auto pt-4 pb-4 space-y-1">
@@ -116,7 +116,7 @@ export default function SidebarLayout({
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Mobile Header (simplified) */}
         <header className="md:hidden flex items-center justify-between p-4 bg-sidebar text-white shadow-md z-20">
-          <h2 className="text-lg font-bold tracking-tight">Admin Portal</h2>
+          <h2 className="text-lg font-bold tracking-tight">{isSuperAdmin ? "Admin Portal" : "Branch Portal"}</h2>
           <div className="flex items-center gap-3">
             <a
               href="/"

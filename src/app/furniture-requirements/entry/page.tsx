@@ -6,10 +6,12 @@ export default async function FurnitureDataEntryPage() {
   const { user, status, registration } = await getCurrentFurnitureUser() || {};
   
   if (!user) {
+    console.log("Entry page: !user is true! Redirecting to login.")
     redirect("/furniture-requirements");
   }
 
   if (user && !registration) {
+    console.log("Entry page: user exists but no registration! Redirecting to /admin/furniture")
     redirect("/admin/furniture");
   }
 

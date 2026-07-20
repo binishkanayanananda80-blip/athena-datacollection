@@ -311,7 +311,7 @@ function LoginForm() {
       const res = await loginBranchUser(values);
       if (res.success) {
         toast.success("Login successful");
-        router.push("/furniture-requirements/dashboard");
+        router.push("/furniture-requirements/entry");
       } else {
         toast.error(res.error || "Login failed");
       }

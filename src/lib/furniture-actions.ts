@@ -220,24 +220,29 @@ export async function loginBranchUser(formData: { identifier: string; password: 
 export async function getCurrentFurnitureUser() {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
-  if (!user) return null;
   
-  // Get branch assignment and registration status
-  const supabaseAdmin = await createAdminClient(); // To bypass RLS and fetch details safely
+  if (!user) {
+    console.log("getCurrentFurnitureUser: supabase.auth.getUser() returned null user.");
+    return null;
+  }
+
+  // Since regular users might not have access to view registrations due to RLS,
+  // we bypass RLS by using the admin client.
+  const supabaseAdmin = await createAdminClient(); 
   
-  const { data: reg } = await supabaseAdmin
+  const { data: reg, error } = await supabaseAdmin
     .from('furniture_branch_registrations')
     .select('*, branches(branch_name)')
     .eq('user_id', user.id)
     .single();
-    
-  if (!reg) return { user, status: null };
+
+  if (error || !reg) {
+     console.log("getCurrentFurnitureUser: Error fetching registration or no reg found:", error?.message);
+     return { user, status: null };
+  }
   
-  return {
-    user,
-    status: reg.status,
-    registration: reg
-  };
+  console.log("getCurrentFurnitureUser: Successfully found user and registration for:", user.id);
+  return { user, status: reg.status, registration: reg };
 }
 
 export async function getMasterDataForEntry() {
