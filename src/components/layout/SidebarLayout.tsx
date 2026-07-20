@@ -24,26 +24,8 @@ export default function SidebarLayout({
   children: React.ReactNode
 }) {
   const pathname = usePathname()
-  const [isSuperAdmin, setIsSuperAdmin] = useState<boolean | null>(null)
-
-  useEffect(() => {
-    async function checkRole() {
-      try {
-        const response = await fetch('/api/user-role')
-        const data = await response.json()
-        // If the user is explicitly a branch_user or has the furniture module in metadata, hide the main admin links
-        if (data.role === 'branch_user' || data.module === 'furniture') {
-          setIsSuperAdmin(false)
-        } else {
-          setIsSuperAdmin(true)
-        }
-      } catch (e) {
-        // Assume super admin if check fails, middleware protects routes anyway
-        setIsSuperAdmin(true)
-      }
-    }
-    checkRole()
-  }, [])
+  // Synchronously determine layout based on route context
+  const isSuperAdmin = !pathname.startsWith('/furniture-requirements')
 
   // Don't show sidebar on login pages
   if (pathname === '/admin/login' || pathname === '/furniture-requirements') {
@@ -78,15 +60,11 @@ export default function SidebarLayout({
       {/* Sidebar */}
       <aside className="w-[280px] bg-sidebar text-sidebar-foreground hidden md:flex flex-col shadow-xl z-20 transition-all duration-300">
         <div className="p-8 border-b border-white/10 min-h-[100px]">
-          {isSuperAdmin !== null && (
-            <>
-              <h2 className="text-2xl font-bold tracking-tight text-white">{isSuperAdmin ? "Admin Portal" : "Branch Portal"}</h2>
-              <p className="text-sm text-white/70 mt-2">Leeds International School</p>
-            </>
-          )}
+          <h2 className="text-2xl font-bold tracking-tight text-white">{isSuperAdmin ? "Admin Portal" : "Branch Portal"}</h2>
+          <p className="text-sm text-white/70 mt-2">Leeds International School</p>
         </div>
         <nav className="flex-1 overflow-y-auto pt-4 pb-4 space-y-1">
-          {isSuperAdmin !== null && navItems.map((item) => {
+          {navItems.map((item) => {
             const isActive = pathname === item.href
             return (
               <Link key={item.href} href={item.href}>
@@ -102,11 +80,9 @@ export default function SidebarLayout({
             )
           })}
         </nav>
-        {isSuperAdmin !== null && (
-          <div className="p-8 border-t border-white/10 space-y-3">
-            <a
-              href="/"
-
+        <div className="p-8 border-t border-white/10 space-y-3">
+          <a
+            href="/"
             className="w-full flex items-center justify-center gap-3 px-4 py-3 rounded-xl text-sm font-bold bg-primary text-white hover:bg-primary/90 transition-colors shadow-md"
           >
             Exit to Data Form
@@ -119,7 +95,6 @@ export default function SidebarLayout({
             Logout
           </a>
         </div>
-        )}
       </aside>
 
       {/* Main Content */}
