@@ -119,13 +119,14 @@ export default function SidebarLayout({
             Logout
           </a>
         </div>
+        )}
       </aside>
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Mobile Header (simplified) */}
         <header className="md:hidden flex items-center justify-between p-4 bg-sidebar text-white shadow-md z-20">
-          <h2 className="text-lg font-bold tracking-tight">{isSuperAdmin ? "Admin Portal" : "Branch Portal"}</h2>
+          <h2 className="text-lg font-bold tracking-tight">{isSuperAdmin === true ? "Admin Portal" : "Branch Portal"}</h2>
           <div className="flex items-center gap-3">
             <a
               href="/"
