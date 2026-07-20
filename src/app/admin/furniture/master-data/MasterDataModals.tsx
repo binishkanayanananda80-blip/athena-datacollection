@@ -10,10 +10,11 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { addFurnitureCategory, addFurnitureGrade, addFurnitureClass, addFurnitureLocation } from "@/lib/furniture-actions";
 
-export default function MasterDataModals({ sections, grades }: { sections: any[], grades: any[] }) {
+export default function MasterDataModals({ sections, grades, categories, tabs }: { sections: any[], grades: any[], categories: any[], tabs: any[] }) {
   const router = useRouter();
   
   const [openCat, setOpenCat] = useState(false);
+  const [openEquip, setOpenEquip] = useState(false);
   const [openLoc, setOpenLoc] = useState(false);
   const [openGrade, setOpenGrade] = useState(false);
   const [openClass, setOpenClass] = useState(false);
@@ -23,19 +24,44 @@ export default function MasterDataModals({ sections, grades }: { sections: any[]
   // Form states
   const [name, setName] = useState("");
   const [parentId, setParentId] = useState("");
+  const [tabId, setTabId] = useState("");
 
   const handleAddCategory = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!tabId) return toast.error("Please select a Tab Type");
     setIsLoading(true);
-    const res = await addFurnitureCategory(name);
+    const actualParentId = (parentId === "none" || !parentId) ? undefined : parentId;
+    const res = await addFurnitureCategory(name, tabId, actualParentId);
     setIsLoading(false);
     if (res.success) {
       toast.success("Category added successfully");
       setOpenCat(false);
       setName("");
+      setParentId("");
+      setTabId("");
       router.refresh();
     } else {
       toast.error(res.error || "Failed to add category");
+    }
+  };
+
+  const handleAddEquipment = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const equipTab = tabs?.find(t => t.tab_type === "equipment");
+    const equipParentCat = categories?.find(c => c.name === "Equipment" && !c.parent_id);
+    
+    if (!equipTab || !equipParentCat) return toast.error("Equipment system configuration is missing.");
+
+    setIsLoading(true);
+    const res = await addFurnitureCategory(name, equipTab.id, equipParentCat.id);
+    setIsLoading(false);
+    if (res.success) {
+      toast.success("Equipment added successfully");
+      setOpenEquip(false);
+      setName("");
+      router.refresh();
+    } else {
+      toast.error(res.error || "Failed to add equipment");
     }
   };
 
@@ -91,6 +117,7 @@ export default function MasterDataModals({ sections, grades }: { sections: any[]
   return (
     <div className="flex flex-wrap gap-4 mb-6 bg-white p-4 rounded-lg border shadow-sm">
       <Button variant="outline" onClick={() => setOpenCat(true)}>Add Category</Button>
+      <Button variant="outline" onClick={() => setOpenEquip(true)}>Add Equipment</Button>
       <Dialog open={openCat} onOpenChange={setOpenCat}>
         <DialogContent>
           <DialogHeader>
@@ -98,10 +125,56 @@ export default function MasterDataModals({ sections, grades }: { sections: any[]
           </DialogHeader>
           <form onSubmit={handleAddCategory} className="space-y-4">
             <div>
-              <Label>Category Name</Label>
-              <Input required value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Desks" />
+              <Label>Name</Label>
+              <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Pre School Tables" required />
             </div>
-            <Button type="submit" disabled={isLoading}>{isLoading ? "Adding..." : "Save"}</Button>
+            <div>
+              <Label>Tab Section</Label>
+              <Select value={tabId} onValueChange={(v) => setTabId(v || "")} required>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Form Tab" />
+                </SelectTrigger>
+                <SelectContent>
+                  {tabs?.map((t: any) => (
+                    <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label>Parent Category (Optional)</Label>
+              <Select value={parentId} onValueChange={(v) => setParentId(v || "")}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Parent Category" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="none">No Parent</SelectItem>
+                  {categories?.filter(c => !c.parent_id).map((c: any) => (
+                    <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? "Saving..." : "Save Category"}
+            </Button>
+          </form>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={openEquip} onOpenChange={setOpenEquip}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Add New Equipment</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleAddEquipment} className="space-y-4">
+            <div>
+              <Label>Equipment Name</Label>
+              <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Wall Fan" required />
+            </div>
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? "Saving..." : "Save Equipment"}
+            </Button>
           </form>
         </DialogContent>
       </Dialog>
@@ -110,14 +183,16 @@ export default function MasterDataModals({ sections, grades }: { sections: any[]
       <Dialog open={openLoc} onOpenChange={setOpenLoc}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Add Non-Academic Location</DialogTitle>
+            <DialogTitle>Add Location</DialogTitle>
           </DialogHeader>
           <form onSubmit={handleAddLocation} className="space-y-4">
             <div>
-              <Label>Location Name</Label>
-              <Input required value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Main Library" />
+              <Label>Name</Label>
+              <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Library" required />
             </div>
-            <Button type="submit" disabled={isLoading}>{isLoading ? "Adding..." : "Save"}</Button>
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? "Saving..." : "Save Location"}
+            </Button>
           </form>
         </DialogContent>
       </Dialog>
@@ -131,18 +206,24 @@ export default function MasterDataModals({ sections, grades }: { sections: any[]
           <form onSubmit={handleAddGrade} className="space-y-4">
             <div>
               <Label>Section</Label>
-              <Select value={parentId} onValueChange={(val) => setParentId(val || "")}>
-                <SelectTrigger><SelectValue placeholder="Select Section" /></SelectTrigger>
+              <Select value={parentId} onValueChange={(v) => setParentId(v || "")} required>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Section" />
+                </SelectTrigger>
                 <SelectContent>
-                  {sections.map(s => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}
+                  {sections.map((s) => (
+                    <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
             <div>
-              <Label>Grade Name</Label>
-              <Input required value={name} onChange={e => setName(e.target.value)} placeholder="e.g. Grade 1" />
+              <Label>Name</Label>
+              <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. Grade 1" required />
             </div>
-            <Button type="submit" disabled={isLoading}>{isLoading ? "Adding..." : "Save"}</Button>
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? "Saving..." : "Save Grade"}
+            </Button>
           </form>
         </DialogContent>
       </Dialog>
@@ -156,18 +237,24 @@ export default function MasterDataModals({ sections, grades }: { sections: any[]
           <form onSubmit={handleAddClass} className="space-y-4">
             <div>
               <Label>Grade</Label>
-              <Select value={parentId} onValueChange={(val) => setParentId(val || "")}>
-                <SelectTrigger><SelectValue placeholder="Select Grade" /></SelectTrigger>
+              <Select value={parentId} onValueChange={(v) => setParentId(v || "")} required>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select Grade" />
+                </SelectTrigger>
                 <SelectContent>
-                  {grades.map(g => <SelectItem key={g.id} value={g.id}>{g.name}</SelectItem>)}
+                  {grades.map((g) => (
+                    <SelectItem key={g.id} value={g.id}>{g.name}</SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
             <div>
-              <Label>Class Name</Label>
-              <Input required value={name} onChange={e => setName(e.target.value)} placeholder="e.g. 1-A" />
+              <Label>Name</Label>
+              <Input value={name} onChange={(e) => setName(e.target.value)} placeholder="e.g. 1A" required />
             </div>
-            <Button type="submit" disabled={isLoading}>{isLoading ? "Adding..." : "Save"}</Button>
+            <Button type="submit" className="w-full" disabled={isLoading}>
+              {isLoading ? "Saving..." : "Save Class"}
+            </Button>
           </form>
         </DialogContent>
       </Dialog>

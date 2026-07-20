@@ -249,14 +249,15 @@ export async function getMasterDataForEntry() {
   const supabase = await createClient();
   
   // Need to bypass RLS for master data if branch user RLS is tricky, but we made master data readable to authenticated.
-  const [sectionsRes, gradesRes, classesRes, locationsRes, categoriesRes, mappingsRes, yearRes] = await Promise.all([
+  const [sectionsRes, gradesRes, classesRes, locationsRes, categoriesRes, mappingsRes, yearRes, tabsRes] = await Promise.all([
     supabase.from('furniture_sections').select('*').eq('is_active', true).order('display_order'),
     supabase.from('furniture_grades').select('*').eq('is_active', true).order('display_order'),
     supabase.from('furniture_classes').select('*').eq('is_active', true).order('display_order'),
     supabase.from('furniture_locations').select('*').eq('is_active', true).order('display_order'),
     supabase.from('furniture_categories').select('*').eq('is_active', true).order('display_order'),
     supabase.from('furniture_category_mappings').select('*'),
-    supabase.from('furniture_academic_years').select('id, name').eq('is_current', true).single()
+    supabase.from('furniture_academic_years').select('id, name').eq('is_current', true).single(),
+    supabase.from('furniture_form_tabs').select('*').eq('is_active', true).order('display_order')
   ]);
 
   return {
@@ -266,6 +267,7 @@ export async function getMasterDataForEntry() {
     locations: locationsRes.data || [],
     categories: categoriesRes.data || [],
     mappings: mappingsRes.data || [],
+    tabs: tabsRes.data || [],
     currentYear: yearRes.data
   };
 }
@@ -312,7 +314,7 @@ export async function saveFurnitureDraft(data: any) {
       branch_id: data.branch_id,
       entry_type: data.entry_type,
       class_id: data.entry_type === 'academic_class' ? data.class_id : null,
-      location_id: data.entry_type === 'non_academic_location' ? data.location_id : null,
+      location_id: (data.entry_type === 'non_academic_location' || data.entry_type === 'equipment') ? (data.location_id || req.location_id) : null,
       furniture_category_id: req.furniture_category_id,
       existing_furniture_quantity: req.existing_furniture_quantity !== '' ? req.existing_furniture_quantity : null,
       new_furniture_requirement: req.new_furniture_requirement || 0,
@@ -324,27 +326,29 @@ export async function saveFurnitureDraft(data: any) {
     // Fetch existing requirements for this class/location to determine what to update vs insert
     let query = supabase
       .from('furniture_requirements')
-      .select('id, furniture_category_id')
+      .select('id, furniture_category_id, location_id')
       .eq('academic_year_id', data.academic_year_id)
       .eq('branch_id', data.branch_id)
       .eq('entry_type', data.entry_type);
       
     if (data.entry_type === 'academic_class') {
       query = query.eq('class_id', data.class_id);
-    } else {
+    } else if (data.entry_type === 'non_academic_location') {
       query = query.eq('location_id', data.location_id);
     }
+    // For equipment, we fetch all for the branch/entry_type and match by both category and location later
 
     const { data: existingReqs, error: fetchError } = await query;
     if (fetchError) return { success: false, error: fetchError.message };
 
-    const existingMap = new Map((existingReqs || []).map(r => [r.furniture_category_id, r.id]));
+    // Key by category_id AND location_id to be safe
+    const existingMap = new Map((existingReqs || []).map(r => [`${r.furniture_category_id}_${r.location_id || 'null'}`, r.id]));
 
     const toInsert = [];
     const toUpdate = [];
 
     for (const req of reqsToUpsert) {
-      const existingId = existingMap.get(req.furniture_category_id);
+      const existingId = existingMap.get(`${req.furniture_category_id}_${req.location_id || 'null'}`);
       if (existingId) {
         toUpdate.push({ ...req, id: existingId });
       } else {
@@ -406,11 +410,13 @@ export async function fetchExistingFormData(academicYearId: string, branchId: nu
 
 // --- Master Data Management ---
 
-export async function addFurnitureCategory(name: string) {
+export async function addFurnitureCategory(name: string, tabId: string, parentId?: string) {
   const supabase = await createAdminClient();
-  const { data, error } = await supabase.from('furniture_categories').insert([{ name, active: true }]).select().single();
+  const data: any = { name, tab_id: tabId, active: true };
+  if (parentId) data.parent_id = parentId;
+  const { data: insertedData, error } = await supabase.from('furniture_categories').insert(data).select().single();
   if (error) return { success: false, error: error.message };
-  return { success: true, data };
+  return { success: true, data: insertedData };
 }
 
 export async function addFurnitureGrade(name: string, section_id: string) {

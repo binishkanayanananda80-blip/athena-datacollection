@@ -14,13 +14,15 @@ export default async function MasterDataDashboard() {
     { data: sections },
     { data: grades },
     { data: classes },
-    { data: locations }
+    { data: locations },
+    { data: tabs }
   ] = await Promise.all([
     supabase.from('furniture_categories').select('*').order('display_order'),
     supabase.from('furniture_sections').select('*').order('display_order'),
     supabase.from('furniture_grades').select('*, furniture_sections(name)').order('display_order'),
     supabase.from('furniture_classes').select('*, furniture_grades(name)').order('display_order'),
     supabase.from('furniture_locations').select('*').order('display_order'),
+    supabase.from('furniture_form_tabs').select('*').order('display_order')
   ]);
 
   return (
@@ -37,6 +39,8 @@ export default async function MasterDataDashboard() {
       <MasterDataModals 
         sections={sections || []} 
         grades={grades || []} 
+        categories={categories || []}
+        tabs={tabs || []}
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

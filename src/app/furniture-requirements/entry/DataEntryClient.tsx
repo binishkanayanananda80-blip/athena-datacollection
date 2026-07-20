@@ -17,8 +17,12 @@ interface DataEntryClientProps {
 }
 
 export default function DataEntryClient({ branchId, academicYearId, masterData }: DataEntryClientProps) {
-  const [activeTab, setActiveTab] = useState<"academic" | "locations">("academic");
+  const tabs = masterData.tabs || [];
+  const [activeTabId, setActiveTabId] = useState<string>(tabs.length > 0 ? tabs[0].id : "");
   
+  const activeTab = tabs.find((t: any) => t.id === activeTabId);
+  const tabType = activeTab?.tab_type || "academic";
+
   // Selection State
   const [selectedSection, setSelectedSection] = useState<string>("");
   const [selectedGrade, setSelectedGrade] = useState<string>("");
@@ -41,57 +45,85 @@ export default function DataEntryClient({ branchId, academicYearId, masterData }
   const classes = masterData.classes.filter((c: any) => c.grade_id === selectedGrade);
   
   // Applicable categories based on context
-  const applicableCategories = activeTab === "academic" 
-    ? masterData.categories.filter((cat: any) => {
-        // If this category is mapped to ANY location, it's a location-only category
-        const isLocationCat = masterData.mappings.some((m: any) => m.category_id === cat.id && m.location_id !== null);
-        if (isLocationCat) return false;
+  let applicableCategories: any[] = [];
+  if (tabType === "equipment") {
+    // For equipment, all sub-categories assigned to this tab are applicable
+    applicableCategories = masterData.categories.filter((cat: any) => cat.tab_id === activeTabId && cat.parent_id);
+  } else if (tabType === "academic") {
+    applicableCategories = masterData.categories.filter((cat: any) => {
+      if (cat.tab_id !== activeTabId || !cat.parent_id) return false;
+      
+      const parentId = cat.parent_id;
+      // We check mappings against the PARENT category
+      const mappings = masterData.mappings.filter((m: any) => m.category_id === parentId);
+      
+      if (mappings.length === 0) return true; // fallback
 
-        const academicMappings = masterData.mappings.filter((m: any) => m.category_id === cat.id && m.location_id === null);
-        
-        // If there are NO academic mappings for this category at all, show it globally for all academic classes
-        if (academicMappings.length === 0) return true;
+      return mappings.some((m: any) => {
+        if (m.class_id) return m.class_id === selectedClass;
+        if (m.grade_id) return m.grade_id === selectedGrade;
+        if (m.section_id) return m.section_id === selectedSection;
+        return false;
+      });
+    });
+  } else {
+    // Locations
+    applicableCategories = masterData.categories.filter((cat: any) => {
+      if (cat.tab_id !== activeTabId || !cat.parent_id) return false;
+      const parentId = cat.parent_id;
+      const mappings = masterData.mappings.filter((m: any) => m.category_id === parentId);
+      if (mappings.length === 0) return true;
+      return mappings.some((m: any) => m.location_id === selectedLocation);
+    });
+  }
 
-        // Otherwise, enforce strict hierarchical mapping check
-        return academicMappings.some((m: any) => {
-          if (m.class_id) return m.class_id === selectedClass;
-          if (m.grade_id) return m.grade_id === selectedGrade;
-          if (m.section_id) return m.section_id === selectedSection;
-          return false;
-        });
-      })
-    : masterData.categories.filter((cat: any) => 
-        masterData.mappings.some((m: any) => 
-          m.category_id === cat.id && m.location_id === selectedLocation
-        )
-      );
+  // Group applicable categories by their parent
+  const groupedCategories = applicableCategories.reduce((acc: any, cat: any) => {
+    const parent = masterData.categories.find((c: any) => c.id === cat.parent_id);
+    const parentName = parent ? parent.name : "Other";
+    if (!acc[parentName]) acc[parentName] = [];
+    acc[parentName].push(cat);
+    return acc;
+  }, {});
 
   // Load existing data when selection changes
   useEffect(() => {
     async function loadData() {
-      if (activeTab === "academic" && !selectedClass) return;
-      if (activeTab === "locations" && !selectedLocation) return;
+      if (tabType === "academic" && !selectedClass) return;
+      if (tabType === "location" && !selectedLocation) return;
+      // equipment needs no selection at the top level
       
       setIsLoadingData(true);
       try {
         const data = await fetchExistingFormData(
           academicYearId, 
           branchId, 
-          activeTab === "academic" ? selectedClass : undefined,
-          activeTab === "locations" ? selectedLocation : undefined
+          tabType === "academic" ? selectedClass : undefined,
+          tabType === "location" ? selectedLocation : undefined
         );
         
-        if (activeTab === "academic") {
+        if (tabType === "academic") {
           setExistingStudents(data.enrolments?.existing_students || 0);
           setNewAdmissions(data.enrolments?.new_admissions || 0);
         }
 
         // Initialize requirements array matching applicable categories
         const initReqs = applicableCategories.map((cat: any) => {
-          const existing = data.requirements.find((r: any) => r.furniture_category_id === cat.id);
+          let existing;
+          if (tabType === "equipment") {
+             // For equipment, fetch the exact row if it exists, but actually we should populate an empty row if no data, 
+             // or multiple rows if there are multiple? 
+             // The user asked for a dropdown per row. If we initialize one row per equipment category, they can select one location.
+             existing = data.requirements.find((r: any) => r.furniture_category_id === cat.id);
+          } else {
+             existing = data.requirements.find((r: any) => r.furniture_category_id === cat.id);
+          }
+          
           return {
+            id: existing?.id, // keep id to update correctly
             furniture_category_id: cat.id,
             category_name: cat.name,
+            location_id: existing?.location_id || "", // for equipment
             existing_furniture_quantity: existing?.existing_furniture_quantity ?? "",
             new_furniture_requirement: existing?.new_furniture_requirement ?? 0,
             remarks: existing?.remarks || ""
@@ -108,20 +140,29 @@ export default function DataEntryClient({ branchId, academicYearId, masterData }
     }
     
     loadData();
-  }, [activeTab, selectedClass, selectedLocation, academicYearId, branchId]);
+  }, [activeTabId, selectedClass, selectedLocation, academicYearId, branchId]);
 
   const handleSave = async (autoSave = false) => {
-    if (activeTab === "academic" && !selectedClass) return;
-    if (activeTab === "locations" && !selectedLocation) return;
+    if (tabType === "academic" && !selectedClass) return;
+    if (tabType === "location" && !selectedLocation) return;
+    
+    // For equipment, enforce location selection
+    if (tabType === "equipment") {
+      const missingLocations = requirements.some(r => r.new_furniture_requirement > 0 && !r.location_id);
+      if (missingLocations && !autoSave) {
+        toast.error("Please select a location for equipment with requirements.");
+        return;
+      }
+    }
 
     if (!autoSave) setIsSaving(true);
     
     const payload = {
       academic_year_id: academicYearId,
       branch_id: branchId,
-      entry_type: activeTab === "academic" ? "academic_class" : "non_academic_location",
-      class_id: activeTab === "academic" ? selectedClass : null,
-      location_id: activeTab === "locations" ? selectedLocation : null,
+      entry_type: tabType === "academic" ? "academic_class" : (tabType === "location" ? "non_academic_location" : "equipment"),
+      class_id: tabType === "academic" ? selectedClass : null,
+      location_id: tabType === "location" ? selectedLocation : null,
       existing_students: existingStudents,
       new_admissions: newAdmissions,
       requirements: requirements
@@ -146,6 +187,11 @@ export default function DataEntryClient({ branchId, academicYearId, masterData }
   useEffect(() => {
     const handler = setTimeout(() => {
       if (requirements.length > 0) {
+        // Only autosave equipment if they have selected locations for non-zero reqs
+        if (tabType === 'equipment') {
+           const missingLocations = requirements.some(r => r.new_furniture_requirement > 0 && !r.location_id);
+           if (missingLocations) return;
+        }
         handleSave(true);
       }
     }, 2000); // Save after 2 seconds of inactivity
@@ -163,30 +209,36 @@ export default function DataEntryClient({ branchId, academicYearId, masterData }
     setRequirements(newReqs);
   };
 
+  const isFormReady = (tabType === "academic" && selectedClass) || 
+                      (tabType === "location" && selectedLocation) || 
+                      (tabType === "equipment");
+
   return (
     <div className="flex flex-col md:flex-row gap-6">
       {/* Navigation / Selection Sidebar */}
       <div className="w-full md:w-64 flex-shrink-0 space-y-6">
-        <div className="flex bg-slate-100 p-1 rounded-lg">
-          <button
-            className={`flex-1 py-2 text-xs font-medium rounded-md transition-colors ${
-              activeTab === "academic" ? "bg-white shadow-sm text-primary" : "text-slate-600 hover:text-slate-900"
-            }`}
-            onClick={() => setActiveTab("academic")}
-          >
-            Academic Classes
-          </button>
-          <button
-            className={`flex-1 py-2 text-xs font-medium rounded-md transition-colors ${
-              activeTab === "locations" ? "bg-white shadow-sm text-primary" : "text-slate-600 hover:text-slate-900"
-            }`}
-            onClick={() => setActiveTab("locations")}
-          >
-            Other Locations
-          </button>
+        <div className="flex flex-col gap-2 bg-slate-100 p-2 rounded-lg">
+          {tabs.map((tab: any) => (
+             <button
+              key={tab.id}
+              className={`w-full py-2 px-3 text-sm text-left font-medium rounded-md transition-colors ${
+                activeTabId === tab.id ? "bg-white shadow-sm text-primary" : "text-slate-600 hover:text-slate-900 hover:bg-slate-200"
+              }`}
+              onClick={() => {
+                setActiveTabId(tab.id);
+                setSelectedSection("");
+                setSelectedGrade("");
+                setSelectedClass("");
+                setSelectedLocation("");
+                setRequirements([]);
+              }}
+            >
+              {tab.name}
+            </button>
+          ))}
         </div>
 
-        {activeTab === "academic" ? (
+        {tabType === "academic" && (
           <div className="space-y-4">
             <div className="space-y-1">
               <label className="text-sm font-medium">Section</label>
@@ -228,7 +280,9 @@ export default function DataEntryClient({ branchId, academicYearId, masterData }
               </Select>
             </div>
           </div>
-        ) : (
+        )}
+        
+        {tabType === "location" && (
           <div className="space-y-4">
             <div className="space-y-1">
               <label className="text-sm font-medium">Location</label>
@@ -249,14 +303,16 @@ export default function DataEntryClient({ branchId, academicYearId, masterData }
 
       {/* Main Data Entry Area */}
       <div className="flex-1">
-        {((activeTab === "academic" && selectedClass) || (activeTab === "locations" && selectedLocation)) ? (
+        {isFormReady ? (
           <Card className="border-none shadow-md">
             <CardHeader className="flex flex-row items-center justify-between pb-4 border-b border-slate-100">
               <div>
                 <CardTitle>
-                  {activeTab === "academic" 
+                  {tabType === "academic" 
                     ? `Class: ${masterData.classes.find((c:any) => c.id === selectedClass)?.name}`
-                    : `Location: ${masterData.locations.find((l:any) => l.id === selectedLocation)?.name}`
+                    : tabType === "location" 
+                      ? `Location: ${masterData.locations.find((l:any) => l.id === selectedLocation)?.name}`
+                      : `${activeTab?.name} List`
                   }
                 </CardTitle>
                 {lastSaved && (
@@ -274,7 +330,7 @@ export default function DataEntryClient({ branchId, academicYearId, masterData }
               ) : (
                 <div className="space-y-8">
                   {/* Academic Class Enrolment Section */}
-                  {activeTab === "academic" && (
+                  {tabType === "academic" && (
                     <div className="bg-slate-50 p-4 rounded-lg border border-slate-200">
                       <h3 className="text-sm font-medium text-slate-900 mb-4">Class Enrolment Details</h3>
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -308,62 +364,93 @@ export default function DataEntryClient({ branchId, academicYearId, masterData }
 
                   {/* Furniture Requirements Table */}
                   <div>
-                    <h3 className="text-sm font-medium text-slate-900 mb-4">Furniture Requirements</h3>
                     {requirements.length > 0 ? (
-                      <div className="border border-slate-200 rounded-lg overflow-hidden">
-                        <Table>
-                          <TableHeader className="bg-slate-50">
-                            <TableRow>
-                              <TableHead className="w-[200px]">Category</TableHead>
-                              {activeTab === "academic" && <TableHead className="w-[100px] text-center">Students</TableHead>}
-                              <TableHead className="w-[150px] text-center">Existing Qty</TableHead>
-                              <TableHead className="w-[150px] text-center">New Req.</TableHead>
-                              <TableHead>Remarks</TableHead>
-                            </TableRow>
-                          </TableHeader>
-                          <TableBody>
-                            {requirements.map((req, index) => (
-                              <TableRow key={req.furniture_category_id}>
-                                <TableCell className="font-medium text-slate-700">{req.category_name}</TableCell>
-                                {activeTab === "academic" && (
-                                  <TableCell className="text-center font-semibold text-slate-500 bg-slate-50/50">
-                                    {totalStudents}
-                                  </TableCell>
-                                )}
-                                <TableCell>
-                                  <Input 
-                                    type="number" 
-                                    min="0"
-                                    className="text-center"
-                                    value={req.existing_furniture_quantity}
-                                    onChange={(e) => handleRequirementChange(index, 'existing_furniture_quantity', e.target.value)}
-                                  />
-                                </TableCell>
-                                <TableCell>
-                                  <Input 
-                                    type="number" 
-                                    min="0"
-                                    className="text-center font-bold text-primary"
-                                    value={req.new_furniture_requirement}
-                                    onChange={(e) => handleRequirementChange(index, 'new_furniture_requirement', e.target.value)}
-                                  />
-                                </TableCell>
-                                <TableCell>
-                                  <Input 
-                                    type="text" 
-                                    placeholder="Optional notes..."
-                                    value={req.remarks}
-                                    onChange={(e) => handleRequirementChange(index, 'remarks', e.target.value)}
-                                  />
-                                </TableCell>
-                              </TableRow>
-                            ))}
-                          </TableBody>
-                        </Table>
+                      <div className="border border-slate-200 rounded-lg overflow-hidden space-y-6 bg-white">
+                        {Object.entries(groupedCategories).map(([parentName, cats]: [string, any]) => (
+                          <div key={parentName} className="border-b last:border-b-0">
+                            <div className="bg-slate-100 px-4 py-2 font-semibold text-sm text-slate-700">
+                              {parentName}
+                            </div>
+                            <Table>
+                              <TableHeader className="bg-white">
+                                <TableRow>
+                                  <TableHead className="w-[200px]">Item</TableHead>
+                                  {tabType === "equipment" && <TableHead className="w-[200px]">Location</TableHead>}
+                                  {tabType === "academic" && <TableHead className="w-[100px] text-center">Students</TableHead>}
+                                  <TableHead className="w-[120px] text-center">Existing Qty</TableHead>
+                                  <TableHead className="w-[120px] text-center">New Req.</TableHead>
+                                  <TableHead>Remarks</TableHead>
+                                </TableRow>
+                              </TableHeader>
+                              <TableBody>
+                                {cats.map((cat: any) => {
+                                  const reqIndex = requirements.findIndex(r => r.furniture_category_id === cat.id);
+                                  const req = requirements[reqIndex];
+                                  if (!req) return null;
+                                  return (
+                                    <TableRow key={cat.id}>
+                                      <TableCell className="font-medium text-slate-700">{req.category_name}</TableCell>
+                                      
+                                      {tabType === "equipment" && (
+                                        <TableCell>
+                                          <Select 
+                                            value={req.location_id} 
+                                            onValueChange={(v) => handleRequirementChange(reqIndex, 'location_id', v)}
+                                          >
+                                            <SelectTrigger className="h-9">
+                                              <SelectValue placeholder="Select Location" />
+                                            </SelectTrigger>
+                                            <SelectContent>
+                                              {masterData.locations.map((l: any) => (
+                                                <SelectItem key={l.id} value={l.id}>{l.name}</SelectItem>
+                                              ))}
+                                            </SelectContent>
+                                          </Select>
+                                        </TableCell>
+                                      )}
+
+                                      {tabType === "academic" && (
+                                        <TableCell className="text-center font-semibold text-slate-500 bg-slate-50/50">
+                                          {totalStudents}
+                                        </TableCell>
+                                      )}
+                                      <TableCell>
+                                        <Input 
+                                          type="number" 
+                                          min="0"
+                                          className="text-center"
+                                          value={req.existing_furniture_quantity}
+                                          onChange={(e) => handleRequirementChange(reqIndex, 'existing_furniture_quantity', e.target.value)}
+                                        />
+                                      </TableCell>
+                                      <TableCell>
+                                        <Input 
+                                          type="number" 
+                                          min="0"
+                                          className="text-center font-bold text-primary"
+                                          value={req.new_furniture_requirement}
+                                          onChange={(e) => handleRequirementChange(reqIndex, 'new_furniture_requirement', e.target.value)}
+                                        />
+                                      </TableCell>
+                                      <TableCell>
+                                        <Input 
+                                          type="text" 
+                                          placeholder="Optional notes..."
+                                          value={req.remarks}
+                                          onChange={(e) => handleRequirementChange(reqIndex, 'remarks', e.target.value)}
+                                        />
+                                      </TableCell>
+                                    </TableRow>
+                                  );
+                                })}
+                              </TableBody>
+                            </Table>
+                          </div>
+                        ))}
                       </div>
                     ) : (
                       <div className="py-8 text-center text-slate-500 bg-slate-50 rounded-lg border border-slate-200">
-                        No applicable furniture categories found for this selection.
+                        No items found for this selection.
                       </div>
                     )}
                   </div>
@@ -374,7 +461,7 @@ export default function DataEntryClient({ branchId, academicYearId, masterData }
         ) : (
           <div className="h-full flex flex-col items-center justify-center py-20 text-slate-400 border-2 border-dashed border-slate-200 rounded-lg">
             <ArrowRight className="w-8 h-8 mb-4 text-slate-300" />
-            <p>Select a {activeTab === "academic" ? "Class" : "Location"} from the sidebar to begin data entry.</p>
+            <p>Select a {tabType === "academic" ? "Class" : tabType === "location" ? "Location" : "Tab"} from the sidebar to begin data entry.</p>
           </div>
         )}
       </div>
