@@ -59,13 +59,16 @@ export default function DataEntryClient({ branchId, academicYearId, masterData }
       
       if (mappings.length === 0) return true; // fallback
 
-      return mappings.some((m: any) => {
+      const result = mappings.some((m: any) => {
         if (m.class_id) return m.class_id === selectedClass;
         if (m.grade_id) return m.grade_id === selectedGrade;
         if (m.section_id) return m.section_id === selectedSection;
         return false;
       });
+      console.log('Cat:', cat.name, 'Parent Mappings:', mappings, 'Result:', result);
+      return result;
     });
+    console.log('Applicable Categories:', applicableCategories);
   } else {
     // Locations
     applicableCategories = masterData.categories.filter((cat: any) => {
@@ -215,6 +218,9 @@ export default function DataEntryClient({ branchId, academicYearId, masterData }
 
   return (
     <div className="flex flex-col md:flex-row gap-6">
+      <div className="bg-red-100 text-red-900 p-2 font-mono text-xs mb-4 col-span-full w-full break-all">
+         DEBUG: appCatLen={applicableCategories.length}, reqLen={requirements.length}, tab={tabType}, mapLen={masterData.mappings.length}, actTab={activeTabId}
+      </div>
       {/* Navigation / Selection Sidebar */}
       <div className="w-full md:w-64 flex-shrink-0 space-y-6">
         <div className="flex flex-col gap-2 bg-slate-100 p-2 rounded-lg">
